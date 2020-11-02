@@ -15,6 +15,11 @@ const updateUserPw = function (userInfo){
     return pros(sql);
 }
 
+const checker = function (uid){
+    const sql = "select upassword from enablermap.user where uid ="+"'"+uid+"';"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -28,8 +33,11 @@ const pros = function (sql) {
     })
 };
 
+
+
 module.exports = {
     queryUserByUid,
     insertUser,
-    updateUserPw
+    updateUserPw,
+    checker
 }

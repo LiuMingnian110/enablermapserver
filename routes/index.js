@@ -5,6 +5,12 @@ const userpro = require('../dao/ProLogin');
 const logger = require('../log/Logfilemaker');
 const filereader = require('../log/Filereader');
 
+
+//ログイン画面
+router.get('/login', function (req, res, next) {
+    res.render('login');
+});
+
 //人位置情報取得
 router.get('/getlocation/:uid', async function (req, res, next) {
     const uid = req.params.uid;
@@ -73,6 +79,23 @@ router.post('/changepw', async function (req, res, next) {
     }else{
         res.send(null);
     }
+});
+
+//ユーザ登録パスワード認証
+router.post('/loginbypd',  async function (req, res, next) {
+    const result = await userpro.checker(req.body.data.uid);
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    if(req.body.data.password == data[0].upassword){
+        res.send("success");
+    }else{
+        res.status(400);
+    }
+});
+
+//MainPage
+router.get('/mainmap', function (req,res,next){
+   res.render('map') ;
 });
 
 module.exports = router;
