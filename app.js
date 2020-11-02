@@ -26,7 +26,7 @@ app.use(session({
     saveUninitialized: true,
     secret: 'secret key', // 建议使用 128 个字符的随机字符串
     cookie: ('name', 'value', { maxAge: 3600 * 1000, secure: false }),
-    store: new redisStore({client: redis.createClient(6379,'127.0.0.1')}),
+    store: new redisStore({client: redis.createClient(6379,'127.0.0.1'),ttl: 30 * 24 * 60 * 60}),
 }));
 app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public'),{index:"login.html"}));
