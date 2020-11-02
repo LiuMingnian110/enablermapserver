@@ -58,10 +58,10 @@ router.post('/userinfo', async function (req, res, next) {
     //     "displaycolor": "1"
     // }
     // }
-    if(req.body.data != null) {
+    if (req.body.data != null) {
         const result = await userpro.insertUser(req.body.data);
         res.send(result);
-    }else{
+    } else {
         res.send(null);
     }
 });
@@ -73,29 +73,40 @@ router.post('/changepw', async function (req, res, next) {
     //     "password": "laotao13CV",
     // }
     // }
-    if(req.body.data != null) {
+    if (req.body.data != null) {
         const result = await userpro.updateUserPw(req.body.data);
         res.send(result);
-    }else{
+    } else {
         res.send(null);
     }
 });
 
 //ユーザ登録パスワード認証
-router.post('/loginbypd',  async function (req, res, next) {
+router.post('/loginbypd', async function (req, res, next) {
     const result = await userpro.checker(req.body.data.uid);
-    var dataString = JSON.stringify(result);
-    var data = JSON.parse(dataString);
-    if(req.body.data.password == data[0].upassword){
-        res.send("success");
-    }else{
+    if(result.length == 0){
         res.status(400);
+    }else{
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        if (req.body.data.password == data[0].upassword) {
+            req.session.isLogin=1;
+            res.send("success");
+        } else {
+            res.status(400);
+        }
     }
+
 });
 
 //MainPage
-router.get('/mainmap', function (req,res,next){
-   res.render('map') ;
+router.get('/mainmap', function (req, res, next) {
+    if (req.session.isLogin == 1) {
+        res.render('map');
+    }else{
+        res.redirect('http://localhost:3000/login');
+    }
+
 });
 
 module.exports = router;
