@@ -5,10 +5,9 @@ const bodyParser = require('body-parser');
 const lessMiddleware = require('less-middleware');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
-var session = require('express-session');
-var redisStore = require('connect-redis')(session);
+const session = require('express-session');
+const redisStore = require('connect-redis')(session);
 const redis = require('redis')
-
 
 const app = express();
 
@@ -43,5 +42,7 @@ app.all('*', function(req, res, next) {
 });
 
 app.use('/', indexRouter);
+
+
 
 module.exports = app;

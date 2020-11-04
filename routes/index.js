@@ -4,6 +4,8 @@ const {client} = require('../dao/RedisUtil');
 const userpro = require('../dao/ProLogin');
 const logger = require('../log/Logfilemaker');
 const filereader = require('../log/Filereader');
+const upload = require('../filepro/svgfile');
+const {reader} = require('../filepro/getmap');
 
 
 //ログイン画面
@@ -111,6 +113,17 @@ router.get('/mainmap', function (req, res, next) {
 //HistoryPage
 router.get('/historymap', function (req, res, next) {
    res.render('historyshow');
+});
+
+//SVG File UpLoad
+router.post('/singleUpload',upload.single('mapsvg'),function (req, res,next){
+    console.log(req.file);
+    res.end("success");
+});
+
+//GET SVG MAP
+router.get('/getMap/:mapname',function (req,res,next){
+    res.send(reader(req.params.mapname))
 });
 
 module.exports = router;
