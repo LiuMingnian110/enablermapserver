@@ -1,13 +1,588 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <p>
-        THIS IS A TEST
-    </p>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnablerMapDemo</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyAvtx-D_AVrB78-bTDzSaFuBLP5nRecsKM&libraries=&v=weekly"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        * {
+            padding: 0px;
+            height: 0px;
+            list-style: none;
+        }
 
+        html, body, .map-box, .row {
+            width: 100%;
+            height: 100%;
+        }
+
+        #map-box {
+            position: relative;
+        }
+
+        .row {
+            width: 100%;
+            height: 100%;
+            float: left;
+            z-index: 1;
+            /* background-color: cadetblue; */
+            margin-left: 0px !important;
+            margin-right: 0px !important;
+        }
+
+        #meun {
+            box-shadow: 0.1px 10px 15px 2px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        #meun, #lists {
+            width: 200px !important;
+            height: 100% !important;
+        }
+
+        .map {
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 999;
+            padding: 20px 20px;
+
+        }
+
+        #IndoorMap{
+            width: 100% !important;
+            height: 100% !important;
+            padding: 20px 20px;
+            position: absolute;
+            background: #00B7FF;
+
+        }
+
+        .col-md-auto {
+            padding: 0px !important;
+        }
+
+        #v-pills-tab {
+            width: 100% !important;
+            height: 100% !important;
+            padding-top: 20px !important;
+        }
+
+        .nav-link {
+            height: 40px !important;
+            padding-left: 35px;
+        }
+
+        .nav-pills .nav-link.active {
+            border-radius: 0px !important;
+        }
+
+        .title-style {
+            height: auto;
+            border-radius: 0px;
+        }
+
+        #lists {
+            padding: 20px 20px 20px 0px;
+        }
+
+        .list-data {
+            height: 85.6%;
+            border-radius: 0px;
+            overflow-y: scroll;
+            padding-bottom: 20px;
+        }
+
+        .list-group-item {
+            width: 100%;
+            height: 40px;
+            line-height: 1 !important;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -khtml-user-select: none;
+            user-select: none;
+        }
+
+        .list-style {
+            width: 100% !important;
+            cursor: pointer;
+        }
+
+        .list-scroll {
+            height: 100%;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+
+        #all-btn {
+            height: 40px !important;
+            border-radius: 0px !important;
+            position: relative;
+            /*top: 15px !important;*/
+            padding: 10px !important;
+            font-size: 18px !important;
+            line-height: 1px !important;
+        }
+
+        #v-pills-home {
+            width: 100%;
+            height: 100%;
+            /* background-color: cadetblue; */
+            float: left;
+        }
+
+        #v-pills-profile {
+            width: 100%;
+            height: 100%;
+            background-color: rgb(15, 119, 255);
+        }
+
+        #map {
+            height: 100%;
+            z-index: 99;
+        }
+
+        #meun-btn {
+            left: 30px;
+        }
+
+        #meun-btn, #list-btn {
+            width: 36px;
+            height: 36px;
+            background-color: #fff;
+            z-index: 999;
+            position: absolute;
+            top: 50%;
+            margin-top: -13px;
+            border-radius: 2px;
+            display: block;
+            box-shadow: 0.1px 0px 0px 2px rgba(134, 134, 134, 0.1) !important;
+            /* opacity: 0.5; */
+            /* transition: 0.5s; */
+        }
+
+        #meun-btn:hover, #list-btn:hover, #refresh-btn img:hover {
+            cursor: pointer;
+        }
+
+        #list-btn {
+            right: 30px;
+        }
+
+        #meun-btn img, #list-btn img {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            left: 50%;
+            top: 50%;
+            margin-top: -15px;
+            margin-left: -15px;
+            opacity: 0.8;
+        }
+
+        #meun-btn img:hover, #list-btn img:hover {
+            opacity: 1;
+        }
+
+        #refresh-btn {
+            width: 28px;
+            height: 28px;
+            position: absolute;
+            right: 10px;
+            z-index: 999;
+            top: 50%;
+            margin-top: -14px;
+        }
+
+        #refresh-btn img {
+            width: 28px;
+            height: 28px;
+            padding: 3px;
+        }
+
+        #refresh-btn img:hover {
+            transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            transition: transform .5s;
+        }
+    </style>
+</head>
+<body onload="runMaps()">
+<div class="map-box" id="map-box">
+    <div class="row">
+        <div class="col-md-auto" id="meun" style="display: none;">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">Home</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+                   aria-controls="v-pills-profile" aria-selected="false">Profile</a>
+            </div>
+        </div>
+        <div class="col map">
+            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div id="meun-btn">
+                    <img src="right-btn.png" id="cancel">
+                </div>
+                <div id="IndoorMap" style="visibility: hidden"></div>
+                <div id="map" style="visibility: visible"></div>
+                <div id="list-btn">
+                    <img src="left-btn.png" id="right-btn">
+                </div>
+            </div>
+            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"></div>
+        </div>
+        <div class="col col-lg-2" id="lists" style="display: none;">
+            <ul class="list-group title-style" style="position: relative;">
+                <li class="list-group-item active" id="user-title">User List</li>
+                <div id="refresh-btn">
+                    <img src="Refresh.png" alt="" id="refresh-img">
+                </div>
+            </ul>
+            <ul class="list-group list-data" id="user-list"></ul>
+            <button type="button" class="btn btn-primary btn-lg btn-block" id="all-btn" onclick="showAll()">SHOW ALL
+            </button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" style="height: 45px" onclick="ClearAll()">
+                Clear
+            </button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" id="viewControl" style="height: 45px"
+                    onclick="viewController()">STOP AUTO VIEW
+            </button>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //Java　Hashmap 自分を定義する
+    function HashMap() {
+        this.map = {};
+    }
+
+    HashMap.prototype = {
+        put: function (key, value) {
+            this.map[key] = value;
+        },
+        get: function (key) {
+            if (this.map.hasOwnProperty(key)) {
+                return this.map[key];
+            }
+            return null;
+        },
+        remove: function (key) {
+            if (this.map.hasOwnProperty(key)) {
+                return delete this.map[key];
+            }
+            return false;
+        },
+        values: function () {
+            var _values = new Array();
+            for (var key in this.map) {
+                _values.push(this.map[key]);
+            }
+            return _values;
+        },
+        removeAll: function () {
+            this.map = {};
+        },
+        keySet: function () {
+            var _keys = [];
+            for (var i in this.map) {
+                _keys.push(i);
+            }
+            return _keys;
+        }
+    };
+    HashMap.prototype.constructor = HashMap;
+
+    var map;
+    var target_list = new HashMap();
+    var userlist = ['testA', 'testB', 'testC', 'testD'];
+    var selectUid = null;
+    var fpersontimer = null;
+    let refreshImg = document.getElementById('refresh-img');
+    var viewauto = true;
+    var IndoorMap = new HashMap();
+    var place_list = new HashMap();
+    const goldStar = {
+        path:
+            "M 12.5,0.5 15.5,9 24.5,9 17.5,14.5 20,23 12.5,18 5,23 7.5,14.5 0.5,9 9.5,9 z",
+        fillColor: "red",
+        fillOpacity: 0.8,
+        scale: 0.8,
+        strokeColor: "gold",
+        strokeWeight: 1,
+    };
+
+
+    //IndoorMap情報取得(api?)
+    var getIndoorInfo = function () {
+        var testpaths = [
+            {lat: 35.661517, lng: 139.745036},
+            {lat: 35.661343, lng: 139.745492},
+            {lat: 35.661142, lng: 139.745369},
+            {lat: 35.661312, lng: 139.744908},
+
+        ];
+        IndoorMap.put('testplace', testpaths);
+        var testpaths2 = [
+            {lat: 36.661517, lng: 138.745036},
+            {lat: 36.661343, lng: 138.745492},
+            {lat: 36.661142, lng: 138.745369},
+            {lat: 36.661312, lng: 138.744908},
+
+        ];
+        IndoorMap.put('testplace2', testpaths2);
+
+
+    };
+
+
+    //ユーザfocus機能コントロール
+    var viewController = function () {
+        var btn = document.getElementById("viewControl");
+        if (viewauto) {
+            viewauto = false;
+            btn.innerText = "Start Auto View";
+        } else {
+            viewauto = true;
+            btn.innerText = "Stop Auto View";
+        }
+
+    }
+
+    //画面初期化
+    var runMaps = function () {
+        getIndoorInfo();
+        const Tokyo = {lat: 35.68, lng: 139.75};
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 10,
+            center: Tokyo,
+        });
+        drawplace(IndoorMap);
+    };
+
+    var drawplace = function (IndoorMap) {
+
+        for (var i = 0; i < IndoorMap.values().length; i++) {
+            var placemark = new google.maps.Marker({
+                position: IndoorMap.values()[i][0],
+                icon: goldStar,
+                map: map,
+            });
+            setMClickEvent(placemark,IndoorMap.values()[i][0]);
+
+            var temp = new google.maps.Polygon({
+                paths: IndoorMap.values()[i],
+                strokeColor: '#ff0000',
+                strokeOpacity: 0.5,
+                strokeWeight: 1,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+            });
+            temp.setMap(map);
+            setPClickEvent(temp,IndoorMap.keySet()[i]);
+            place_list.put(IndoorMap.keySet()[i],temp);
+        }
+    };
+
+    var setMClickEvent = function(marker,position){
+        google.maps.event.addListener(marker, 'click', function (event) {
+            map.setZoom(20);
+            map.setCenter(position);
+        });
+    };
+
+    var setPClickEvent = function(polygon,placename){
+        google.maps.event.addListener(polygon, 'click', function (event) {
+            alert(placename);
+            document.getElementById("map").style.visibility="hidden";
+            document.getElementById("IndoorMap").style.visibility="visible";
+            ClearAll();
+        });
+    };
+
+    //draw one person position
+    var drawMark = function (uid, lat, lng) {
+        if (target_list.get(uid) != null) {
+            var temp = target_list.get(uid);
+            temp[0].setMap(null);
+            temp[0] = null;
+            var marker = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                label: uid,
+                map: map,
+            });
+            temp[0] = marker;
+            target_list.put(uid, temp);
+
+        } else {
+            var temp = [];
+            var marker = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                label: uid,
+                map: map,
+            });
+            temp.push(marker);
+            target_list.put(uid, temp);
+
+        }
+    };
+
+    var showAll = function () {
+        //性能が落ちる為、showAll時は場所一回表示する。
+        // var showallflag = setInterval(showAll,5000);
+        // console.log('test');
+        //request userlist by ajax
+        var indexcount = 0;
+        for (var i in userlist) {
+            if (indexcount < userlist.length) {
+                $.ajax({
+                    timeout: 3000,
+                    type: 'GET',
+                    url: 'http://localhost:3000/getlocation/' + userlist[i],
+                    async: false,
+                    success: function (data) {
+                        if (data != null) {
+                            drawMark(userlist[i], Number(data.lat), Number(data.lon));
+                            indexcount++;
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            }
+        }
+    };
+
+    var ClearAll = function () {
+        clearInterval(fpersontimer);
+        for (var i in userlist) {
+            temp = target_list.get(userlist[i]);
+            if (temp != null) {
+                temp[0].setMap(null);
+            }
+        }
+        ;
+        target_list.removeAll();
+    };
+
+    var followoneperson = function (uid) {
+        if (selectUid != uid) {
+            clearInterval(fpersontimer);
+            selectUid = uid;
+            fpersontimer = setInterval(fperson, 3000);
+        }
+    }
+
+    //follow one person
+    var fperson = function () {
+        var uid = selectUid;
+        $.ajax({
+            timeout: 3000,
+            type: 'GET',
+            url: 'http://localhost:3000/getlocation/' + uid,
+            success: function (data) {
+                if (data != null) {
+                    console.log('3s test');
+                    drawMark(uid, Number(data.lat), Number(data.lon));
+                    if (viewauto) {
+                        map.setCenter({lat: Number(data.lat), lng: Number(data.lon)});
+                        map.setZoom(19);
+                    }
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+
+    };
+
+    var lis = null;
+
+    function listMake() {
+        let uls = document.getElementById('user-list')
+        refreshImg.addEventListener('click', () => {
+            while (uls.hasChildNodes()) {
+                uls.removeChild(uls.firstChild);
+            }
+            ;
+            for (let i = 0; i < userlist.length; i++) {
+                lis = document.createElement('li');
+                lis.setAttribute('class', 'list-group-item list-style list-group-item-action');
+                var temp = "followoneperson('" + userlist[i] + "')";
+                lis.setAttribute('onclick', temp);
+                lis.innerHTML = userlist[i];
+                uls.appendChild(lis);
+            }
+        })
+    };
+    listMake();
+
+    // function getUserList(){
+    //     $.ajax({
+    //         timeout: 3000,
+    //         type: 'GET',
+    //         url: '',
+    //         success: function (data) {
+    //             userlist = data;
+    //         },
+    //         error: function (err) {
+    //             console.log(err);
+    //         }
+    //     })
+    // };
+
+
+    //SwitchBtn
+    function btn() {
+        let meunBtn = document.getElementById("meun-btn")
+        let cancel = document.getElementById("cancel")
+        let meun = document.getElementById('meun')
+        let lists = document.getElementById("lists")
+        let listBtn = document.getElementById("list-btn")
+        let rightBtn = document.getElementById('right-btn')
+        meunBtn.addEventListener('click', () => {
+            if (meun.style.display == 'none') {
+                meun.style.display = 'block'
+                if (meun.style.display == 'block') {
+                    cancel.src = 'hide-btn.png'
+                }
+            } else {
+                meun.style.display = 'none'
+                if (meun.style.display == 'none') {
+                    cancel.src = 'right-btn.png'
+                }
+            }
+        })
+        listBtn.addEventListener('click', () => {
+            if (lists.style.display == 'none') {
+                lists.style.display = 'block'
+                if (lists.style.display == 'block') {
+                    rightBtn.src = 'hide-btn.png'
+                }
+            } else {
+                lists.style.display = 'none'
+                if (lists.style.display == 'none') {
+                    rightBtn.src = 'left-btn.png'
+                }
+            }
+        })
+    };
+    btn();
+</script>
 </body>
+
 </html>

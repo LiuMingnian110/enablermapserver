@@ -1,0 +1,701 @@
+body {
+font-size:0.6em;
+}
+#main-left{
+display:none;
+}
+
+body {
+height:100%;
+overflow:hidden;
+}
+.ui-dialog {
+z-index:9999;
+}
+.ui-front {
+z-index:9998;
+}
+.ui-widget-overlay {
+opacity:0.4;
+}
+#wrapper {
+height:100%;
+}
+#header {
+}
+#mapmanage-wrapper {
+width:100%;
+display:box;
+display: -webkit-box;
+display: -moz-box;
+height:100%;
+max-height:100%;
+}
+
+#mapmanage-explorer {
+-webkit-box-ordinal-group: 1; 
+-moz-box-ordinal-group: 1;
+width:auto;
+height:100%;
+background:#17212B;
+
+display:box;
+display: -webkit-box;
+display: -moz-box;
+
+}
+
+#mapmanage-main {
+-webkit-box-flex: 1;
+-moz-box-flex: 1;
+-webkit-box-ordinal-group: 2; 
+-moz-box-ordinal-group: 2;
+height:100%;
+max-height:100%;
+}
+
+#mapmanage-toolbar-top {
+background: #ecf0f3;
+width:100%;
+height:26px;
+display:box;
+display: -webkit-box;
+display: -moz-box;
+overflow:hidden;
+}
+#mapmanage-toolbar-top-left {
+-webkit-box-ordinal-group: 1; 
+-moz-box-ordinal-group: 1;
+overflow:hidden;
+height:26px;
+}
+#mapmanage-toolbar-top-right {
+-webkit-box-ordinal-group: 2; 
+-moz-box-ordinal-group: 2;
+-webkit-box-flex: 1;
+-moz-box-flex: 1;
+height:26px;
+text-align:right;
+overflow:hidden;
+}
+
+#mapmanage-work {
+width:100%;
+height:50%;
+display:box;
+display: -webkit-box;
+display: -moz-box;
+}
+#mapmanage-canvas {
+-webkit-box-flex: 1;
+-moz-box-flex: 1;
+-webkit-box-ordinal-group: 1; 
+-moz-box-ordinal-group: 1;
+min-width:400px;
+height:100%;
+background:#fff;
+overflow:auto;
+}
+
+#mapmanage-canvas.drag-over {
+background:#3498db;
+}
+
+#mapmanage-controller {
+-webkit-box-ordinal-group: 2; 
+-moz-box-ordinal-group: 2;
+width:360px;
+background: #ecf0f3;
+height:100%;
+display:box;
+display: -webkit-box;
+display: -moz-box;
+overflow:auto;
+}
+#mapmanage-toolbar-bottom {
+background:#ecf0f1;
+height:24px;
+padding-left:1.2em;
+}
+
+#mapmanage-explorer-body {
+-webkit-box-ordinal-group: 1; 
+-moz-box-ordinal-group: 1;
+width:100%;
+height:100%;
+font-size:0.9em;
+}
+#mapmanage-explorer-bar {
+-webkit-box-ordinal-group: 2; 
+-moz-box-ordinal-group: 2;
+width:20px;
+display:none;
+}
+
+#mapmanage-controller-body {
+-webkit-box-ordinal-group: 2; 
+-moz-box-ordinal-group: 2;
+text-align:center;
+position:relative;
+width:100%;
+}
+#mapmanage-controller-body .jstree {
+text-align:left;
+}
+#mapmanage-controller-bar {
+-webkit-box-ordinal-group: 1; 
+-moz-box-ordinal-group: 1;
+width:2px;
+}
+
+
+#mapmanage-explorer-body h2 {
+font-size: 1.6em;
+margin: 15px 0 0;
+padding: 0;
+text-indent: 10px;
+color: #2980b9;
+text-align:left;
+}
+
+#properties {
+min-height:20%;
+color:#2c3e50;
+}
+
+#properties dl {
+padding:12px;
+}
+
+#properties dl dt{
+font-weight:bold;
+color:#2980b9;
+}
+#properties dl dd{
+font-weight:bold;
+color:#ecf0f1 ;
+}
+
+#explorer-tree {
+font-size:1em;
+color:#2c3e50;
+height:95%; 
+min-height:100%;
+overflow-y:auto;
+}
+
+#explorer-tree ul{
+list-style-type:none;
+margin-left:4px;
+}
+
+.building-list {
+padding-left:0;
+}
+
+.building-list li {
+ margin-bottom:0.8em;
+ padding:0 0 12px 0;
+ background:transparent;
+ color:#7f8c8d;
+ font-weight:bold;
+}
+.building-name {
+font-size:1.4em;
+padding:12px;
+color:#e74c3c;
+}
+.floor-list {
+padding:0;
+display:none;
+}
+.floor-list li {
+ margin:0;
+ padding:6px;
+ color:#2c3e50;
+ font-weight:normal;
+ text-indent:24px;
+}
+.floor:hover {
+background:#2980b9;
+color:#ecf0f1;
+}
+
+.building-list .floor-list li.active {
+background:#bdc3c7;
+color:#2980b9;
+font-weight:bold;
+}
+
+.building-list li.active {
+background:#34495e;
+color:#bdc3c7;
+}
+
+.building-list li.active ul li {
+color:#ecf0f1;
+}
+.msg-center {
+width:100%;
+text-align:center;
+font-size:1.2em;
+font-weight:bold;
+}
+
+
+.floor-thumbs {
+width:100%;
+dispaly:block;
+margin:0;
+padding:0;
+list-style-type:none;
+
+}
+.floor-thumb {
+width:48%;
+margin:1% 0% 1% 1%;
+float:left;
+background:#fff;
+}
+
+.floor-img {
+height:280px;
+}
+
+.floor-thumb .floor-img img{
+width:100%;
+}
+
+.newFloorForm .floor-map {
+
+  width:500px;
+  max-height:500px;
+
+}
+
+
+.newFloorForm {
+display:box;
+display: -webkit-box;
+display: -moz-box;
+margin:auto;
+}
+.newFloorForm-left {
+width:650px;
+-webkit-box-ordinal-group: 1; 
+-moz-box-ordinal-group: 1;
+padding:24px;
+}
+.newFloorForm-left img {
+}
+
+.newFloorForm-right {
+width:420px;
+-webkit-box-ordinal-group: 2; 
+-moz-box-ordinal-group: 2;
+background:#ecf0f1;
+}
+
+.newFloorForm-right form {
+width:100%;
+}
+
+.newFloorForm-left dl {
+
+padding:20px 0;
+width:100%;
+margin:0;
+}
+.newFloorForm-left dt {
+display:inline-block;
+font-weight:bold;
+color:#2980b9;
+
+}
+.newFloorForm-left dt:after {
+content: ":";
+}
+
+.newFloorForm-left dd {
+display:inline-block;
+margin:0;
+margin-right:2em;
+padding:0;
+text-align:left;
+color:#2c3e50;
+}
+
+.newFloorForm-left {
+background:#fff;
+}
+.newFloorForm-right {
+color: #2980b9;
+}
+
+.newFloorForm-right th {
+
+}
+
+.newFloorForm-right input,
+.newFloorForm-right textarea
+{
+margin:20px 0;
+}
+
+
+.newFloorForm-right input[type=submit] {
+border-radius: 5px;         /* CSS3 */
+-moz-border-radius: 5px;    /* Firefox */
+-webkit-border-radius:5px; /* Safari,Chrome */
+background:#3b8bba;
+color:#fff;
+text-indent:0;
+}
+.newFloorForm-right input[type=submit]:hover {
+background: #1f8dd6;
+}
+
+.newFloorForm-right textarea {
+height:180px;
+}
+
+.fullmap {
+
+width:100%;
+
+}
+
+
+.controll-selector {
+margin:0;
+}
+
+.controll-selector li:hover {
+color:#2980b9 !important;
+}
+.controll-selector li.selected {
+color:#2980b9 !important;
+background:#ecf0f1;
+}
+
+.controll-selector li{
+width:110px;
+background:#7f8c8d;
+margin:0;
+}
+
+.edit-selector li.selected {
+color:#ecf0f1 !important;
+background:#2980b9;
+}
+form {
+width:100%;
+}
+
+.anchor-form {
+}
+.anchor-form table, .anchor-form tbody {
+border:0;
+background:transparent;
+color:#ecf0f1;
+}
+.anchor-form table td {
+width: 300px;
+}
+
+.anchor-dialog {
+background:#2c3e50;
+}
+
+.ap-table {
+width:90%;
+font-size:0.9em;
+
+}
+
+.ap-table td{
+padding:2px;
+}
+.ap-table tbody tr:hover {
+background:#3498db;
+color:#ecf0f1;
+}
+
+.thumb {
+width:100%;
+position:relative;
+}
+
+.thumb .compass {
+width:32px;
+height:32px;
+display:block;
+position:absolute;
+top:-20px;
+right:12px;
+}
+.thumb .thumbMap {
+width:250px;
+display:block;
+margin:auto;
+margin-top:120px;
+}
+#mapmanage-toolbar-bottom {
+text-align:left;
+font-size:0.9em;
+}
+#mapmanage-toolbar-bottom span {
+display:inline-block;
+text-align:left;
+margin:0;
+padding:0;
+}
+
+.toolbar-pos {
+width:140px;
+}
+
+.right-button {
+margin:20px;
+width:300px;
+padding: 10px 10px;
+}
+
+form table tbody {
+background:transparent;
+}
+form table tbody th{
+color:#ecf0f1;
+}
+
+.jstree-container-ul > li {
+font-size: 1.4em;
+margin-top: 2px;
+margin-bottom: 2px;
+background-color:#fff !important;
+padding-top:10px;
+padding-bottom:10px;
+}
+
+.jstree-default .jstree-wholerow-clicked {
+background:#fff !important;
+}
+
+.jstree-container-ul > li > ul > li {
+margin-top: 6px;
+margin-bottom: 6px;
+color:#3498db;
+}
+
+
+
+.olControlEditingToolbar .olControlModifyFeatureItemInactive { 
+    //background-position: -1px -1px;
+}
+.olControlEditingToolbar .olControlModifyFeatureItemActive { 
+    //background-position: -1px -24px;
+}
+.olControlEditingToolbar .olControlSelectFeatureItemInactive{
+    background-position: -1px -1px;
+}
+.olControlEditingToolbar .olControlSelectFeatureItemActive {
+    background-position: -1px -24px;
+}
+
+
+.network-info {}
+.network-info th{
+padding:0;
+padding-left:2px;
+width:50%;
+}
+.network-info td{
+padding:0;
+}
+.network-info input,
+.network-info select {
+border:none;
+border-radius:none;
+padding:0;
+margin:0;
+font-size:12px;
+background:transparent;
+}
+
+.mouse-info {
+text-align:right;
+font-size:1.2em;
+color:#fff;
+font-weight:bold;
+}
+.mouse-info-val {
+display:inline-block;
+width:180px;
+
+text-align:left;
+}
+.olControlMousePosition {
+background-color:rgba(0,0,0,0.5);
+}
+.info-button {
+margin:auto;
+width:120px;
+margin-top:20px;
+}
+
+.network-spread {
+background:#ddd !important;
+width:100%;
+}
+
+.ui-tabs .ui-tabs-panel {
+padding:0;
+margin-left:20px;
+}
+.network-spread table {
+}
+#tabs-network,
+#tabs-preset
+{
+overflow-x:auto;
+}
+#tabs-preset table,
+#tabs-network table{
+
+}
+#tabs-preset table thead tr th,
+#tabs-network table thead tr th{
+}
+
+#tabs-preset tr,
+#tabs-network tr{
+
+}
+#tabs-preset th,
+#tabs-network th{
+}
+#tabs-preset td,
+#tabs-network td{
+}
+#tabs-preset select,#tabs-network input,
+#tabs-network select,#tabs-network input{
+}
+
+.width-250 {
+width:250px;
+}
+.width-60 {
+width:60px;
+}
+/*
+.link-selecteds {
+background: #d99;
+}
+.link-selecteds td{
+background: #d99;
+}
+*/
+.link-selecteds td input{
+color: #2c3e50 !important;
+background: #d99 !important;
+}
+.link-selecteds td select{
+background: #d99 !important;
+color:#2c3e50 !important;
+}
+.controller-button {
+position:absolute;
+right:20px;
+top:10px;
+}
+
+.network-spread-Controller {
+width:100%;
+text-align:left;
+position:relative;
+height:50px;
+padding-top:10px;
+}
+
+.olControlEditingToolbar .olControlmSelectFeatureItemInactive {
+    background-position: -1px -1px;
+}
+
+.olControlEditingToolbar .olControlmSelectFeatureItemActive {
+    background-position: -1px -24px;
+}
+
+.extraWide {
+-webkit-box-flex: 1;
+-moz-box-flex: 1;
+}
+.extraBoxFlex {
+-webkit-box-flex: 2;
+-moz-box-flex: 2;
+}
+
+#mapmanage-controller-body .ui-tabs {
+}
+
+#mapmanage-controller-body .network-spread table {
+width:200%;
+}
+
+.verticalBox {
+display:block !important;
+}
+.verticalBox #mapmanage-canvas {
+height:50%;
+width:100%;
+}
+.verticalBox #mapmanage-controller {
+height:50%;
+width:100%;
+}
+.network-spread tbody select {
+
+}
+.network-spread thead {
+color: #2c3e50;
+}
+.handsontable .currentRow {
+    background-color: #e7e8ef;
+}
+.handsontable .currentCol {
+    background-color: #f9f9fb;
+}
+
+#mapmanage-controller-body {
+font-size:0.9em;
+}
+#mapmanage-controller-body h2 {
+font-size:1.2em;
+}
+
+#mapmanage-controller-body .right-button {
+/* display:none; */
+}
+
+#mapmanage-canvas {
+position:relative;
+z-index:1;
+}
+#mapmanage-canvas div.olControlMousePosition {
+bottom:20px;
+right:8px;
+font-size:0.8em;
+}
+
+.ui-dialog tr, .ui-dialog th, .ui-dialog td {
+border:0;
+}
+.ui-dialog tr:hover {
+background:initial;
+}
+.htContainer {
+background:#ccc;
+
+}
+.htCore {
+color:#333;
+}

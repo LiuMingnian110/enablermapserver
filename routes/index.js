@@ -35,7 +35,7 @@ router.get('/historical/:uid', async function (req, res, next) {
         return null;
     });
     if (result != null) {
-        res.json(result.toString());
+        res.send(result.toString());
     } else {
         res.send(null);
     }
@@ -106,7 +106,11 @@ router.get('/mainmap', function (req, res, next) {
     }else{
         res.redirect('http://localhost:3000/login');
     }
+});
 
+//HistoryPage
+router.get('/historymap', function (req, res, next) {
+   res.render('historyshow');
 });
 
 module.exports = router;
