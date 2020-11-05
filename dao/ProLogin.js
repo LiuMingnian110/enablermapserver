@@ -16,7 +16,12 @@ const updateUserPw = function (userInfo){
 }
 
 const checker = function (mail){
-    const sql = "select uid,pwd from enablermap.user where mail ="+"'"+mail+"';"
+    const sql = "select pnumber,pwd from enablermap.user where mail ="+"'"+mail+"';"
+    return pros(sql);
+}
+
+const checkerpnumber = function (pnumber){
+    const sql = "select * from enablermap.company where pnumber ="+"'"+pnumber+"';"
     return pros(sql);
 }
 
@@ -39,5 +44,6 @@ module.exports = {
     queryUserByUid,
     insertUser,
     updateUserPw,
-    checker
+    checker,
+    checkerpnumber
 }

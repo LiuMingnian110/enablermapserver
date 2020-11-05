@@ -92,11 +92,12 @@ router.post('/loginbypd', async function (req, res, next) {
         var dataString = JSON.stringify(result);
         var data = JSON.parse(dataString);
         if (req.body.data.pwd == data[0].pwd) {
-            var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep;
-            if (str == data[0].uid.substring(0,14)) {
+            const result1 = await userpro.checkerpnumber(data[0].pnumber);
+            if (result1.length != 0) {
+                var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep+data[0].pnumber;
                 req.session.isLogin = 1;
-                res.setHeader('Set-Cookie', ['enabermap.uid='+data[0].uid]);
-                res.send("success");
+                res.setHeader('Set-Cookie', ['enabermap.uid='+str]);
+                res.send(str);
             }else{
                 res.status(400);
             }
@@ -131,5 +132,8 @@ router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) 
 router.get('/getMap/:mapname', function (req, res, next) {
     res.send(reader(req.params.mapname))
 });
+
+//GET COMPANYCODE
+
 
 module.exports = router;
