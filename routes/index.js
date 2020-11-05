@@ -44,44 +44,44 @@ router.get('/historical/:uid', async function (req, res, next) {
 });
 
 //ユーザー情報検索
-router.get('/user/:uid', async function (req, res, next) {
-    const result = await userpro.queryUserByUid(req.params.uid)
-    res.send(result);
-});
+// router.get('/user/:uid', async function (req, res, next) {
+//     const result = await userpro.queryUserByUid(req.params.uid)
+//     res.send(result);
+// });
 
 //ユーザ登録
-router.post('/userinfo', async function (req, res, next) {
-    // {
-    //     "data":{"uid": "0000100100100100004",
-    //     "mailAddress": "tao@enabler.co.jp",
-    //     "password": "laotao13CV",
-    //     "role": "1",
-    //     "displayicon": "1",
-    //     "displaycolor": "1"
-    // }
-    // }
-    if (req.body.data != null) {
-        const result = await userpro.insertUser(req.body.data);
-        res.send(result);
-    } else {
-        res.send(null);
-    }
-});
+// router.post('/userinfo', async function (req, res, next) {
+//     // {
+//     //     "data":{"uid": "0000100100100100004",
+//     //     "mailAddress": "tao@enabler.co.jp",
+//     //     "password": "laotao13CV",
+//     //     "role": "1",
+//     //     "displayicon": "1",
+//     //     "displaycolor": "1"
+//     // }
+//     // }
+//     if (req.body.data != null) {
+//         const result = await userpro.insertUser(req.body.data);
+//         res.send(result);
+//     } else {
+//         res.send(null);
+//     }
+// });
 
 //ユーザパスワード更新
-router.post('/changepw', async function (req, res, next) {
-    // {
-    //     "data":{"uid": "0000100100100100004",
-    //     "password": "laotao13CV",
-    // }
-    // }
-    if (req.body.data != null) {
-        const result = await userpro.updateUserPw(req.body.data);
-        res.send(result);
-    } else {
-        res.send(null);
-    }
-});
+// router.post('/changepw', async function (req, res, next) {
+//     // {
+//     //     "data":{"uid": "0000100100100100004",
+//     //     "password": "laotao13CV",
+//     // }
+//     // }
+//     if (req.body.data != null) {
+//         const result = await userpro.updateUserPw(req.body.data);
+//         res.send(result);
+//     } else {
+//         res.send(null);
+//     }
+// });
 
 //ユーザ登録パスワード認証
 router.post('/loginbypd', async function (req, res, next) {
@@ -95,6 +95,7 @@ router.post('/loginbypd', async function (req, res, next) {
             var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep;
             if (str == data[0].uid.substring(0,14)) {
                 req.session.isLogin = 1;
+                res.setHeader('Set-Cookie', ['enabermap.uid='+data[0].uid]);
                 res.send("success");
             }else{
                 res.status(400);
