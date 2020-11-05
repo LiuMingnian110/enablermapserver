@@ -15,8 +15,8 @@ const updateUserPw = function (userInfo){
     return pros(sql);
 }
 
-const checker = function (uid){
-    const sql = "select upassword from enablermap.user where uid ="+"'"+uid+"';"
+const checker = function (mail){
+    const sql = "select uid,pwd from enablermap.user where mail ="+"'"+mail+"';"
     return pros(sql);
 }
 

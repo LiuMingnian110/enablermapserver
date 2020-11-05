@@ -85,15 +85,20 @@ router.post('/changepw', async function (req, res, next) {
 
 //ユーザ登録パスワード認証
 router.post('/loginbypd', async function (req, res, next) {
-    const result = await userpro.checker(req.body.data.uid);
-    if(result.length == 0){
+    const result = await userpro.checker(req.body.data.mail);
+    if (result.length == 0) {
         res.status(400);
-    }else{
+    } else {
         var dataString = JSON.stringify(result);
         var data = JSON.parse(dataString);
-        if (req.body.data.password == data[0].upassword) {
-            req.session.isLogin=1;
-            res.send("success");
+        if (req.body.data.pwd == data[0].pwd) {
+            var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep;
+            if (str == data[0].uid.substring(0,14)) {
+                req.session.isLogin = 1;
+                res.send("success");
+            }else{
+                res.status(400);
+            }
         } else {
             res.status(400);
         }
@@ -105,24 +110,24 @@ router.post('/loginbypd', async function (req, res, next) {
 router.get('/mainmap', function (req, res, next) {
     if (req.session.isLogin == 1) {
         res.render('map');
-    }else{
+    } else {
         res.redirect('http://localhost:3000/login');
     }
 });
 
 //HistoryPage
 router.get('/historymap', function (req, res, next) {
-   res.render('historyshow');
+    res.render('historyshow');
 });
 
 //SVG File UpLoad
-router.post('/singleUpload',upload.single('mapsvg'),function (req, res,next){
+router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) {
     console.log(req.file);
     res.end("success");
 });
 
 //GET SVG MAP
-router.get('/getMap/:mapname',function (req,res,next){
+router.get('/getMap/:mapname', function (req, res, next) {
     res.send(reader(req.params.mapname))
 });
 
