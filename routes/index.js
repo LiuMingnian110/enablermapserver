@@ -133,7 +133,15 @@ router.get('/getMap/:mapname', function (req, res, next) {
     res.send(reader(req.params.mapname))
 });
 
-//GET COMPANYCODE
+//GET USERLIST
+router.get('/getuserlist',async function (req,res,next){
+   const result =  await userpro.getuserlist();
+   if(result.length == 0){
+       res.status(400);
+   }else{
+       res.send(result);
+   }
+});
 
 
 module.exports = router;

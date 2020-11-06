@@ -25,6 +25,11 @@ const checkerpnumber = function (pnumber){
     return pros(sql);
 }
 
+const getuserlist = function(){
+    const sql = "select * from enablermap.company;"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -45,5 +50,6 @@ module.exports = {
     insertUser,
     updateUserPw,
     checker,
-    checkerpnumber
+    checkerpnumber,
+    getuserlist
 }
