@@ -128,10 +128,10 @@ router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) 
     res.end("success");
 });
 
-//GET SVG MAP
-router.get('/getMap/:mapname', function (req, res, next) {
-    res.send(reader(req.params.mapname))
-});
+//GET SVG MAP 廃棄、使用しない
+// router.get('/getmap/:mapname.svg', function (req, res, next) {
+//     res.send(reader(req.params.mapname))
+// });
 
 //GET USERLIST
 router.get('/getuserlist',async function (req,res,next){

@@ -52,6 +52,14 @@
                     <th>経度</th>
                     <td class="longitude_value" id="showlon"></td>
                 </tr>
+                <tr class="back_g">
+                    <th>高度</th>
+                    <td class="longitude_value" id="showalt"></td>
+                </tr>
+                <tr class="back_g">
+                    <th>フロア</th>
+                    <td class="longitude_value" id="showfloor"></td>
+                </tr>
             </table>
         </div>
 
@@ -60,21 +68,20 @@
             <select id="speed-select">
                 <option value="1000">1x</option>
                 <option value="500">2x</option>
-                <option value="333">3x</option>
-                <option value="200">5x</option>
                 <option value="100">10x</option>
+                <option value="50">20x</option>
             </select>
             <button id="player-stop" class="mbox">START</button>
         </div>
 
         <div id="map-control" class="ctl-box">
             <label>Map-control</label>
-            <div class="mbox">
-                <select id="map-mode">
-                    <option value="auto">Auto Zoom to Extent</option>
-                    <option value="center">Auto Marker Center</option>
-                </select>
-            </div>
+<!--            <div class="mbox">-->
+<!--                <select id="map-mode">-->
+<!--                    <option value="auto">Auto Zoom to Extent</option>-->
+<!--                    <option value="center">Auto Marker Center</option>-->
+<!--                </select>-->
+<!--            </div>-->
             <div class="mbox">
                 <button id="layer-clear">Marker Clear</button>
             </div>
@@ -85,11 +92,15 @@
     <div id="map"></div>
     <script>
         var dataArr;
-        var targetArr;
+        var targetArr = [];
+        var drawlist = [];
+        var drawtimer = null;
+        var map;
+        var i = 0;
 
         var initMap = function () {
             const Tokyo = {lat: 35.68, lng: 139.75};
-            var map = new google.maps.Map(document.getElementById("map"), {
+            map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: Tokyo,
             });
@@ -101,28 +112,47 @@
             $.ajax({
                 timeout: 3000,
                 type: 'GET',
-                url: 'http://localhost:3000/historical/'+name,
+                url: 'http://localhost:3000/historical/' + name,
                 success: function (data) {
                     if (data != "") {
-                        dataArr=data.split(/[(\r\n)\r\n]+/);
+                        dataArr = data.split(/[(\r\n)\r\n]+/);
                         dataArr.pop();
-                        for(let i=0; i<dataArr.length; i++){
-                            dataArr[i]=JSON.parse(dataArr[i]);
+                        for (let i = 0; i < dataArr.length; i++) {
+                            dataArr[i] = JSON.parse(dataArr[i]);
                         }
-                        console.log(dataArr);
-                        if(document.getElementById("time").value != "all"){
-                            for(let i=0; i<dataArr.length; i++){
-                                //比较时间大小加入targetArr
+                        // console.log(dataArr);
+                        if (document.getElementById("time").value != "all") {
+                            for (let i = 0; i < dataArr.length; i++) {
+                                if (dataArr[i].time <= document.getElementById("time").value) {
+                                    targetArr.push(dataArr[i]);
+                                }
+
                             }
-                        }else{
+                            if (targetArr.length == 0) {
+                                document.getElementById("showuid").innerText = "Not Found";
+                                document.getElementById("showtime").innerText = "";
+                                document.getElementById("showlon").innerText = "";
+                                document.getElementById("showlat").innerText = "";
+                                document.getElementById("showalt").innerText = "";
+                            } else {
+                                document.getElementById("showuid").innerText = dataArr[0].uid;
+                                document.getElementById("showtime").innerText = dataArr[0].time;
+                                document.getElementById("showlon").innerText = dataArr[0].lon;
+                                document.getElementById("showlat").innerText = dataArr[0].lat;
+                                document.getElementById("showlat").innerText = dataArr[0].alt;
+                                targetArr = dataArr;
+                                dataArr = [];
+                            }
+                        } else {
                             document.getElementById("showuid").innerText = dataArr[0].uid;
                             document.getElementById("showtime").innerText = dataArr[0].time;
                             document.getElementById("showlon").innerText = dataArr[0].lon;
                             document.getElementById("showlat").innerText = dataArr[0].lat;
-                            targetArr=dataArr;
-                            dataArr=[];
+                            document.getElementById("showlat").innerText = dataArr[0].alt;
+                            targetArr = dataArr;
+                            dataArr = [];
                         }
-                    }else{
+                    } else {
                         document.getElementById("showuid").innerText = "Not Found";
                     }
                 },
@@ -131,6 +161,57 @@
                 }
             })
         };
+
+        var drawPoint = function () {
+            var lat = Number(targetArr[i].lat);
+            var lng = Number(targetArr[i].lon);
+            var marker = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                map: map,
+            });
+            drawlist.push(marker);
+            document.getElementById("showuid").innerText = targetArr[i].uid;
+            document.getElementById("showtime").innerText = targetArr[i].time;
+            document.getElementById("showlon").innerText = targetArr[i].lon;
+            document.getElementById("showlat").innerText = targetArr[i].lat;
+            document.getElementById("showalt").innerText = targetArr[i].alt;
+            map.setCenter({lat: Number(targetArr[i].lat), lng: Number(targetArr[i].lon)});
+            if (i < targetArr.length) {
+                i = i + 1;
+            }
+        }
+
+        //draw one person position
+        var drawMark = function () {
+            var options = $("#speed-select option:selected");
+            console.log(options.val());
+            drawtimer = setInterval("drawPoint()", options.val());
+        };
+
+
+        document.getElementById('player-stop').addEventListener('click', function () {
+            if (document.getElementById('player-stop').innerText == "START") {
+                document.getElementById('player-stop').innerText = "STOP"
+                drawMark();
+            } else {
+                document.getElementById('player-stop').innerText = "START"
+                clearInterval(drawtimer);
+            }
+        });
+
+        document.getElementById('layer-clear').addEventListener('click', function () {
+            i = 0;
+            clearInterval(drawtimer);
+            for (var index in drawlist) {
+                drawlist[index].setMap(null);
+            }
+            drawlist = null;
+            document.getElementById("showuid").innerText = "";
+            document.getElementById("showtime").innerText = "";
+            document.getElementById("showlon").innerText = "";
+            document.getElementById("showlat").innerText = "";
+            document.getElementById("showalt").innerText = "";
+        });
 
     </script>
 </div>
