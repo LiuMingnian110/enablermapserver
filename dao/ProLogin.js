@@ -1,7 +1,7 @@
 const client = require('./MySQLUtil');
 
-const queryUserByUid = function (uid) {
-    const sql = "select * from enablermap.user where uid = " + "'" + uid + "'" + ";";
+const queryUserByUid = function (pnumber) {
+    const sql = "select * from enablermap.user where pnumber = " + "'" + pnumber + "'" + ";";
     return pros(sql);
 }
 
@@ -10,8 +10,13 @@ const insertUser = function (userInfo) {
     return pros(sql);
 }
 
+const confrimPw = function (userInfo){
+    const sql = "select pwd from enablermap.user where pnumber = "+"'"+userInfo.pnumber+"';"
+    return pros(sql);
+}
+
 const updateUserPw = function (userInfo){
-    const sql = "update enablermap.user set upassword = "+"'"+userInfo.password + "'" + "where uid ="+"'"+userInfo.uid + "';"
+    const sql = "update enablermap.user set pwd = "+"'"+userInfo.new + "'" + "where pnumber ="+"'"+userInfo.pnumber + "';"
     return pros(sql);
 }
 
@@ -27,6 +32,11 @@ const checkerpnumber = function (pnumber){
 
 const getuserlist = function(){
     const sql = "select * from enablermap.company;"
+    return pros(sql);
+}
+
+const getcompanydetail = function(companyNo){
+    const sql = "SELECT pcountry,poffice,pdep FROM enablermap.companydetail where pcompanycode="+"'"+companyNo+"';"
     return pros(sql);
 }
 
@@ -51,5 +61,7 @@ module.exports = {
     updateUserPw,
     checker,
     checkerpnumber,
-    getuserlist
+    getuserlist,
+    getcompanydetail,
+    confrimPw
 }

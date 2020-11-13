@@ -44,10 +44,10 @@ router.get('/historical/:uid', async function (req, res, next) {
 });
 
 //ユーザー情報検索
-// router.get('/user/:uid', async function (req, res, next) {
-//     const result = await userpro.queryUserByUid(req.params.uid)
-//     res.send(result);
-// });
+router.get('/user/:pnumber', async function (req, res, next) {
+    const result = await userpro.queryUserByUid(req.params.pnumber)
+    res.send(result);
+});
 
 //ユーザ登録
 // router.post('/userinfo', async function (req, res, next) {
@@ -69,19 +69,26 @@ router.get('/historical/:uid', async function (req, res, next) {
 // });
 
 //ユーザパスワード更新
-// router.post('/changepw', async function (req, res, next) {
-//     // {
-//     //     "data":{"uid": "0000100100100100004",
-//     //     "password": "laotao13CV",
-//     // }
-//     // }
-//     if (req.body.data != null) {
-//         const result = await userpro.updateUserPw(req.body.data);
-//         res.send(result);
-//     } else {
-//         res.send(null);
-//     }
-// });
+router.post('/changepw', async function (req, res, next) {
+    // {
+    //     "data":{"pnumber": "00004",
+    //     "password": "laotao13CV",
+    // }
+    // }
+    if (req.body.data != null) {
+        const result = await userpro.confrimPw(req.body.data);
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        if (data[0].pwd == req.body.data.current) {
+            const result1 = await userpro.updateUserPw(req.body.data);
+            res.send(result1);
+        }else{
+            res.send(null);
+        }
+    } else {
+        res.send(null);
+    }
+});
 
 //ユーザ登録パスワード認証
 router.post('/loginbypd', async function (req, res, next) {
@@ -94,11 +101,11 @@ router.post('/loginbypd', async function (req, res, next) {
         if (req.body.data.pwd == data[0].pwd) {
             const result1 = await userpro.checkerpnumber(data[0].pnumber);
             if (result1.length != 0) {
-                var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep+data[0].pnumber;
+                var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep + data[0].pnumber;
                 req.session.isLogin = 1;
-                res.setHeader('Set-Cookie', ['enabermap.uid='+str]);
+                res.setHeader('Set-Cookie', ['enabermap.uid=' + str]);
                 res.send(str);
-            }else{
+            } else {
                 res.status(400);
             }
         } else {
@@ -134,13 +141,20 @@ router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) 
 // });
 
 //GET USERLIST
-router.get('/getuserlist',async function (req,res,next){
-   const result =  await userpro.getuserlist();
-   if(result.length == 0){
-       res.status(400);
-   }else{
-       res.send(result);
-   }
+router.get('/getuserlist', async function (req, res, next) {
+    const result = await userpro.getuserlist();
+    if (result.length == 0) {
+        res.status(400);
+    } else {
+        res.send(result);
+    }
+});
+
+//企業情報取得
+router.get('/getcompanydetail/:companyNo', async function (req, res, next) {
+    const result = await userpro.getcompanydetail(req.params.companyNo);
+
+    res.send(result);
 });
 
 
