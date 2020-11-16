@@ -7,16 +7,20 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvtx-D_AVrB78-bTDzSaFuBLP5nRecsKM"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/mapmanage.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/cake.generic.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/style1.css"/>
+
     <style>
         .mbox button {
             width: 100%;
             padding: 10px;
         }
+
+
     </style>
 </head>
 <body>
@@ -76,12 +80,12 @@
 
         <div id="map-control" class="ctl-box">
             <label>Map-control</label>
-<!--            <div class="mbox">-->
-<!--                <select id="map-mode">-->
-<!--                    <option value="auto">Auto Zoom to Extent</option>-->
-<!--                    <option value="center">Auto Marker Center</option>-->
-<!--                </select>-->
-<!--            </div>-->
+            <!--            <div class="mbox">-->
+            <!--                <select id="map-mode">-->
+            <!--                    <option value="auto">Auto Zoom to Extent</option>-->
+            <!--                    <option value="center">Auto Marker Center</option>-->
+            <!--                </select>-->
+            <!--            </div>-->
             <div class="mbox">
                 <button id="layer-clear">Marker Clear</button>
             </div>
@@ -89,14 +93,29 @@
 
     </div>
 
-    <div id="map"></div>
+    <div id="map" style="display: block"></div>
+    <div id="IndoorMap" style="display: none;flex-grow: 1"></div>
+
     <script>
         var dataArr;
         var targetArr = [];
         var drawlist = [];
         var drawtimer = null;
         var map;
+        var indoormap;
         var i = 0;
+        var indoordetail = [];
+        var keypointmarkers = [];
+        var keypoint1;
+        var keypoint2;
+        var realpoint1;
+        var realpoint2;
+        var test;
+        var realmap;
+        var temp1;
+        var temp2;
+        var imageBounds=[];
+
 
         var initMap = function () {
             const Tokyo = {lat: 35.68, lng: 139.75};
@@ -104,8 +123,187 @@
                 zoom: 10,
                 center: Tokyo,
             });
+            //show mouse point
+            // let infoWindow = new google.maps.InfoWindow({
+            //     content: "Click the map to get Lat/Lng!",
+            //     position: Tokyo,
+            // });
+            // infoWindow.open(map);
+            // // Configure the click listener.
+            // map.addListener("click", (mapsMouseEvent) => {
+            //     // Close the current InfoWindow.
+            //     infoWindow.close();
+            //     // Create a new InfoWindow.
+            //     infoWindow = new google.maps.InfoWindow({
+            //         position: mapsMouseEvent.latLng,
+            //     });
+            //     infoWindow.setContent(
+            //         JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+            //     );
+            //     infoWindow.open(map);
+            // });
         };
         initMap();
+
+        var drawindoormap = function (filename) {
+            indoormap = L.map('IndoorMap', {
+                center: [40.75, -74.2],
+                zoom: 13
+            });
+
+            //quit
+            L.Control.quitpage = L.Control.extend({
+
+                quitmain: function () {
+                    document.getElementById("map").style.display = "block";
+                    document.getElementById("IndoorMap").style.display = "none";
+                },
+
+                onAdd: function (map) {
+                    var img = L.DomUtil.create('img');
+                    img.src = '/icon/shut.png';
+                    img.style.width = '50px'
+                    L.DomEvent.addListener(img, 'click', this.quitmain, this);
+                    return img;
+                },
+
+            });
+            L.control.quitpage = function (opts) {
+                return new L.Control.quitpage(opts);
+            }
+
+            L.control.quitpage({position: 'topright'}).addTo(indoormap);
+
+            //showmessage
+            L.Control.showbox = L.Control.extend({
+
+                onAdd: function (map) {
+                    var divbox = L.DomUtil.create('div');
+                    divbox.id = "info";
+                    return divbox;
+                },
+
+            });
+            L.control.showbox = function (opts) {
+                return new L.Control.showbox(opts);
+            }
+
+            L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
+
+            //drawnew map
+            L.Control.drawnewmap = L.Control.extend({
+                drawmap: function (){
+                    indoormap.removeLayer(keypoint1);
+                    indoormap.removeLayer(keypoint2);
+                    indoormap.removeLayer(test);
+                    temp1=realpoint1.split(",");
+                    temp2=realpoint2.split(",");
+
+                    imageBounds=[
+                        [40.712216-keypointmarkers[0]+Number(temp1[0]),-74.22655-keypointmarkers[1]+Number(temp1[1])],
+                        [40.773941-keypointmarkers[2]+Number(temp2[0]),-74.12544-keypointmarkers[3]+Number(temp2[1])]
+                    ];
+                    realmap = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
+                    indoormap.panTo([40.712216-keypointmarkers[0]+Number(temp1[0]),-74.22655-keypointmarkers[1]+Number(temp1[1])]);
+                    indoormap.zoomIn(2);
+                },
+
+
+                onAdd: function (map) {
+                    var drawbutton = L.DomUtil.create('button');
+                    drawbutton.id = "drawnmap";
+                    drawbutton.innerText = "Draw";
+                    L.DomEvent.addListener(drawbutton, 'click', this.drawmap, this);
+                    return drawbutton;
+                },
+
+            });
+            L.control.drawnewmap = function (opts) {
+                return new L.Control.drawnewmap(opts);
+            }
+
+            L.control.drawnewmap({position: 'bottomright'}).addTo(indoormap);
+
+            indoormap.on('mousemove', function (e) {
+                document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
+            });
+
+            indoormap.on('click', function (ev) {
+                if (keypoint1 == null) {
+                    keypointmarkers.push(ev.latlng.lat);
+                    keypointmarkers.push(ev.latlng.lng);
+                    keypoint1 = L.marker(ev.latlng).addTo(indoormap);
+                    realpoint1 = prompt("input position (Eg:lat,lng)")
+                } else if (keypoint2 == null) {
+                    keypointmarkers.push(ev.latlng.lat);
+                    keypointmarkers.push(ev.latlng.lng);
+                    keypoint2 = L.marker(ev.latlng).addTo(indoormap);
+                    realpoint2 = prompt("input position (Eg:lat,lng)")
+                }else{
+                    alert("You had been add two point")
+                }
+                ;
+            });
+
+
+            var imageUrl = 'http://localhost/' + filename + '.svg';
+            imageBounds = [
+                [40.712216, -74.22655],
+                [40.773941, -74.12544]
+            ];
+
+            test = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
+
+        }
+
+        var showindoormap = function (filename, keypoint) {
+            document.getElementById("map").style.display = "none";
+            document.getElementById("IndoorMap").style.display = "block";
+            if (keypoint == "") {
+                drawindoormap(filename);
+            }else{
+
+            }
+
+        }
+
+        var getmapdetail = function () {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:3000/getindoordetail/00001',
+                success: function (data) {
+                    indoordetail = data;
+                    for (let i = 0, len = indoordetail.length; i < len; i++) {
+                        var templist = indoordetail[i].position.split("|");
+                        var areaCoords = [];
+                        for (let j = 0, len = templist.length; j < len; j++) {
+                            var tempstring = {
+                                lat: Number(templist[j].split(",")[0]),
+                                lng: Number(templist[j].split(",")[1])
+                            }
+                            areaCoords.push(tempstring);
+                        }
+                        var areaTriangle = new google.maps.Polygon({
+                            paths: areaCoords,
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 0.8,
+                            strokeWeight: 3,
+                            fillColor: "#FF0000",
+                            fillOpacity: 0.35,
+                        });
+                        areaTriangle.setMap(map);
+                        areaTriangle.addListener("click", function () {
+                            showindoormap(indoordetail[i].svgfile, indoordetail[i].keypoint);
+                        });
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        };
+        getmapdetail();
+
 
         var getuser = function () {
             const name = document.getElementById("user").value;

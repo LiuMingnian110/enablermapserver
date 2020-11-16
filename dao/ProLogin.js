@@ -40,6 +40,11 @@ const getcompanydetail = function(companyNo){
     return pros(sql);
 }
 
+const getindoordetail = function(companyNo){
+    const sql = "SELECT * FROM enablermap.indoormap where pcompanycode="+"'"+companyNo+"';"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -63,5 +68,6 @@ module.exports = {
     checkerpnumber,
     getuserlist,
     getcompanydetail,
-    confrimPw
+    confrimPw,
+    getindoordetail
 }

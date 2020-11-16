@@ -157,5 +157,12 @@ router.get('/getcompanydetail/:companyNo', async function (req, res, next) {
     res.send(result);
 });
 
+//indoormap
+router.get('/getindoordetail/:companyNo', async function (req, res, next) {
+    const result = await userpro.getindoordetail(req.params.companyNo);
+
+    res.send(result);
+});
+
 
 module.exports = router;
