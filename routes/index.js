@@ -13,6 +13,20 @@ router.get('/login', function (req, res, next) {
     res.render('login');
 });
 
+//MainPage
+router.get('/mainmap', function (req, res, next) {
+    if (req.session.isLogin == 1) {
+        res.render('map');
+    } else {
+        res.redirect('http://localhost:3000/login');
+    }
+});
+
+//HistoryPage
+router.get('/historymap', function (req, res, next) {
+    res.render('historyshow');
+});
+
 //人位置情報取得
 router.get('/getlocation/:uid', async function (req, res, next) {
     const uid = req.params.uid;
@@ -82,7 +96,7 @@ router.post('/changepw', async function (req, res, next) {
         if (data[0].pwd == req.body.data.current) {
             const result1 = await userpro.updateUserPw(req.body.data);
             res.send(result1);
-        }else{
+        } else {
             res.send(null);
         }
     } else {
@@ -93,6 +107,7 @@ router.post('/changepw', async function (req, res, next) {
 //ユーザ登録パスワード認証
 router.post('/loginbypd', async function (req, res, next) {
     const result = await userpro.checker(req.body.data.mail);
+    console.log(result);
     if (result.length == 0) {
         res.status(400);
     } else {
@@ -101,7 +116,9 @@ router.post('/loginbypd', async function (req, res, next) {
         if (req.body.data.pwd == data[0].pwd) {
             const result1 = await userpro.checkerpnumber(data[0].pnumber);
             if (result1.length != 0) {
-                var str = req.body.data.pcompanycode + req.body.data.pcountry + req.body.data.poffice + req.body.data.pdep + data[0].pnumber;
+                dataString = JSON.stringify(result1);
+                data = JSON.parse(dataString);
+                var str = data[0].pcompanycode + data[0].pcountry + data[0].poffice + data[0].pdep + data[0].pnumber;
                 req.session.isLogin = 1;
                 res.setHeader('Set-Cookie', ['enabermap.uid=' + str]);
                 res.send(str);
@@ -115,19 +132,8 @@ router.post('/loginbypd', async function (req, res, next) {
 
 });
 
-//MainPage
-router.get('/mainmap', function (req, res, next) {
-    if (req.session.isLogin == 1) {
-        res.render('map');
-    } else {
-        res.redirect('http://localhost:3000/login');
-    }
-});
 
-//HistoryPage
-router.get('/historymap', function (req, res, next) {
-    res.render('historyshow');
-});
+
 
 //SVG File UpLoad
 router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) {
@@ -160,7 +166,12 @@ router.get('/getcompanydetail/:companyNo', async function (req, res, next) {
 //indoormap
 router.get('/getindoordetail/:companyNo', async function (req, res, next) {
     const result = await userpro.getindoordetail(req.params.companyNo);
+    res.send(result);
+});
 
+//updata indoor map keypoint
+router.post('/updatakeypoint', async function (req, res, next) {
+    const result = await userpro.updatakeypoints(req.body.data.svgfile, req.body.data.keypoints);
     res.send(result);
 });
 

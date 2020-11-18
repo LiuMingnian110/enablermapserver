@@ -1,23 +1,110 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.33,minimum-scale=1.0,maximum-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="renderer" content="webkit">
-    <title>Enabler Location System</title>
-    <link rel="stylesheet" rev="stylesheet" href="/stylesheets/iconfont.css" type="text/css" media="all">
-    <link rel="stylesheet" rev="stylesheet" href="/stylesheets/txcstx.css" type="text/css" media="all">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <style>
-        .tx-login-bg {
-            background: url(/images/bg.jpg) no-repeat 0 0;
-        }</style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 </head>
-<body class="tx-login-bg">
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    html,body,#login-box{
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    #form-box{
+        width: 50%;
+        height: 100%;
+        position: relative;
+        float: left;
+    }
+    #form-box form{
+        padding: 0px 100px;
+        position: relative;
+        margin-top: 50%;
+        transform: translateY(-50%);
+    }
+    #title{
+        font-size: 2.9em;
+        width: 100%;
+        text-align: center;
+        color: rgb(0, 110, 255);
+        /* padding-top: 40px; */
+        position: absolute;
+        top: 50px;
+    }
+    #img-box{
+        width: 50%;
+        height: 100%;
+        position: relative;
+    }
+    .row{
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+    .col{
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    #map,#floor-plan{
+        height: 50%;
+    }
+    #map{
+        background: url(/images/bg1.jpg) no-repeat 0 0;
+        background-size:100% 100%;
+    }
+    #floor-plan{
+        background: url(/images/bg2.jpg) no-repeat 0 0;
+        background-size:100% 100%;
+
+    }
+    .btn {
+        width: 100% !important;
+    }
+    /* .pw-form{
+        width: 100%;
+        height: 100%;
+    } */
+
+</style>
+<body>
+<div id="login-box" class="row">
+    <div id="form-box">
+        <div id="title">Enabler Location System</div>
+        <form class="pw-form">
+            <div class="form-group">
+                <label for="exampleInputEmail1">企業番号/Company no.</label>
+                <input class="form-control" type="text" placeholder="例）00000" id="company">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">メールアドレス/Mail address</label>
+                <input type="email" class="form-control" id="email" placeholder="例）enabler@gmail.co.jp">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">パスワード/Password</label>
+                <input type="password" class="form-control" id="password">
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="dataUp()">Sign in</button>
+        </form>
+    </div>
+    <div id="img-box" class="col align-self-end">
+        <div id="map"></div>
+        <div id="floor-plan"></div>
+    </div>
+</div>
+</body>
 <script>
-    const login = function () {
-        if ($("#companyno").val() == "" || $("#country").val() == "" || $("#office").val() == "" || $("#department").val() == "" || $("#mailaddress").val() == "" || $("#password").val() == "") {
+
+    function dataUp(){
+        if($("#company").val() == "" || $("#email").val() == "" || $("#password").val() == ""){
             alert("情報を全部入力してください。");
-        } else {
+        }else{
             $.ajax({
                 timeout: 3000,
                 type: 'POST',
@@ -25,44 +112,15 @@
                 contentType: "application/json",
                 dataType: "text",
                 async: true,
-                // data : JSON.stringify({"uid":$("#edtUserUID").val(),"password":$("#edtPassWord").val()}),
-                data: JSON.stringify({"data": {"pcompanycode": $("#companyno").val(), "pcountry": $("#country").val(), "poffice": $("#office").val(), "pdep": $("#department").val(), "mail": $("#mailaddress").val(),"pwd": $("#password").val()}}),
+                data: JSON.stringify({"data": {"pcompanycode": $("#company").val(), "mail": $("#email").val(),"pwd": $("#password").val()}}),
                 success: function () {
                     window.location.href = '/mainmap';
                 },
                 error: function () {
-                    alert("User is not found");
-                }
 
+                }
             })
         }
     }
 </script>
-<div class="tx-login-box">
-    <div class="login-avatar bg-black"><i class="iconfont icon-wode"></i></div>
-    <ul class="tx-form-li row">
-        <li class="col-24 col-m-24"><p><input type="text" id="companyno" name="companyno" placeholder="companyno"
-                                              class="tx-input" value=""><i>企業番号/Company no(5桁)</i></p></li>
-        <li class="col-24 col-m-24"><p><input type="text" id="country" name="country" placeholder="country"
-                                              class="tx-input" value=""><i>国.地域/Country no(3桁)</i></p></li>
-        <li class="col-24 col-m-24"><p><input type="text" id="office" name="office" placeholder="office"
-                                              class="tx-input" value=""><i>事業所番号/Offlce no(3桁)</i></p></li>
-        <li class="col-24 col-m-24"><p><input type="text" id="department" name="department" placeholder="department"
-                                              class="tx-input" value=""><i>部門番号/Department no(3桁)</i></p></li>
-        <li class="col-24 col-m-24"><p><input type="text" id="mailaddress" name="mailaddress" placeholder="mailaddress"
-                                              class="tx-input" value=""><i>メールアドレス/Mail address(*@*)</i></p></li>
-        <li class="col-24 col-m-24"><p><input type="password" id="password" name="password" placeholder="password"
-                                              class="tx-input" value=""><i>パスワード/password（*）</i></p></li>
-        <li class="col-24 col-m-24">
-            <p class="tx-input-full">
-                <button type="submit" id="loginbtnPost" name="loginbtnPost" onclick="login()"
-                        class="tx-btn tx-btn-big bg-black">Sign In
-                </button>
-            </p>
-        </li>
-    </ul>
-</div>
-
-
-</body>
 </html>

@@ -114,14 +114,19 @@
         var realmap;
         var temp1;
         var temp2;
-        var imageBounds=[];
+        var imageBounds = [];
 
-
+        //google map and leaflet map init
         var initMap = function () {
             const Tokyo = {lat: 35.68, lng: 139.75};
             map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: Tokyo,
+            });
+
+            indoormap = L.map('IndoorMap', {
+                center: [40.75, -74.2],
+                zoom: 13
             });
             //show mouse point
             // let infoWindow = new google.maps.InfoWindow({
@@ -145,11 +150,8 @@
         };
         initMap();
 
+        //初期化Map（keypointがないの場合）ここで設定段階でやるべき、もしやっていないならここでやります。
         var drawindoormap = function (filename) {
-            indoormap = L.map('IndoorMap', {
-                center: [40.75, -74.2],
-                zoom: 13
-            });
 
             //quit
             L.Control.quitpage = L.Control.extend({
@@ -192,20 +194,37 @@
 
             //drawnew map
             L.Control.drawnewmap = L.Control.extend({
-                drawmap: function (){
+                drawmap: function () {
                     indoormap.removeLayer(keypoint1);
                     indoormap.removeLayer(keypoint2);
                     indoormap.removeLayer(test);
-                    temp1=realpoint1.split(",");
-                    temp2=realpoint2.split(",");
+                    temp1 = realpoint1.split(",");
+                    temp2 = realpoint2.split(",");
 
-                    imageBounds=[
-                        [40.712216-keypointmarkers[0]+Number(temp1[0]),-74.22655-keypointmarkers[1]+Number(temp1[1])],
-                        [40.773941-keypointmarkers[2]+Number(temp2[0]),-74.12544-keypointmarkers[3]+Number(temp2[1])]
+                    imageBounds = [
+                        [40.712216 - keypointmarkers[0] + Number(temp1[0]), -74.22655 - keypointmarkers[1] + Number(temp1[1])],
+                        [40.773941 - keypointmarkers[2] + Number(temp2[0]), -74.12544 - keypointmarkers[3] + Number(temp2[1])]
                     ];
                     realmap = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
-                    indoormap.panTo([40.712216-keypointmarkers[0]+Number(temp1[0]),-74.22655-keypointmarkers[1]+Number(temp1[1])]);
+                    indoormap.panTo([40.712216 - keypointmarkers[0] + Number(temp1[0]), -74.22655 - keypointmarkers[1] + Number(temp1[1])]);
                     indoormap.zoomIn(2);
+
+                    $.ajax({
+                        timeout: 3000,
+                        type: 'POST',
+                        url: 'http://localhost:3000/updatakeypoint',
+                        contentType: "application/json",
+                        dataType: "text",
+                        async: true,
+                        data: JSON.stringify({"data": {"svgfile": filename, "keypoints": imageBounds.toString()}}),
+                        success: function () {
+                            console.log("success");
+                        },
+                        error: function () {
+                            console.log("failed");
+                        }
+
+                    })
                 },
 
 
@@ -239,7 +258,7 @@
                     keypointmarkers.push(ev.latlng.lng);
                     keypoint2 = L.marker(ev.latlng).addTo(indoormap);
                     realpoint2 = prompt("input position (Eg:lat,lng)")
-                }else{
+                } else {
                     alert("You had been add two point")
                 }
                 ;
@@ -256,13 +275,74 @@
 
         }
 
+        var drawcurrentindoormap = function (filename, keypoint) {
+            var keypoints = keypoint.split(",");
+
+            //quit
+            L.Control.quitpage = L.Control.extend({
+
+                quitmain: function () {
+                    document.getElementById("map").style.display = "block";
+                    document.getElementById("IndoorMap").style.display = "none";
+                    test.remove();
+                    test1.remove();
+                    test2.remove();
+                },
+
+                onAdd: function (map) {
+                    var img = L.DomUtil.create('img');
+                    img.src = '/icon/shut.png';
+                    img.style.width = '50px'
+                    L.DomEvent.addListener(img, 'click', this.quitmain, this);
+                    return img;
+                },
+
+            });
+            L.control.quitpage = function (opts) {
+                return new L.Control.quitpage(opts);
+            }
+
+            var test1 = L.control.quitpage({position: 'topright'}).addTo(indoormap);
+
+            //showmessage
+            L.Control.showbox = L.Control.extend({
+
+                onAdd: function (map) {
+                    var divbox = L.DomUtil.create('div');
+                    divbox.id = "info";
+                    return divbox;
+                },
+
+            });
+            L.control.showbox = function (opts) {
+                return new L.Control.showbox(opts);
+            }
+
+            var test2 = L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
+
+            indoormap.on('mousemove', function (e) {
+                document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
+            });
+
+            var imageUrl = 'http://localhost/' + filename + '.svg';
+
+            imageBounds = [
+                [Number(keypoints[0]), Number(keypoints[1])],
+                [Number(keypoints[2]), Number(keypoints[3])]
+            ];
+
+            test = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
+            indoormap.panInsideBounds(imageBounds);
+            indoormap.zoomIn(3);
+        }
+
         var showindoormap = function (filename, keypoint) {
             document.getElementById("map").style.display = "none";
             document.getElementById("IndoorMap").style.display = "block";
-            if (keypoint == "") {
+            if (keypoint == ""　|| keypoint == null) {
                 drawindoormap(filename);
-            }else{
-
+            } else {
+                drawcurrentindoormap(filename, keypoint);
             }
 
         }
@@ -367,6 +447,7 @@
                 position: {lat: lat, lng: lng},
                 map: map,
             });
+            var lmarker = L.marker([lat,lng]).addTo(indoormap);
             drawlist.push(marker);
             document.getElementById("showuid").innerText = targetArr[i].uid;
             document.getElementById("showtime").innerText = targetArr[i].time;
