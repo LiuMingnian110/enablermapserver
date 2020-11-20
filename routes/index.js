@@ -40,6 +40,9 @@ router.post('/location/:uid', function (req, res, next) {
     if (req.body.data != null) {
         logger.logger(uid, JSON.stringify(req.body.data));
         client.synPost(uid, req.body.data);
+        res.json({"result": "success"});
+    } else {
+        res.json({"result": "failed"});
     }
     ;
     res.end();
@@ -95,12 +98,19 @@ router.post('/changepw', async function (req, res, next) {
         var data = JSON.parse(dataString);
         if (data[0].pwd == req.body.data.current) {
             const result1 = await userpro.updateUserPw(req.body.data);
-            res.send(result1);
+            dataString = JSON.stringify(result1);
+            data = JSON.parse(dataString);
+            if (data[0].affectedRows == 1 || data[0].affectedRows == "1") {
+                res.json({"status": "success"});
+            } else {
+                res.json({"status": "failed"});
+            }
+
         } else {
-            res.send(null);
+            res.json({"status": "failed"});
         }
     } else {
-        res.send(null);
+        res.json({"status": "failed"});
     }
 });
 
@@ -109,7 +119,7 @@ router.post('/loginbypd', async function (req, res, next) {
     const result = await userpro.checker(req.body.data.mail);
     console.log(result);
     if (result.length == 0) {
-        res.status(400);
+        res.json({"uid": "error"});
     } else {
         var dataString = JSON.stringify(result);
         var data = JSON.parse(dataString);
@@ -121,18 +131,16 @@ router.post('/loginbypd', async function (req, res, next) {
                 var str = data[0].pcompanycode + data[0].pcountry + data[0].poffice + data[0].pdep + data[0].pnumber;
                 req.session.isLogin = 1;
                 res.setHeader('Set-Cookie', ['enabermap.uid=' + str]);
-                res.send(str);
+                res.json({"uid": str});
             } else {
-                res.status(400);
+                res.json({"uid": "error"});
             }
         } else {
-            res.status(400);
+            res.json({"uid": "error"});
         }
     }
 
 });
-
-
 
 
 //SVG File UpLoad
@@ -142,9 +150,10 @@ router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) 
 });
 
 //GET SVG MAP 廃棄、使用しない
-// router.get('/getmap/:mapname.svg', function (req, res, next) {
-//     res.send(reader(req.params.mapname))
-// });
+router.get('/getmap/:mapname.svg', function (req, res, next) {
+    res.json({"svg":reader(req.params.mapname)});
+
+});
 
 //GET USERLIST
 router.get('/getuserlist', async function (req, res, next) {
@@ -163,6 +172,13 @@ router.get('/getcompanydetail/:companyNo', async function (req, res, next) {
     res.send(result);
 });
 
+//企業名取得
+router.get('/getcompanyname/:companyNo', async function (req, res, next) {
+    const result = await userpro.getcompanyname(req.params.companyNo);
+
+    res.send(result);
+});
+
 //indoormap
 router.get('/getindoordetail/:companyNo', async function (req, res, next) {
     const result = await userpro.getindoordetail(req.params.companyNo);
@@ -174,6 +190,10 @@ router.post('/updatakeypoint', async function (req, res, next) {
     const result = await userpro.updatakeypoints(req.body.data.svgfile, req.body.data.keypoints);
     res.send(result);
 });
+
+// router.get('/jsontest',function (req,res,next) {
+//     res.json({"uid":"00001"});
+// })
 
 
 module.exports = router;

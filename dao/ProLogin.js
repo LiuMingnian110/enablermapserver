@@ -40,6 +40,12 @@ const getcompanydetail = function (companyNo) {
     return pros(sql);
 }
 
+const getcompanyname = function (companyNo) {
+    const sql = "SELECT companyname FROM enablermap.companyall where companycode=" + "'" + companyNo + "';"
+    return pros(sql);
+}
+
+
 const getindoordetail = function (companyNo) {
     const sql = "SELECT * FROM enablermap.indoormap where pcompanycode=" + "'" + companyNo + "';"
     return pros(sql);
@@ -74,5 +80,6 @@ module.exports = {
     getcompanydetail,
     confrimPw,
     getindoordetail,
-    updatakeypoints
+    updatakeypoints,
+    getcompanyname
 }

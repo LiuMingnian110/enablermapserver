@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "name": "enablermapserver",
+      "cwd": "C:/Users/81701/IdeaProjects/enablermapserver",
+      "script": "bin/www",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "error_file": "systemlog/errorlog/apperror.log",
+      "out_file": "systemlog/outlog/appout.log",
+      "pid_file": "systemlog/pids/node-geo-api.pid",
+      "instances": 6,
+      "min_uptime": "15s",
+      "max_restarts": 5,
+      "max_memory_restart": "1M",
+      "cron_restart": "30 * * * *",
+      "watch": false,
+      "merge_logs": true,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+      "autorestart": false,
+      "vizion": false
+    }
+  ]
+}
