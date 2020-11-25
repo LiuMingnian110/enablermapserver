@@ -1,0 +1,76 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+html,body,#admin-settings-box{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#admin-settings-box{
+  width: 90%;
+  height: 90%;
+  box-shadow: 0.1px 0px 0px 2px rgba(134, 134, 134, 0.1);
+  position: relative;
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+}
+#navigation-box{
+  width: 100%;
+  height: 38px;
+  position: relative;
+  margin-bottom: 20px;
+  background-color: #007bff;
+  padding: 0px 20px;
+  border-radius: 3px 3px 0 0;
+}
+#userSettings-bnt{
+  height: 38px;
+  float: left;
+}
+#userSettings-bnt img{
+  height: 24px;
+  float: left;
+  position: absolute;
+  top: 50%;
+  margin-top: -12px;
+}
+#userSettings-bnt h3{
+  line-height: 38px;
+  margin-left: 34px;
+  margin-bottom: 0px !important;
+  font-size: 18px;
+  color: #fff;
+}
+#return-bnt{
+  position: absolute;
+  right: 20px;
+}
+#return-bnt img{
+  height: 20px;
+}
+#data-upload{
+  line-height: 38px;
+  position: relative;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-200%);
+  padding: 0px 20px;
+}
+#data-upload p{
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 0px !important;
+}
+.form-control{
+  width: 50% !important;
+  float: left;
+  padding-right: 20px !important;
+}
+.up-data-btn{
+  margin-top: -5px !important;
+  margin-left: 20px;
+}

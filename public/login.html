@@ -90,8 +90,8 @@
                 <label for="exampleInputPassword1">パスワード/Password</label>
                 <input type="password" class="form-control" id="password">
             </div>
-            <button type="submit" class="btn btn-primary" onclick="dataUp()">Sign in</button>
         </form>
+        <button type="submit" class="btn btn-primary" onclick="dataUp()">Sign in</button>
     </div>
     <div id="img-box" class="col align-self-end">
         <div id="map"></div>
@@ -113,11 +113,15 @@
                 dataType: "text",
                 async: true,
                 data: JSON.stringify({"data": {"pcompanycode": $("#company").val(), "mail": $("#email").val(),"pwd": $("#password").val()}}),
-                success: function () {
-                    window.location.href = '/mainmap';
+                success: function (data) {
+                    if(data.uid == 'error'){
+                        window.location.href = '/login';
+                    }else{
+                        window.location.href = '/mainmap';
+                    }
                 },
                 error: function () {
-
+                    alert('Please check your network,if it is still not work.Please look admin for help!');
                 }
             })
         }

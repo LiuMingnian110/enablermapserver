@@ -13,6 +13,21 @@ router.get('/login', function (req, res, next) {
     res.render('login');
 });
 
+//admin-settings画面
+router.get('/admin-settings', function (req, res, next) {
+    res.render('admin-settings');
+});
+
+//ログイン画面
+router.get('/indoor-map', function (req, res, next) {
+    res.render('indoor-map');
+});
+
+//ログイン画面
+router.get('/userSettings', function (req, res, next) {
+    res.render('userSettings');
+});
+
 //MainPage
 router.get('/mainmap', function (req, res, next) {
     if (req.session.isLogin == 1) {
@@ -20,11 +35,6 @@ router.get('/mainmap', function (req, res, next) {
     } else {
         res.redirect('http://localhost:3000/login');
     }
-});
-
-//HistoryPage
-router.get('/historymap', function (req, res, next) {
-    res.render('historyshow');
 });
 
 //人位置情報取得
@@ -87,11 +97,6 @@ router.get('/user/:pnumber', async function (req, res, next) {
 
 //ユーザパスワード更新
 router.post('/changepw', async function (req, res, next) {
-    // {
-    //     "data":{"pnumber": "00004",
-    //     "password": "laotao13CV",
-    // }
-    // }
     if (req.body.data != null) {
         const result = await userpro.confrimPw(req.body.data);
         var dataString = JSON.stringify(result);
@@ -116,27 +121,25 @@ router.post('/changepw', async function (req, res, next) {
 
 //ユーザ登録パスワード認証
 router.post('/loginbypd', async function (req, res, next) {
-    const result = await userpro.checker(req.body.data.mail);
-    console.log(result);
+    const result = await userpro.checker(req.body.data.mail, req.body.data.pwd);
     if (result.length == 0) {
         res.json({"uid": "error"});
+        res.end();
     } else {
         var dataString = JSON.stringify(result);
         var data = JSON.parse(dataString);
-        if (req.body.data.pwd == data[0].pwd) {
-            const result1 = await userpro.checkerpnumber(data[0].pnumber);
-            if (result1.length != 0) {
-                dataString = JSON.stringify(result1);
-                data = JSON.parse(dataString);
-                var str = data[0].pcompanycode + data[0].pcountry + data[0].poffice + data[0].pdep + data[0].pnumber;
-                req.session.isLogin = 1;
-                res.setHeader('Set-Cookie', ['enabermap.uid=' + str]);
-                res.json({"uid": str});
-            } else {
-                res.json({"uid": "error"});
-            }
+        const result1 = await userpro.checkerpnumber(data[0].pnumber);
+        if (result1.length != 0) {
+            dataString = JSON.stringify(result1);
+            data = JSON.parse(dataString);
+            var str = data[0].pcompanycode + data[0].pcountry + data[0].poffice + data[0].pdep + data[0].pnumber;
+            req.session.isLogin = 1;
+            res.setHeader('Set-Cookie', ['enabermap.uid=' + str]);
+            res.json({"uid": str});
+            res.end();
         } else {
-            res.json({"uid": "error"});
+            res.json({"uid": "unknow! Please check the person number in DB"});
+            res.end();
         }
     }
 
@@ -151,7 +154,7 @@ router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) 
 
 //GET SVG MAP 廃棄、使用しない
 router.get('/getmap/:mapname.svg', function (req, res, next) {
-    res.json({"svg":reader(req.params.mapname)});
+    res.json({"svg": reader(req.params.mapname)});
 
 });
 
@@ -168,21 +171,25 @@ router.get('/getuserlist', async function (req, res, next) {
 //企業情報取得
 router.get('/getcompanydetail/:companyNo', async function (req, res, next) {
     const result = await userpro.getcompanydetail(req.params.companyNo);
-
-    res.send(result);
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    res.send(data);
 });
 
 //企業名取得
 router.get('/getcompanyname/:companyNo', async function (req, res, next) {
     const result = await userpro.getcompanyname(req.params.companyNo);
-
-    res.send(result);
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    res.send(data);
 });
 
 //indoormap
 router.get('/getindoordetail/:companyNo', async function (req, res, next) {
     const result = await userpro.getindoordetail(req.params.companyNo);
-    res.send(result);
+    var dataString = JSON.stringify(result);
+    var  data= JSON.parse(dataString);
+    res.send(data);
 });
 
 //updata indoor map keypoint
@@ -190,6 +197,21 @@ router.post('/updatakeypoint', async function (req, res, next) {
     const result = await userpro.updatakeypoints(req.body.data.svgfile, req.body.data.keypoints);
     res.send(result);
 });
+
+//updata upload time
+router.post('/uploadtime', async function (req, res, next) {
+    const result = await userpro.uploadtime(req.body.data.companycode, req.body.data.uploadtime);
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    if(data.changedRows == 1){
+        res.json({"result":"success"})
+    }else{
+        res.json({"result":"failed"})
+    }
+    res.end();
+});
+
+
 
 // router.get('/jsontest',function (req,res,next) {
 //     res.json({"uid":"00001"});

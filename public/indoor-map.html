@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  <script src="./js/farbtastic.js"></script>
+  <link rel="stylesheet" href="/stylesheets/indoor-map.css">
+  <title>屋内地図設定</title>
+</head>
+<body>
+    <div id="indoor-map-box">
+      <div id="indoor-map">
+        <div id="navigation-box">
+          <div id="userSettings-bnt">
+              <img src="/icon/Settings.png" alt="">
+              <h3>屋内地図設定</h3>
+          </div>
+          <div id="return-bnt">
+              <a href="./mainmap">
+                  <button type="button" class="btn btn-primary">
+                      <!-- ホームページ -->
+                      <img src="/icon/return.png" alt="">
+                  </button>
+              </a>
+          </div>
+        </div>
+        <div id="form-title">
+          <span>地図上で屋内地図エリアを線で囲む</span>
+        </div>
+        <form action="" method="post" id="map-fom">
+            <div class="form-file">
+              <div class="form-group">
+                <label>屋内地図　</label>
+                <label style="position: absolute; right: 0px;">図面登録</label>
+              </div>
+              <div class="file-icon" id="file-icon">
+                <img src="/icon/file.png" alt="">
+              </div>
+              <div class="file-up">
+                <input class="form-control-file" type="file" name="company" id="company" accept="image/svg">
+              </div>
+            </div>
+            <div class="form-file">
+              <div class="form-group">
+                <label>地点登録</label>
+                <label style="position: absolute; right: 0px;">フロア</label>
+            </div>
+              <select id="offlce" class="form-control">
+                <option value="1">1F</option>
+                <option value="2">2F</option>
+                <option value="3">3F</option>
+                <option value="4">4F</option>
+                <option value="5">5F</option>
+              </select>
+            </div>
+            <div class="coordinate-box">
+                <div class="coordinate-title">
+                    <p id="location-title">地点登録</p>
+                    <p id="number-title">番号</p>
+                    <p id="coordinate-title">座標</p>
+                    <div id="layer-preview">
+                      <img src="" alt="" id="preview">
+                    </div>
+                </div>
+                <div class="increase-box">
+                  <div class="point" id="point">
+                    <p id="point-p">地点登録</p>
+                    <p id="latitude">緯度</p>
+                    <p id="longitude">経度</p>
+                    <p id="altitude">高度</p>
+                  </div>
+                  <div class="input-list" id="input-list">
+                    <div id="create-btn">
+                      <button type="button" class="btn btn-primary">
+                        <svg t="1605764327048" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5641">
+                          <path d="M923.4 486H540V101.6c0-15.4-12.6-28-28-28s-28 12.6-28 28V486H100.6c-15.4 0-28 12.6-28 28s12.6 28 28 28H484v382.6c0 15.4 12.6 28 28 28s28-12.6 28-28V542h383.4c15.4 0 28-12.6 28-28s-12.6-28-28-28z" fill="#ffffff" p-id="5642"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary mb-2" id="submit">Subimt</button>
+        </form>
+      </div>
+    </div>
+</body>
+<script>
+
+let inputList = document.getElementById('input-list')
+let createBtn = document.getElementById('create-btn')
+
+const trashIconSvg = '<svg t="1605763994929" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2902"><path d="M970.24 256h-301.44L592.64 160H431.36L355.2 256H53.76V192h270.72l76.16-96h222.72L699.52 192h270.72v64zM803.84 928H220.16L144 356.48l64-8.96 67.84 516.48h472.32l67.84-516.48 64 8.96-76.16 571.52z" fill="#ffffff" p-id="2903"></path><path d="M376.96 412.16h64v371.84h-64zM583.04 412.16h64v371.84h-64z" fill="#ffffff" p-id="2904"></path></svg>'
+
+var createRemoveBtn = function (basedom, handlerName = '', handlerEvent = function(){}) {
+  let divEle = document.createElement('div')
+  let buttonEle = document.createElement('button')
+  buttonEle.classList.add('btn','btn-danger')
+  buttonEle.innerHTML = trashIconSvg
+  buttonEle['on'+handlerName] = handlerEvent
+  divEle.appendChild(buttonEle)
+  divEle.classList.add('delete-btn')
+  basedom.appendChild(divEle)
+  return divEle
+}
+
+//添加li，className
+var createLiItem = function (basedom, classname = '') {
+  let liEle = document.createElement('li')
+  if(classname) {
+      if(classname.constructor === Array) {
+        classname.forEach(name => {
+          liEle.classList.add(name)
+        })
+      } else {
+        liEle.classList.add(classname)
+      }
+    }
+  basedom.appendChild(liEle)
+  return liEle
+}
+
+//添加input，value
+var createInput = function(basedom, classname = '', value = '') {
+    let inputEle = document.createElement('input')
+    if(classname) {
+      if(classname.constructor === Array) {
+        classname.forEach(name => {
+          inputEle.classList.add(name)
+        })
+      } else {
+        inputEle.classList.add(classname)
+      }
+    }
+    if(value) inputEle.value = value
+    basedom.appendChild(inputEle)
+    return inputEle
+}
+
+var globalRowNumber = 1
+var createFormRow = function() {
+  let ulEle = document.createElement('ul')
+
+    const liItemNum = 4
+    for(let i = 0; i < liItemNum; i++){
+      var liEle
+      switch(i) {
+        case 0:
+          liEle = createLiItem(ulEle, 'point-input')
+          createInput(liEle, 'form-control', globalRowNumber)
+          break
+        case 1:
+          liEle = createLiItem(ulEle, 'latitude-input')
+          createInput(liEle, 'form-control')
+          break
+        case 2:
+          liEle = createLiItem(ulEle, 'longitude-input')
+          createInput(liEle, 'form-control')
+          break
+        case 3:
+          liEle = createLiItem(ulEle, 'altitude-input')
+          createInput(liEle, 'form-control')
+          break
+      }
+      ulEle.appendChild(liEle)
+    }
+
+    if(globalRowNumber !== 1) {
+      var btnWrapper = createRemoveBtn(ulEle, 'click', function(e){
+        // console.log('remove clicked')
+        e.preventDefault()
+        this.parentNode.parentNode.remove()
+        let listDom = inputList.getElementsByTagName('ul')
+        for(let i = 0; i < listDom.length; i++){
+          var pointInput = listDom[i].querySelector('.point-input').querySelector('.form-control')
+          // 第一个没有删除按钮
+          if(i !== 0) {
+            var delBtn = listDom[i].querySelector('.delete-btn').querySelector('button')
+            if(delBtn.number > this.number){
+              delBtn.number -= 1
+              pointInput.value -= 1
+            }
+          }
+          // 最后一个
+          if(i === listDom.length - 1){
+            globalRowNumber = i === 0 ? 2 : delBtn.number + 1
+          }
+        }
+        return false
+      })
+      var btn = btnWrapper.getElementsByTagName('button')[0]
+      btn.number = globalRowNumber
+    }
+    globalRowNumber++
+
+    let parentNode = createBtn.parentNode
+    let lastNode = parentNode.lastElementChild
+    parentNode.insertBefore(ulEle,lastNode)
+}
+createFormRow()
+createBtn.onclick = createFormRow
+
+//图片本地预览
+var preview = document.getElementById('preview')
+var file
+var blobURL = ''
+var fileUploader = document.getElementById('company')
+fileUploader.onchange = function(e) {
+  window.URL.revokeObjectURL(blobURL)
+  var file = e.target.files[0]
+  var filename = file.name
+  var extname = filename.substr(filename.lastIndexOf('.') + 1, filename.length)
+  if(extname !== 'svg') {
+    if(file.outerHTML){
+      file.outerHTML=file.outerHTML;
+    }
+    else{ //FF
+      file.value="";
+    }
+    return false
+  }
+  blobURL = window.URL.createObjectURL(file)
+  preview.setAttribute('src', blobURL)
+  console.log(file)
+  file = file
+}
+
+//点击提交
+const submitBtn = document.getElementById('submit')
+submitBtn.addEventListener('click',function(){
+  const offlce = document.getElementById('offlce')
+  let inputList = document.getElementById('input-list')
+  const ulList = inputList.querySelectorAll('ul')
+
+
+  var formData = new FormData()
+  formData.append('mapsvg', file)
+  $.ajax({
+    url: 'http://localhost:3000/',
+    type: 'post',
+    // dataType: String,
+    data: formData,
+    contentType: false,
+    success: function(data){
+      console.log(data)
+    },
+    error: function(){
+      console.log('上传失败')
+    }
+  })
+
+
+  var positionInfo = []
+  //获取ul孙节点input.vaule
+  for(let i = 0; i < ulList.length; i++){
+    var inputLists = ulList[i].querySelectorAll('input')
+    var rowInputValue = {}
+    inputLists.forEach(function(ele, index) {
+      if(index === 0) {
+        rowInputValue.pos = ele.value
+      }
+      if(index === 1) {
+        rowInputValue.lng = ele.value
+      }
+      if(index === 2) {
+        rowInputValue.lag = ele.value
+      }
+      if(index === 3) {
+        rowInputValue.height = ele.value
+      }
+    })
+    positionInfo.push(rowInputValue)
+  }
+  formData = new FormData()
+  formData.append('positionInfo', positionInfo)
+  formData.append('floor', 1)
+
+  $.ajax({
+    url: 'http://localhost:3000/',
+    type: 'post',
+    // dataType: String,
+    data: formData,
+    contentType: false,
+    success: function(data){
+      console.log(data)
+    },
+    error: function(){
+      console.log('上传失败')
+    }
+  })
+})
+
+</script>
+</html>
