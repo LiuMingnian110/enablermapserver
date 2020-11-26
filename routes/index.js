@@ -77,23 +77,30 @@ router.get('/user/:pnumber', async function (req, res, next) {
 });
 
 //ユーザ登録
-// router.post('/userinfo', async function (req, res, next) {
-//     // {
-//     //     "data":{"uid": "0000100100100100004",
-//     //     "mailAddress": "tao@enabler.co.jp",
-//     //     "password": "laotao13CV",
-//     //     "role": "1",
-//     //     "displayicon": "1",
-//     //     "displaycolor": "1"
-//     // }
-//     // }
-//     if (req.body.data != null) {
-//         const result = await userpro.insertUser(req.body.data);
-//         res.send(result);
-//     } else {
-//         res.send(null);
-//     }
-// });
+router.post('/newuser', async function (req, res, next) {
+    if (req.body.data.companycode == "" || req.body.data.countrycode == "" || req.body.data.officecode == "" || req.body.data.depcode == "" || req.body.data.username == "" || req.body.data.mail == "" || req.body.data.password == "" || req.body.data.role == "" || req.body.data.icon == "" || req.body.data.color == "") {
+        res.json({"status": "failed"});
+        res.end();
+    } else {
+        await userpro.newpnumber(req.body.data.companycode, req.body.data.countrycode, req.body.data.officecode, req.body.data.depcode);
+        var result = await userpro.getlastpnumber();
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        var pnumber = data[0].maxpnumber;
+        const result1 = await userpro.insertUser(req.body.data.mail, req.body.data.password, req.body.data.role, req.body.data.icon, req.body.data.color, pnumber, req.body.data.username);
+        dataString = JSON.stringify(result1);
+        data = JSON.parse(dataString);
+        if(data[0].affectedRows == 1 || data[0].affectedRows == "1"){
+            res.json({"status": "success"});
+            res.end();
+        }else{
+            res.json({"status": "failed"});
+            res.end();
+        }
+
+    }
+
+});
 
 //ユーザパスワード更新
 router.post('/changepw', async function (req, res, next) {
@@ -188,7 +195,7 @@ router.get('/getcompanyname/:companyNo', async function (req, res, next) {
 router.get('/getindoordetail/:companyNo', async function (req, res, next) {
     const result = await userpro.getindoordetail(req.params.companyNo);
     var dataString = JSON.stringify(result);
-    var  data= JSON.parse(dataString);
+    var data = JSON.parse(dataString);
     res.send(data);
 });
 
@@ -203,14 +210,13 @@ router.post('/uploadtime', async function (req, res, next) {
     const result = await userpro.uploadtime(req.body.data.companycode, req.body.data.uploadtime);
     var dataString = JSON.stringify(result);
     var data = JSON.parse(dataString);
-    if(data.changedRows == 1){
-        res.json({"result":"success"})
-    }else{
-        res.json({"result":"failed"})
+    if (data.changedRows == 1) {
+        res.json({"result": "success"})
+    } else {
+        res.json({"result": "failed"})
     }
     res.end();
 });
-
 
 
 // router.get('/jsontest',function (req,res,next) {

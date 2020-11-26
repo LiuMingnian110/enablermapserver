@@ -34,18 +34,18 @@
   height: 101px;
 }
 .farbtastic .wheel {
-  background: url(../../../../Downloads/webMap-system-main/webMap-system-main/workdemo/icons/wheel.png) no-repeat;
+  background: url(/icon/wheel.png) no-repeat;
   width: 195px;
   height: 195px;
 }
 .farbtastic .overlay {
-  background: url(../icon/mask.png) no-repeat;
+  background: url(/icon/mask.png) no-repeat;
 }
 .farbtastic .marker {
   width: 17px;
   height: 17px;
   margin: -8px 0 0 -8px;
   overflow: hidden;
-  background: url(../icon/marker.png) no-repeat;
+  background: url(/icon/marker.png) no-repeat;
 }
 

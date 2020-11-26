@@ -4,26 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
     <script src="/javascripts/farbtastic.js"></script>
     <link rel="stylesheet" href="/stylesheets/farbtastic.css">
     <title>Document</title>
     <style>
-        *{
+        * {
             padding: 0;
             margin: 0;
-            list-style-type:none;
+            list-style-type: none;
         }
-        html,body,#userSettings-box{
+
+        html, body, #userSettings-box {
             width: 100%;
             height: 100%;
             position: relative;
         }
-        body{
+
+        body {
             display: flex;
         }
-        #userSettings-box{
+
+        #userSettings-box {
             /* padding: 20px 40px; */
             position: relative;
             background-color: #fff;
@@ -35,7 +41,8 @@
             border-radius: 3px;
             border: 1px solid #cccccc;
         }
-        #navigation-box{
+
+        #navigation-box {
             width: 100%;
             height: 38px;
             position: relative;
@@ -44,69 +51,84 @@
             padding: 0px 20px;
             border-radius: 3px 3px 0 0;
         }
-        #userSettings-bnt{
+
+        #userSettings-bnt {
             height: 38px;
             float: left;
         }
-        #userSettings-bnt img{
+
+        #userSettings-bnt img {
             height: 24px;
             float: left;
             position: absolute;
             top: 50%;
             margin-top: -12px;
         }
-        #userSettings-bnt h3{
+
+        #userSettings-bnt h3 {
             line-height: 38px;
             margin-left: 34px;
             margin-bottom: 0px !important;
             font-size: 18px;
             color: #fff;
         }
-        #return-bnt{
+
+        #return-bnt {
             position: absolute;
             right: 20px;
         }
-        #return-bnt img{
+
+        #return-bnt img {
             height: 20px;
         }
-        #form-box{
+
+        #form-box {
             width: 100%;
             position: relative;
             padding: 0px 20px;
         }
-        .form-group{
+
+        .form-group {
             width: 50%;
             /* padding-right: 20px; */
             /* padding: 5px 20px; */
             position: relative;
         }
-        .company-no{
+
+        .company-no {
             margin-right: 20px;
         }
-        .form-row{
+
+        .form-row {
             margin: 0px !important;
         }
-        .form-control{
+
+        .form-control {
             width: 90% !important;
             display: initial !important;
         }
-        .input-btn{
+
+        .input-btn {
             margin-top: -6px !important;
         }
-        #sign-btn{
+
+        #sign-btn {
             padding: 50px 20px;
         }
-        #sign-btn button{
+
+        #sign-btn button {
             width: 20%;
             position: absolute;
             left: 50%;
             margin-left: -10%;
             bottom: 30px;
         }
-        #colors{
+
+        #colors {
             width: 80% !important;
         }
-        #picker .farbtastic{
+
+        #picker .farbtastic {
             margin-top: 20px;
             background-color: #fff;
             box-shadow: 0.1px 10px 15px 2px rgba(0, 0, 0, 0.1) !important;
@@ -114,10 +136,12 @@
             position: absolute !important;
             right: 0px;
         }
-        .form-group label{
+
+        .form-group label {
             width: 300px !important;
         }
-        #new-offlce{
+
+        #new-offlce {
             width: 360px;
             height: 260px;
             box-shadow: 0.1px 10px 15px 2px rgba(0, 0, 0, 0.1) !important;
@@ -130,7 +154,8 @@
             margin-top: -180px;
             margin-left: -130px;
         }
-        .pw-chagen-title{
+
+        .pw-chagen-title {
             width: 100%;
             height: 40px;
             line-height: 40px;
@@ -139,48 +164,58 @@
             color: #fff;
             border-radius: 3px 3px 0px 0px;
         }
-        #pw-chagen-btn{
+
+        #pw-chagen-btn {
             position: absolute;
             width: 22px;
             height: 22px;
             right: 20px;
             top: 9px;
         }
-        #pw-chagen-btn img{
+
+        #pw-chagen-btn img {
             width: 22px;
             height: 22px;
             margin-top: -22px;
         }
-        #pw-chagen-btn:hover{
+
+        #pw-chagen-btn:hover {
             cursor: pointer;
         }
-        .pw-form{
+
+        .pw-form {
             width: 100%;
             position: relative;
         }
-        .form-group label{
+
+        .form-group label {
             padding-right: 10px;
             height: 38px;
             float: left;
             line-height: 38px;
             margin-bottom: 0px;
         }
-        #office-no{
+
+        #office-no {
             width: 100%;
             padding: 0px 20px;
             color: #212529;
             margin-bottom: 0px !important;
         }
-        #office-no label{
+
+        #office-no label {
             width: 100px !important;
         }
-        #exampleInputPassword1{
+
+        #exampleInputPassword1 {
             width: 100% !important;
         }
-        #submit-btn{
+
+        #submit-btn {
             margin-top: 12px;
         }
-        #user-btn{
+
+        #user-btn {
             height: 38px;
             width: 200px;
             position: absolute;
@@ -188,25 +223,29 @@
             left: 50%;
             margin-left: -100px;
         }
-        #icon-box{
+
+        #icon-box {
             height: 38px;
             margin-top: 37px;
             position: relative;
         }
-        #icon{
+
+        #icon {
             width: 100px;
             height: 100%;
             border: 1px solid #ccc;
             border-radius: 5px;
             position: relative;
         }
-        #icon-select{
+
+        #icon-select {
             width: 62px;
             height: 100%;
             position: relative;
             float: left;
         }
-        #icon-select img{
+
+        #icon-select img {
             width: 38px;
             height: 38px;
             padding: 5px;
@@ -214,7 +253,8 @@
             left: 50%;
             margin-left: -19px;
         }
-        .icon-btn{
+
+        .icon-btn {
             width: 37px;
             height: 37px;
             background-color: #007bff;
@@ -222,16 +262,19 @@
             right: 0px;
             border-radius: 0px 5px 5px 0px;
         }
-        .icon-btn:hover{
+
+        .icon-btn:hover {
             cursor: pointer;
             background-color: #0069d9;
         }
-        .icon-btn svg{
+
+        .icon-btn svg {
             width: 38px;
             height: 38px;
             padding: 5px;
         }
-        .icon-display{
+
+        .icon-display {
             position: relative;
             margin-top: 40px;
             border: 1px solid #ccc;
@@ -239,335 +282,354 @@
             margin-bottom: 20px;
             border-radius: 5px;
         }
-        .icon-display img{
+
+        .icon-display img {
             width: 38px;
             height: 38px;
             margin-left: 12px;
             padding: 8px;
         }
-        .icon-display ul{
+
+        .icon-display ul {
             margin-bottom: 0px !important;
         }
-        .icon-display li{
+
+        .icon-display li {
             width: 100%;
             height: 38px;
         }
-        .icon-display li:hover{
+
+        .icon-display li:hover {
             background-color: #f8f8f8;
             cursor: pointer;
         }
     </style>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#picker').farbtastic('#colors')
         })
     </script>
 </head>
 <body>
-    <div id="userSettings-box">
-        <div id="navigation-box">
-            <div id="userSettings-bnt">
-                <img src="/icon/Settings.png" alt="">
-                <h3>ユーザー設定</h3>
-            </div>
-            <div id="return-bnt">
-                <a href="./mainmap">
-                    <button type="button" class="btn btn-primary">
-                        <!-- ホームページ -->
-                        <img src="/icon/return.png" alt="">
-                    </button>
-                </a>
-            </div>
+<div id="userSettings-box">
+    <div id="navigation-box">
+        <div id="userSettings-bnt">
+            <img src="/icon/Settings.png" alt="">
+            <h3>ユーザー設定</h3>
         </div>
-        <form id="form-box" class="form-row"  onsubmit="return false">
-            <div class="form-group">
-                <label for="exampleInputEmail1" class="company-no">企業番号/Company no.</label>
-                <input class="form-control" type="text" id="company" name="company" value='' onblur="inputELe()">
-            </div>
-            <div class="form-group">
-                <label for="inputState">国.地域/Country.Area</label>
-                <select id="country" name="pcountry" class="form-control country demos"></select>
-                <button type="button" class="btn btn-primary input-btn up-btn" id="country-btn">+</button>
-            </div>
-            <div class="form-group">
-                <label for="inputState">事業所番号/Office no.</label>
-                <select id="poffice" class="form-control demos" name="offlce"></select>
-                <button type="button" class="btn btn-primary input-btn up-btn" id="offlce-btn">+</button>
-            </div>
-            <div class="form-group">
-                <label for="inputState">部門番号/Department no.</label>
-                <select id="department" class="form-control demos" name="pdep"></select>
-                <button type="button" class="btn btn-primary input-btn up-btn" id="department-btn">+</button>
-            </div>
-            <div class="form-group">
-                <label>ユーザー登録/User registration</label>
-                <input type="text" class="form-control" id="users" value="" name="userName">
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlInput1">メールアドレス/Mail address</label>
-                <input type="email" class="form-control" id="email" value="" name="email">
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">パスワード/Password</label>
-              <input type="password" class="form-control" id="password" name="password">
-            </div>
-            <div class="form-group">
-                <label for="inputState">権限/Role</label>
-                <select id="role" class="form-control country" name="role">
-                    <option selected>ユーザ</option>
-                    <option>管理者</option>
-                    <option>事業所管理者</option>
-                    <option>部門管理者</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="inputState">表示アイコン/Display Icon</label>
-                <div id="icon-box" >
-                    <div id="icon">
-                        <div id="icon-select" name="iconSelect"></div>
-                        <div class="icon-btn" id="icon-btn">
-                            <svg t="1605686500920" class="icon-dom" id="icon-left" style="display: none;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2870">
-                                <path d="M750.331 457.203l-238.576 238.087-238.087-238.576z" p-id="2871" fill="#ffffff"></path>
-                            </svg>
-                            <svg t="1605687524259" class="icon-dom" id="icon-right" style="display: block;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7340">
-                                <path d="M640 768L384 512l256-256z" p-id="7341" fill="#ffffff"></path>
-                            </svg>
-                        </div>
-                        <div class="icon-display" style="display: none;" id="icon-display"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputState">表示色/Display Color</label>
-                <input class="form-control" type="text" id="colors" value='#ffffff' name="colors">
-                <button type="button" class="btn btn-primary input-btn" id="color-btn">color</button>
-                <div id="picker" style="display: none;"></div>
-            </div>
-            <button type="button" class="btn btn-primary" id="user-btn" onclick="dataUpBtn()">Sign in</button>
-        </form>
-        <div id="new-offlce" style="display: none;">
-            <div class="pw-chagen-title">
-                <span id="title"></span>
-                <div id="pw-chagen-btn">
-                    <img src="/icon/shut.png" alt="">
-                </div>
-                <form class="pw-form">
-                    <div class="form-group" id="office-no" >
-                        <label id="numbering"></label>
-                        <input type="text" class="form-control" id="n-input" value="" autocomplete="off">
-                    </div>
-                    <div class="form-group" id="office-no" >
-                        <label id="name"></label>
-                        <input type="text" class="form-control" id="name-input" value="" autocomplete="off">
-                    </div>
-                    <button type="button" class="btn btn-primary" id="submit-btn" >Submit</button>
-                </form>
-            </div>
+        <div id="return-bnt">
+            <a href="./mainmap">
+                <button type="button" class="btn btn-primary">
+                    <!-- ホームページ -->
+                    <img src="/icon/return.png" alt="">
+                </button>
+            </a>
         </div>
     </div>
+    <form id="form-box" class="form-row" onsubmit="return false">
+        <div class="form-group">
+            <label for="exampleInputEmail1" class="company-no">企業番号/Company no.</label>
+            <input class="form-control" type="text" id="company" name="company" onblur="inputELe()">
+        </div>
+        <div class="form-group">
+            <label for="inputState">国.地域/Country.Area</label>
+            <select id="country" name="pcountry" class="form-control country demos"></select>
+            <button type="button" class="btn btn-primary input-btn up-btn" id="country-btn">+</button>
+        </div>
+        <div class="form-group">
+            <label for="inputState">事業所番号/Office no.</label>
+            <select id="poffice" class="form-control demos" name="offlce"></select>
+            <button type="button" class="btn btn-primary input-btn up-btn" id="offlce-btn">+</button>
+        </div>
+        <div class="form-group">
+            <label for="inputState">部門番号/Department no.</label>
+            <select id="department" class="form-control demos" name="pdep"></select>
+            <button type="button" class="btn btn-primary input-btn up-btn" id="department-btn">+</button>
+        </div>
+        <div class="form-group">
+            <label>ユーザー登録/User registration</label>
+            <input type="text" class="form-control" id="users" value="" name="userName">
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">メールアドレス/Mail address</label>
+            <input type="email" class="form-control" id="email" value="" name="email">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">パスワード/Password</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="inputState">権限/Role</label>
+            <select id="role" class="form-control country" name="role">
+                <option selected>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="inputState">表示アイコン/Display Icon</label>
+            <div id="icon-box">
+                <div id="icon">
+                    <div id="icon-select" name="iconSelect"></div>
+                    <div class="icon-btn" id="icon-btn">
+                        <svg t="1605686500920" class="icon-dom" id="icon-left" style="display: none;"
+                             viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2870">
+                            <path d="M750.331 457.203l-238.576 238.087-238.087-238.576z" p-id="2871"
+                                  fill="#ffffff"></path>
+                        </svg>
+                        <svg t="1605687524259" class="icon-dom" id="icon-right" style="display: block;"
+                             viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7340">
+                            <path d="M640 768L384 512l256-256z" p-id="7341" fill="#ffffff"></path>
+                        </svg>
+                    </div>
+                    <div class="icon-display" style="display: none;" id="icon-display"></div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputState">表示色/Display Color</label>
+            <input class="form-control" type="text" id="colors" value='#ffffff' name="colors">
+            <button type="button" class="btn btn-primary input-btn" id="color-btn">color</button>
+            <div id="picker" style="display: none;"></div>
+        </div>
+        <button type="button" class="btn btn-primary" id="user-btn" onclick="dataUpBtn()">Sign in</button>
+    </form>
+    <div id="new-offlce" style="display: none;">
+        <div class="pw-chagen-title">
+            <span id="title"></span>
+            <div id="pw-chagen-btn">
+                <img src="/icon/shut.png" alt="">
+            </div>
+            <form class="pw-form">
+                <div class="form-group" id="office-no">
+                    <label id="numbering"></label>
+                    <input type="text" class="form-control" id="n-input" value="" autocomplete="off">
+                </div>
+                <button type="button" class="btn btn-primary" id="submit-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 <script>
-let seletedType = 0
-let colorBtn = document.getElementById('color-btn')
-let picker = document.getElementById('picker')
-let upBtn = document.querySelectorAll('.up-btn')
-let pwChagenBtn = document.getElementById('pw-chagen-btn')
-let newOfflce = document.getElementById('new-offlce')
-function colorDome(){
-    colorBtn.addEventListener('click',()=>{
-        if(picker.style.display == 'none'){
-            picker.style.display = 'block'
-        }else{
-            picker.style.display = 'none'
-        }
-    })
-    pwChagenBtn.addEventListener('click',()=>{
-        if(newOfflce.style.display == 'none'){
-            newOfflce.style.display = 'block'
-        }else{
-            newOfflce.style.display = 'none'
-        }
-    })
-    let title = document.getElementById('title')
-    let numbering = document.getElementById('numbering')
-    let names = document.getElementById('name')
-    for(let i = 0; i < upBtn.length; i++){
-           upBtn[i].index = i
-        upBtn[i].addEventListener('click', function(){
-            if(newOfflce.style.display == 'none'){
-                newOfflce.style.display = 'block'
-            }
-            seletedType = this.index
-            switch(this.index){
-                case 0:
-                    title.innerText = '国.地域登録'
-                    numbering.innerText = '国.地域番号'
-                    names.innerText = '国.地域名'
-                    break
-                case 1:
-                    title.innerText = '事業所登録'
-                    numbering.innerText = '事業所番号'
-                    names.innerText = '事業所名'
-                    break
-                case 2:
-                    title.innerText = '部門登録'
-                    numbering.innerText = '部門番号'
-                    names.innerText = '部門名'
-                    break
+    let seletedType = 0
+    let colorBtn = document.getElementById('color-btn')
+    let picker = document.getElementById('picker')
+    let upBtn = document.querySelectorAll('.up-btn')
+    let pwChagenBtn = document.getElementById('pw-chagen-btn')
+    let newOfflce = document.getElementById('new-offlce')
+
+    function colorDome() {
+        colorBtn.addEventListener('click', () => {
+            if (picker.style.display == 'none') {
+                picker.style.display = 'block'
+            } else {
+                picker.style.display = 'none'
             }
         })
+        pwChagenBtn.addEventListener('click', () => {
+            if (newOfflce.style.display == 'none') {
+                newOfflce.style.display = 'block'
+            } else {
+                newOfflce.style.display = 'none'
+            }
+        })
+        let title = document.getElementById('title')
+        let numbering = document.getElementById('numbering')
+        for (let i = 0; i < upBtn.length; i++) {
+            upBtn[i].index = i
+            upBtn[i].addEventListener('click', function () {
+                if (newOfflce.style.display == 'none') {
+                    newOfflce.style.display = 'block'
+                }
+                seletedType = this.index
+                switch (this.index) {
+                    case 0:
+                        title.innerText = '国.地域登録'
+                        numbering.innerText = '国.地域番号'
+                        break
+                    case 1:
+                        title.innerText = '事業所登録'
+                        numbering.innerText = '事業所番号'
+                        break
+                    case 2:
+                        title.innerText = '部門登録'
+                        numbering.innerText = '部門番号'
+                        break
+                }
+            })
+        }
     }
-}
-colorDome()
 
-let countryBtn = document.getElementById('country-btn')
-let offlceBtn = document.getElementById('offlce-btn')
-let departmentBtn = document.getElementById('department-btn')
-let mailbtn = document.getElementById('mail-btn')
-let submitBtn = document.getElementById('submit-btn')
-let demos = document.querySelectorAll('.demos')
-let nInput = document.getElementById('n-input')
-let nameInput = document.getElementById('name-input')
-submitBtn.addEventListener('click', () => {
-    let nValue = nInput.value
-    let nameValue = nameInput.value
-    let values = nValue + ' ' +nameValue
+    colorDome()
 
-    if(nValue.value != '' && nameValue.value != ''){
-        demos[seletedType].options.add(new Option(values))
-        newOfflce.style.display = 'none'
-    }
-    if(nInput.value != '' && nameInput.value != ''){
-        nInput.value = ''
-        nameInput.value = ''
-    }
-})
+    let submitBtn = document.getElementById('submit-btn')
+    let demos = document.querySelectorAll('.demos')
+    let nInput = document.getElementById('n-input')
+    submitBtn.addEventListener('click', () => {
+        let nValue = nInput.value;
+        let values = nValue;
 
-/*
-* ユーザー設定画面
-*/
-let companyNo = document.getElementById('company')
-let countryNo = document.getElementById('country')
-let offlceNo = document.getElementById('offlce')
-let departmentNo = document.getElementById('department')
-let email = document.getElementById('email')
-let password = document.getElementById('password')
-let roleNo = document.getElementById('role')
-let icons = document.getElementById('icons')
-let colors = document.getElementById('icons')
+        if (nValue.value != '') {
+            demos[seletedType].options.add(new Option(values))
+            newOfflce.style.display = 'none'
+        }
+        if (nInput.value != '') {
+            nInput.value = ''
+        }
+    })
 
-let iconBtn = document.getElementById('icon-btn')
-let iconLeft = document.getElementById('icon-left')
-let iconRight = document.getElementById('icon-right')
-let iconDisplay = document.getElementById('icon-display')
-iconBtn.addEventListener('click',function(){
-    if(iconRight.style.display == 'block'){
-        iconLeft.style.display = 'block'
-        iconRight.style.display = 'none'
-        iconDisplay.style.display = 'block'
-    }else{
-        iconLeft.style.display = 'none'
-        iconRight.style.display = 'block'
-        iconDisplay.style.display = 'none'
-    }
-})
-let iconData = ['/icon/enter.png','/icon/positioning.png','/icon/mobile.png']
-function liDom(){
-    for(let i = 0; i < iconData.length; i++){
-        let imgEle = document.createElement('img')
-        let liEle = document.createElement('li')
-        liEle.classList.add('icon-list')
-        let ulEle = document.createElement('ul')
-        imgEle.src = iconData[i]
-        liEle.appendChild(imgEle)
-        ulEle.appendChild(liEle)
-        iconDisplay.appendChild(ulEle)
-    }
-    let iconList = document.querySelectorAll('.icon-list')
-    for(let i = 0; i < iconList.length; i++ ){
-        iconList[i].index = i
-        iconList[i].addEventListener('click',function(){
+    /*
+    * ユーザー設定画面
+    */
+    let iconBtn = document.getElementById('icon-btn')
+    let iconLeft = document.getElementById('icon-left')
+    let iconRight = document.getElementById('icon-right')
+    let iconDisplay = document.getElementById('icon-display')
+    iconBtn.addEventListener('click', function () {
+        if (iconRight.style.display == 'block') {
+            iconLeft.style.display = 'block'
+            iconRight.style.display = 'none'
+            iconDisplay.style.display = 'block'
+        } else {
+            iconLeft.style.display = 'none'
+            iconRight.style.display = 'block'
+            iconDisplay.style.display = 'none'
+        }
+    })
+    let iconData = ['/icon/enter.png', '/icon/positioning.png', '/icon/mobile.png']
+
+    function liDom() {
+        for (let i = 0; i < iconData.length; i++) {
+            let imgEle = document.createElement('img')
+            let liEle = document.createElement('li')
+            liEle.classList.add('icon-list')
+            let ulEle = document.createElement('ul')
+            imgEle.src = iconData[i]
+            liEle.appendChild(imgEle)
+            ulEle.appendChild(liEle)
+            iconDisplay.appendChild(ulEle)
+        }
+        let iconList = document.querySelectorAll('.icon-list')
+        for (let i = 0; i < iconList.length; i++) {
+            iconList[i].index = i
+            iconList[i].addEventListener('click', function () {
                 let div = document.createElement('div')
                 let imgEle = document.createElement('img')
                 let iconSelect = document.getElementById('icon-select')
                 imgEle.src = iconData[this.index]
                 div.appendChild(imgEle)
                 iconSelect.innerHTML = div.innerHTML
-                if(iconRight.style.display == 'block'){
+                if (iconRight.style.display == 'block') {
                     iconLeft.style.display = 'block'
                     iconRight.style.display = 'none'
                     iconDisplay.style.display = 'block'
-                }else{
+                } else {
                     iconLeft.style.display = 'none'
                     iconRight.style.display = 'block'
                     iconDisplay.style.display = 'none'
                 }
+            })
+        }
+    }
+
+    liDom()
+
+    const companys = []
+    const pcountrys = []
+    const poffices = []
+    const pdeps = []
+
+    function inputELe() {
+
+        var len = $("#country").find("option").length;
+        if (len == 0) {
+
+            const company = document.getElementById('company')
+            const country = document.getElementById('country')
+            const offlce = document.getElementById('poffice')
+            const department = document.getElementById('department')
+            const data = $.ajax({
+                type: 'get',
+                url: 'http://localhost:3000/getcompanydetail/' + company.value,
+                async: true,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length != 0) {
+                        //遍历获取到的所有数据，存入companys
+                        for (let i = 0; i < data.length; i++) {
+                            companys.push(data[i])
+                        }
+                        for (let n = 0; n < companys.length; n++) {
+                            pcountrys.push(companys[n].pcountry)
+                            poffices.push(companys[n].poffice)
+                            pdeps.push(companys[n].pdep)
+                        }
+
+                        function optionDom(dom, idName) {
+                            for (let i = 0; i < dom.length; i++) {
+                                const optionDom = document.createElement('option')
+                                optionDom.innerText = dom[i]
+                                idName.appendChild(optionDom)
+                            }
+                        }
+
+                        optionDom(pcountrys, country)
+                        optionDom(poffices, offlce)
+                        optionDom(pdeps, department)
+                    }
+                },
+                error: function () {
+                    alert("companycode does not exist!")
+                }
+            })
+        }
+
+    }
+
+    function dataUpBtn() {
+        var companycode = $("#company").val();
+        var countrycode = $("#country").find("option:selected").text();
+        var officecode = $("#poffice").find("option:selected").text();
+        var depcode = $("#department").find("option:selected").text();
+        var username = $("#users").val();
+        var mail = $("#email").val();
+        var password = $("#password").val();
+        var role = $("#role").find("option:selected").text();
+        var icon = "1";
+        var color = $("#colors").val().substring(1, 7);
+        $.ajax({
+            timeout: 5000,
+            type: 'POST',
+            url: 'http://localhost:3000/newuser',
+            contentType: "application/json",
+            dataType: "text",
+            data: JSON.stringify({
+                "data": {
+                    "companycode": companycode,
+                    "countrycode": countrycode,
+                    "officecode": officecode,
+                    "depcode": depcode,
+                    "username": username,
+                    "mail": mail,
+                    "password": password,
+                    "role": role,
+                    "icon": icon,
+                    "color": color
+                }
+            }),
+            success: function (data) {
+                if(JSON.parse(data).status == 'success'){
+                    alert("add user success!");
+                }else{
+                    alert("add user failed!");
+                }
+            },
+            error: function () {
+                alert('Please check your network,if it is still not work.Please look admin for help!');
+            }
         })
     }
-}
-liDom()
-
-const companys = []
-const pcountrys = []
-const poffices = []
-const pdeps = []
-
-function inputELe(){
-    const company = document.getElementById('company')
-    const country = document.getElementById('country')
-    const offlce = document.getElementById('poffice')
-    const department = document.getElementById('department')
-    const data = $.ajax({
-        type: 'get',
-        url: 'http://104.198.245.131:3000/getcompanydetail/'+ company.value,
-        async:true,
-        cache:false,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            //遍历获取到的所有数据，存入companys
-            for(let i = 0; i < data.length; i++){
-                companys.push(data[i])
-                console.log(data[i])
-            }
-            for(let n = 0; n <  companys.length; n++){
-                pcountrys.push(companys[n].pcountry)
-                poffices.push(companys[n].poffice)
-                pdeps.push(companys[n].pdep)
-            }
-            console.log(pcountrys)
-            console.log(poffices)
-            console.log(pdeps)
-            function optionDom(dom, idName){
-                for(let i = 0; i < dom.length; i++){
-                    const optionDom = document.createElement('option')
-                    optionDom.innerText  = dom[i]
-                    idName.appendChild(optionDom)
-                }
-            }
-            optionDom( pcountrys, country )
-            optionDom( poffices, offlce )
-            optionDom( pdeps, department )
-        },
-        error: function(){
-            console.log('err')
-        }
-    })
-}
-
-function dataUpBtn(){
-    $.ajax({
-        type: 'post',
-        dataType: 'josn',
-        //提交链接未确认
-        url: 'http://104.198.245.131:3000/singleUpload',
-        data: $('#form-box').serialize(),
-        success: function(result){
-            if(result == 200){
-                console.log('success')
-            }
-        }
-    })
-}
 </script>
 </html>

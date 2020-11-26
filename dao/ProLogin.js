@@ -5,8 +5,8 @@ const queryUserByUid = function (pnumber) {
     return pros(sql);
 }
 
-const insertUser = function (userInfo) {
-    const sql = "insert ignore into enablermap.user values (" + "'" + userInfo.uid + "'," + "'" + userInfo.mailAddress + "'," + "'" + userInfo.password + "'," + "'" + userInfo.role + "'," + "'" + userInfo.displayicon + "'," + "'" + userInfo.displaycolor + "'" + ");"
+const insertUser = function (mail, pwd, prole, displayicon, displaycolor, pnumber, pname) {
+    const sql = "insert ignore into enablermap.user values (" + "'" + mail + "'," + "'" + pwd + "'," + "'" + prole + "'," + "'" + displayicon + "'," + "'" + displaycolor + "'," + "'" + pnumber + "'," + "'" + pname + "');"
     return pros(sql);
 }
 
@@ -20,8 +20,8 @@ const updateUserPw = function (userInfo) {
     return pros(sql);
 }
 
-const checker = function (mail,pwd) {
-    const sql = "select pnumber from enablermap.user where mail =" + "'" + mail + "' and pwd = "+"'"+pwd+"';"
+const checker = function (mail, pwd) {
+    const sql = "select pnumber from enablermap.user where mail =" + "'" + mail + "' and pwd = " + "'" + pwd + "';"
     return pros(sql);
 }
 
@@ -61,6 +61,16 @@ const uploadtime = function (companycode, uploadtime) {
     return pros(sql);
 }
 
+const newpnumber = function (companycode, contrycode, officecode, pdep) {
+    const sql = "INSERT INTO enablermap.company (pcompanycode, pcountry, poffice, pdep) VALUES (" + "'" + companycode + "', '" + contrycode + "', '" + officecode + "', '" + pdep + "');"
+    return pros(sql);
+}
+
+const getlastpnumber = function () {
+    const sql = "select max(pnumber) as maxpnumber from enablermap.company;"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -87,5 +97,7 @@ module.exports = {
     getindoordetail,
     updatakeypoints,
     getcompanyname,
-    uploadtime
+    uploadtime,
+    newpnumber,
+    getlastpnumber
 }
