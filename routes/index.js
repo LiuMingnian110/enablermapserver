@@ -90,10 +90,10 @@ router.post('/newuser', async function (req, res, next) {
         const result1 = await userpro.insertUser(req.body.data.mail, req.body.data.password, req.body.data.role, req.body.data.icon, req.body.data.color, pnumber, req.body.data.username);
         dataString = JSON.stringify(result1);
         data = JSON.parse(dataString);
-        if(data[0].affectedRows == 1 || data[0].affectedRows == "1"){
+        if (data[0].affectedRows == 1 || data[0].affectedRows == "1") {
             res.json({"status": "success"});
             res.end();
-        }else{
+        } else {
             res.json({"status": "failed"});
             res.end();
         }
@@ -110,14 +110,9 @@ router.post('/changepw', async function (req, res, next) {
         var data = JSON.parse(dataString);
         if (data[0].pwd == req.body.data.current) {
             const result1 = await userpro.updateUserPw(req.body.data);
-            dataString = JSON.stringify(result1);
-            data = JSON.parse(dataString);
-            if (data[0].affectedRows == 1 || data[0].affectedRows == "1") {
-                res.json({"status": "success"});
-            } else {
-                res.json({"status": "failed"});
-            }
-
+            // dataString = JSON.stringify(result1);
+            // data = JSON.parse(dataString);
+            res.json({"status": "success"});
         } else {
             res.json({"status": "failed"});
         }
@@ -154,9 +149,10 @@ router.post('/loginbypd', async function (req, res, next) {
 
 
 //SVG File UpLoad
-router.post('/singleUpload', upload.single('mapsvg'), function (req, res, next) {
-    console.log(req.file);
-    res.end("success");
+router.post('/singleUpload', upload.single('mapsvg'), async function (req, res, next) {
+    const result = await userpro.insertIndoorMap(req.body.companycode, req.body.countrycode, req.body.svgfilename, req.body.building, req.body.floor, req.body.position);
+    res.json({"status": "success"});
+    res.end();
 });
 
 //GET SVG MAP 廃棄、使用しない

@@ -71,6 +71,11 @@ const getlastpnumber = function () {
     return pros(sql);
 }
 
+const insertIndoorMap = function (pcompanycode,pcountry,svgfile,building,floor,position) {
+    const sql = "insert ignore into enablermap.indoormap values ("+"'"+pcompanycode+"','"+pcountry+"','"+svgfile+"','"+building+"','"+floor+"','"+position+"',null);"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -99,5 +104,6 @@ module.exports = {
     getcompanyname,
     uploadtime,
     newpnumber,
-    getlastpnumber
+    getlastpnumber,
+    insertIndoorMap
 }
