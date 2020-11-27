@@ -112,6 +112,7 @@
                 contentType: "application/json",
                 dataType: "text",
                 async: true,
+                withCredentials: true,
                 data: JSON.stringify({"data": {"pcompanycode": $("#company").val(), "mail": $("#email").val(),"pwd": $("#password").val()}}),
                 success: function (data) {
                     if(data.uid == 'error'){

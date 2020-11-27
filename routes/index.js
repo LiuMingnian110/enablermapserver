@@ -18,14 +18,19 @@ router.get('/admin-settings', function (req, res, next) {
     res.render('admin-settings');
 });
 
-//ログイン画面
+//屋内地図画面
 router.get('/indoor-map', function (req, res, next) {
     res.render('indoor-map');
 });
 
-//ログイン画面
+//ユーザ設定画面
 router.get('/userSettings', function (req, res, next) {
     res.render('userSettings');
+});
+
+//履歴表示画面
+router.get('/historyshow', function (req, res, next) {
+    res.render('historyshow');
 });
 
 //MainPage
@@ -90,13 +95,9 @@ router.post('/newuser', async function (req, res, next) {
         const result1 = await userpro.insertUser(req.body.data.mail, req.body.data.password, req.body.data.role, req.body.data.icon, req.body.data.color, pnumber, req.body.data.username);
         dataString = JSON.stringify(result1);
         data = JSON.parse(dataString);
-        if (data[0].affectedRows == 1 || data[0].affectedRows == "1") {
-            res.json({"status": "success"});
-            res.end();
-        } else {
-            res.json({"status": "failed"});
-            res.end();
-        }
+        res.json({"status": "success"});
+        res.end();
+
 
     }
 
@@ -204,13 +205,9 @@ router.post('/updatakeypoint', async function (req, res, next) {
 //updata upload time
 router.post('/uploadtime', async function (req, res, next) {
     const result = await userpro.uploadtime(req.body.data.companycode, req.body.data.uploadtime);
-    var dataString = JSON.stringify(result);
-    var data = JSON.parse(dataString);
-    if (data.changedRows == 1) {
-        res.json({"result": "success"})
-    } else {
-        res.json({"result": "failed"})
-    }
+    // var dataString = JSON.stringify(result);
+    // var data = JSON.parse(dataString);
+    res.json({"result": "success"});
     res.end();
 });
 
