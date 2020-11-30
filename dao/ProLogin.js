@@ -30,8 +30,8 @@ const checkerpnumber = function (pnumber) {
     return pros(sql);
 }
 
-const getuserlist = function () {
-    const sql = "select * from enablermap.company;"
+const getuserlist = function (pcompanycode) {
+    const sql = "select * from enablermap.company where pcompanycode = "+"'"+pcompanycode+"';"
     return pros(sql);
 }
 

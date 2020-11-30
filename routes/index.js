@@ -163,12 +163,14 @@ router.get('/getmap/:mapname.svg', function (req, res, next) {
 });
 
 //GET USERLIST
-router.get('/getuserlist', async function (req, res, next) {
-    const result = await userpro.getuserlist();
+router.get('/getuserlist/:companyNo', async function (req, res, next) {
+    const result = await userpro.getuserlist(req.params.companyNo);
     if (result.length == 0) {
         res.status(400);
     } else {
-        res.send(result);
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        res.send(data);
     }
 });
 

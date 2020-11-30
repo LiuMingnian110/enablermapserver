@@ -75,7 +75,6 @@
 
         var dataArr;
         var resultArr;
-        var drawtimer = null;
         var map;
         var indoormap;
         var indoordetail = [];
@@ -136,10 +135,10 @@
             // var companycode = cookie_value.substring(0, 5);
             getmapdetail('00001');
 
-            $.cookie('userlist', '0000108100100100001,0000108100100100002');
+            $.cookie('userlist', '9999908100100100016,9999908100100100017');
             $.cookie('target_time_min', '2020-11-05T04:38:45.244Z');
-            $.cookie('target_time_max', '2020-11-05T04:43:22.744Z');
-            $.cookie('speed', '1000');
+            $.cookie('target_time_max', '2020-12-01T04:43:22.744Z');
+            $.cookie('speed', '10');
             var time = $.cookie("speed");
             var targetlist = $.cookie("userlist");
             var target_time_min = $.cookie("target_time_min");
@@ -151,14 +150,14 @@
                 $.ajax({
                     type: 'GET',
                     async: false,
-                    url: 'http://localhost:3000/historical/' + uid,
+                    url: 'http://104.198.245.131:3000/historical/' + uid,
                     success: function (data) {
                         if (data != null) {
                             dataArr = data.split(/[(\r\n)\r\n]+/);
                             dataArr.pop();
                             for (let j = 0; j < dataArr.length; j++) {
                                 dataArr[j] = JSON.parse(dataArr[j]);
-                                if (dataArr[j].time >= target_time_min && dataArr[j].time <= target_time_max) {
+                                if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
                                     resultArr.push(dataArr[j]);
                                 }
                             }
