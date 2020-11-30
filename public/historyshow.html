@@ -25,85 +25,62 @@
 </head>
 <body>
 <div id="wrapper">
-    <!--    <div id="controler">-->
-    <!--        <div id="log-file" class="ctl-box">-->
-    <!--            <label>USER INFO</label>-->
-    <!--            <table class="sim_data">-->
-    <!--                UID-->
-    <!--                <input id="user" type="text" style="font-size: 14px"/>-->
-    <!--                時間-->
-    <!--                <input id="time" type="text" value="all" style="font-size: 14px"/>-->
-    <!--                <button id="getuser" style="padding: 0px" onclick="getuser()">検索</button>-->
-    <!--                <tr class="back_g">-->
-    <!--                    <th>UID</th>-->
-    <!--                    <td class="2d_lpf_value" id="showuid"></td>-->
-    <!--                </tr>-->
-    <!--                &lt;!&ndash;                <tr class="back_g">&ndash;&gt;-->
-    <!--                &lt;!&ndash;                    <th style="width:60px;">端末ID</th>&ndash;&gt;-->
-    <!--                &lt;!&ndash;                    <td class="device_id_value"></td>&ndash;&gt;-->
-    <!--                &lt;!&ndash;                </tr>&ndash;&gt;-->
-    <!--                <tr class="back_g">-->
-    <!--                    <th>表示時刻</th>-->
-    <!--                    <td class="gpstime_value" id="showtime"></td>-->
-    <!--                </tr>-->
-    <!--                <tr class="back_g">-->
-    <!--                    <th>緯度</th>-->
-    <!--                    <td class="latitude_value" id="showlat"></td>-->
-    <!--                </tr>-->
-    <!--                <tr class="back_g">-->
-    <!--                    <th>経度</th>-->
-    <!--                    <td class="longitude_value" id="showlon"></td>-->
-    <!--                </tr>-->
-    <!--                <tr class="back_g">-->
-    <!--                    <th>高度</th>-->
-    <!--                    <td class="longitude_value" id="showalt"></td>-->
-    <!--                </tr>-->
-    <!--                <tr class="back_g">-->
-    <!--                    <th>フロア</th>-->
-    <!--                    <td class="longitude_value" id="showfloor"></td>-->
-    <!--                </tr>-->
-    <!--            </table>-->
-    <!--        </div>-->
-
-    <!--        <div id="player" class="ctl-box mbox">-->
-    <!--            <label>Player</label>-->
-    <!--            <select id="speed-select">-->
-    <!--                <option value="1000">1x</option>-->
-    <!--                <option value="500">2x</option>-->
-    <!--                <option value="100">10x</option>-->
-    <!--                <option value="50">20x</option>-->
-    <!--            </select>-->
-    <!--            <button id="player-stop" class="mbox">START</button>-->
-    <!--        </div>-->
-
-    <!--        <div id="map-control" class="ctl-box">-->
-    <!--            <label>Map-control</label>-->
-    <!--            &lt;!&ndash;            <div class="mbox">&ndash;&gt;-->
-    <!--            &lt;!&ndash;                <select id="map-mode">&ndash;&gt;-->
-    <!--            &lt;!&ndash;                    <option value="auto">Auto Zoom to Extent</option>&ndash;&gt;-->
-    <!--            &lt;!&ndash;                    <option value="center">Auto Marker Center</option>&ndash;&gt;-->
-    <!--            &lt;!&ndash;                </select>&ndash;&gt;-->
-    <!--            &lt;!&ndash;            </div>&ndash;&gt;-->
-    <!--            <div class="mbox">-->
-    <!--                <button id="layer-clear">Marker Clear</button>-->
-    <!--            </div>-->
-    <!--        </div>-->
-
-    <!--    </div>-->
 
     <div id="map" style="display: block"></div>
     <div id="IndoorMap" style="display: none;flex-grow: 1"></div>
 
     <script>
+
+        //Java　Hashmap 自分を定義する
+        function HashMap() {
+            this.map = {};
+        }
+
+        HashMap.prototype = {
+            put: function (key, value) {
+                this.map[key] = value;
+            },
+            get: function (key) {
+                if (this.map.hasOwnProperty(key)) {
+                    return this.map[key];
+                }
+                return null;
+            },
+            remove: function (key) {
+                if (this.map.hasOwnProperty(key)) {
+                    return delete this.map[key];
+                }
+                return false;
+            },
+            values: function () {
+                var _values = new Array();
+                for (var key in this.map) {
+                    _values.push(this.map[key]);
+                }
+                return _values;
+            },
+            removeAll: function () {
+                this.map = {};
+            },
+            keySet: function () {
+                var _keys = [];
+                for (var i in this.map) {
+                    _keys.push(i);
+                }
+                return _keys;
+            }
+        };
+        HashMap.prototype.constructor = HashMap;
+
+
         var dataArr;
-        var targetArr = [];
-        var drawlist = [];
+        var resultArr;
         var drawtimer = null;
         var map;
         var indoormap;
-        var i = 0;
         var indoordetail = [];
         var test;
+        let file_data = new HashMap();
 
         //屋内地図Map上に書く
         var getmapdetail = function (companycode) {
@@ -155,164 +132,51 @@
                 zoom: 10
             });
 
-            var cookie_value = $.cookie("enabermap.uid");
-            var companycode = cookie_value.substring(0, 5);
-            getmapdetail(companycode);
+            // var cookie_value = $.cookie("enabermap.uid");
+            // var companycode = cookie_value.substring(0, 5);
+            getmapdetail('00001');
 
-            // // var userlist = $.cookie("historyuserlist");
-            // var userlist = ['0000108100100100001', '0000108100100100002'];
-            // for (let i = 0; i < userlist.length; i++) {
-            //     let uid = userlist[i];
-            //
-            // }
+            $.cookie('userlist', '0000108100100100001,0000108100100100002');
+            $.cookie('target_time_min', '2020-11-05T04:38:45.244Z');
+            $.cookie('target_time_max', '2020-11-05T04:43:22.744Z');
+            $.cookie('speed', '1000');
+            var time = $.cookie("speed");
+            var targetlist = $.cookie("userlist");
+            var target_time_min = $.cookie("target_time_min");
+            var target_time_max = $.cookie("target_time_max");
+            var userlist = targetlist.split(',');
+            for (let i = 0; i < userlist.length; i++) {
+                let uid = userlist[i];
+                resultArr = [];
+                $.ajax({
+                    type: 'GET',
+                    async: false,
+                    url: 'http://localhost:3000/historical/' + uid,
+                    success: function (data) {
+                        if (data != null) {
+                            dataArr = data.split(/[(\r\n)\r\n]+/);
+                            dataArr.pop();
+                            for (let j = 0; j < dataArr.length; j++) {
+                                dataArr[j] = JSON.parse(dataArr[j]);
+                                if (dataArr[j].time >= target_time_min && dataArr[j].time <= target_time_max) {
+                                    resultArr.push(dataArr[j]);
+                                }
+                            }
+                            file_data.put(uid, resultArr);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+            }
+            alert("load log file success!")
+            for (let i = 0; i < userlist.length; i++) {
+                delay(0, file_data.get(userlist[i]), Number(time));
+            }
 
-
-            //show mouse point
-            // let infoWindow = new google.maps.InfoWindow({
-            //     content: "Click the map to get Lat/Lng!",
-            //     position: Tokyo,
-            // });
-            // infoWindow.open(map);
-            // // Configure the click listener.
-            // map.addListener("click", (mapsMouseEvent) => {
-            //     // Close the current InfoWindow.
-            //     infoWindow.close();
-            //     // Create a new InfoWindow.
-            //     infoWindow = new google.maps.InfoWindow({
-            //         position: mapsMouseEvent.latLng,
-            //     });
-            //     infoWindow.setContent(
-            //         JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
-            //     );
-            //     infoWindow.open(map);
-            // });
         };
         initMap();
-
-        //初期化Map（keypointがないの場合）ここで設定段階でやるべき、もしやっていないならここでやります。
-        // var drawindoormap = function (filename) {
-        //
-        //     //quit
-        //     L.Control.quitpage = L.Control.extend({
-        //
-        //         quitmain: function () {
-        //             document.getElementById("map").style.display = "block";
-        //             document.getElementById("IndoorMap").style.display = "none";
-        //         },
-        //
-        //         onAdd: function (map) {
-        //             var img = L.DomUtil.create('img');
-        //             img.src = '/icon/shut.png';
-        //             img.style.width = '50px'
-        //             L.DomEvent.addListener(img, 'click', this.quitmain, this);
-        //             return img;
-        //         },
-        //
-        //     });
-        //     L.control.quitpage = function (opts) {
-        //         return new L.Control.quitpage(opts);
-        //     }
-        //
-        //     L.control.quitpage({position: 'topright'}).addTo(indoormap);
-        //
-        //     //showmessage
-        //     L.Control.showbox = L.Control.extend({
-        //
-        //         onAdd: function (map) {
-        //             var divbox = L.DomUtil.create('div');
-        //             divbox.id = "info";
-        //             return divbox;
-        //         },
-        //
-        //     });
-        //     L.control.showbox = function (opts) {
-        //         return new L.Control.showbox(opts);
-        //     }
-        //
-        //     L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
-        //
-        //     //drawnew map
-        //     L.Control.drawnewmap = L.Control.extend({
-        //         drawmap: function () {
-        //             indoormap.removeLayer(keypoint1);
-        //             indoormap.removeLayer(keypoint2);
-        //             indoormap.removeLayer(test);
-        //             temp1 = realpoint1.split(",");
-        //             temp2 = realpoint2.split(",");
-        //
-        //             imageBounds = [
-        //                 [40.712216 - keypointmarkers[0] + Number(temp1[0]), -74.22655 - keypointmarkers[1] + Number(temp1[1])],
-        //                 [40.773941 - keypointmarkers[2] + Number(temp2[0]), -74.12544 - keypointmarkers[3] + Number(temp2[1])]
-        //             ];
-        //             realmap = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
-        //             indoormap.panTo([40.712216 - keypointmarkers[0] + Number(temp1[0]), -74.22655 - keypointmarkers[1] + Number(temp1[1])]);
-        //             indoormap.zoomIn(2);
-        //
-        //             $.ajax({
-        //                 timeout: 3000,
-        //                 type: 'POST',
-        //                 url: 'http://localhost:3000/updatakeypoint',
-        //                 contentType: "application/json",
-        //                 dataType: "text",
-        //                 async: true,
-        //                 data: JSON.stringify({"data": {"svgfile": filename, "keypoints": imageBounds.toString()}}),
-        //                 success: function () {
-        //                     console.log("success");
-        //                 },
-        //                 error: function () {
-        //                     console.log("failed");
-        //                 }
-        //
-        //             })
-        //         },
-        //
-        //
-        //         onAdd: function (map) {
-        //             var drawbutton = L.DomUtil.create('button');
-        //             drawbutton.id = "drawnmap";
-        //             drawbutton.innerText = "Draw";
-        //             L.DomEvent.addListener(drawbutton, 'click', this.drawmap, this);
-        //             return drawbutton;
-        //         },
-        //
-        //     });
-        //     L.control.drawnewmap = function (opts) {
-        //         return new L.Control.drawnewmap(opts);
-        //     }
-        //
-        //     L.control.drawnewmap({position: 'bottomright'}).addTo(indoormap);
-        //
-        //     indoormap.on('mousemove', function (e) {
-        //         document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
-        //     });
-        //
-        //     indoormap.on('click', function (ev) {
-        //         if (keypoint1 == null) {
-        //             keypointmarkers.push(ev.latlng.lat);
-        //             keypointmarkers.push(ev.latlng.lng);
-        //             keypoint1 = L.marker(ev.latlng).addTo(indoormap);
-        //             realpoint1 = prompt("input position (Eg:lat,lng)")
-        //         } else if (keypoint2 == null) {
-        //             keypointmarkers.push(ev.latlng.lat);
-        //             keypointmarkers.push(ev.latlng.lng);
-        //             keypoint2 = L.marker(ev.latlng).addTo(indoormap);
-        //             realpoint2 = prompt("input position (Eg:lat,lng)")
-        //         } else {
-        //             alert("You had been add two point")
-        //         }
-        //         ;
-        //     });
-        //
-        //
-        //     var imageUrl = 'http://localhost/' + filename + '.svg';
-        //     imageBounds = [
-        //         [40.712216, -74.22655],
-        //         [40.773941, -74.12544]
-        //     ];
-        //
-        //     test = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
-        //
-        // }
 
         var drawcurrentindoormap = function (filename, keypoint) {
             var keypoints = keypoint.split(",");
@@ -379,113 +243,27 @@
             drawcurrentindoormap(filename, keypoint);
         }
 
-
-        var getuser = function () {
-            const name = document.getElementById("user").value;
-            $.ajax({
-                timeout: 3000,
-                type: 'GET',
-                url: 'http://localhost:3000/historical/' + name,
-                success: function (data) {
-                    if (data != "") {
-                        dataArr = data.split(/[(\r\n)\r\n]+/);
-                        dataArr.pop();
-                        for (let i = 0; i < dataArr.length; i++) {
-                            dataArr[i] = JSON.parse(dataArr[i]);
-                        }
-                        // console.log(dataArr);
-                        if (document.getElementById("time").value != "all") {
-                            for (let i = 0; i < dataArr.length; i++) {
-                                if (dataArr[i].time <= document.getElementById("time").value) {
-                                    targetArr.push(dataArr[i]);
-                                }
-
-                            }
-                            if (targetArr.length == 0) {
-                                document.getElementById("showuid").innerText = "Not Found";
-                                document.getElementById("showtime").innerText = "";
-                                document.getElementById("showlon").innerText = "";
-                                document.getElementById("showlat").innerText = "";
-                                document.getElementById("showalt").innerText = "";
-                            } else {
-                                document.getElementById("showuid").innerText = dataArr[0].uid;
-                                document.getElementById("showtime").innerText = dataArr[0].time;
-                                document.getElementById("showlon").innerText = dataArr[0].lon;
-                                document.getElementById("showlat").innerText = dataArr[0].lat;
-                                document.getElementById("showlat").innerText = dataArr[0].alt;
-                                targetArr = dataArr;
-                                dataArr = [];
-                            }
-                        } else {
-                            document.getElementById("showuid").innerText = dataArr[0].uid;
-                            document.getElementById("showtime").innerText = dataArr[0].time;
-                            document.getElementById("showlon").innerText = dataArr[0].lon;
-                            document.getElementById("showlat").innerText = dataArr[0].lat;
-                            document.getElementById("showlat").innerText = dataArr[0].alt;
-                            targetArr = dataArr;
-                            dataArr = [];
-                        }
-                    } else {
-                        document.getElementById("showuid").innerText = "Not Found";
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        };
-
-        var drawPoint = function () {
-            var lat = Number(targetArr[i].lat);
-            var lng = Number(targetArr[i].lon);
-            var marker = new google.maps.Marker({
-                position: {lat: lat, lng: lng},
-                map: map,
-            });
-            var lmarker = L.marker([lat, lng]).addTo(indoormap);
-            drawlist.push(marker);
-            document.getElementById("showuid").innerText = targetArr[i].uid;
-            document.getElementById("showtime").innerText = targetArr[i].time;
-            document.getElementById("showlon").innerText = targetArr[i].lon;
-            document.getElementById("showlat").innerText = targetArr[i].lat;
-            document.getElementById("showalt").innerText = targetArr[i].alt;
-            map.setCenter({lat: Number(targetArr[i].lat), lng: Number(targetArr[i].lon)});
-            if (i < targetArr.length) {
-                i = i + 1;
+        var drawPoint = function (i, target, time) {
+            if (i < target.length) {
+                var lat = Number(target[i].lat);
+                var lng = Number(target[i].lon);
+                var marker = new google.maps.Marker({
+                    position: {lat: lat, lng: lng},
+                    map: map,
+                });
+                var lmarker = L.marker([lat, lng]).addTo(indoormap);
+                i += 1;
+                delay(i, target, time);
+            } else {
+                console.log("end");
             }
         }
 
-        //draw one person position
-        var drawMark = function () {
-            var options = $("#speed-select option:selected");
-            console.log(options.val());
-            drawtimer = setInterval("drawPoint()", options.val());
-        };
-
-
-        // document.getElementById('player-stop').addEventListener('click', function () {
-        //     if (document.getElementById('player-stop').innerText == "START") {
-        //         document.getElementById('player-stop').innerText = "STOP"
-        //         drawMark();
-        //     } else {
-        //         document.getElementById('player-stop').innerText = "START"
-        //         clearInterval(drawtimer);
-        //     }
-        // });
-
-        // document.getElementById('layer-clear').addEventListener('click', function () {
-        //     i = 0;
-        //     clearInterval(drawtimer);
-        //     for (var index in drawlist) {
-        //         drawlist[index].setMap(null);
-        //     }
-        //     drawlist = null;
-        //     document.getElementById("showuid").innerText = "";
-        //     document.getElementById("showtime").innerText = "";
-        //     document.getElementById("showlon").innerText = "";
-        //     document.getElementById("showlat").innerText = "";
-        //     document.getElementById("showalt").innerText = "";
-        // });
+        function delay(i, target, time) {
+            setTimeout(function () {
+                drawPoint(i, target, time);
+            }, Number(time));
+        }
 
     </script>
 </div>
