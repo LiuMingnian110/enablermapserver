@@ -77,8 +77,10 @@ router.get('/historical/:uid', async function (req, res, next) {
 
 //ユーザー情報検索
 router.get('/user/:pnumber', async function (req, res, next) {
-    const result = await userpro.queryUserByUid(req.params.pnumber)
-    res.send(result);
+    const result = await userpro.queryUserByUid(req.params.pnumber);
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    res.json(data);
 });
 
 //ユーザ登録
@@ -106,19 +108,20 @@ router.post('/newuser', async function (req, res, next) {
 //ユーザパスワード更新
 router.post('/changepw', async function (req, res, next) {
     if (req.body.data != null) {
-        const result = await userpro.confrimPw(req.body.data);
-        var dataString = JSON.stringify(result);
-        var data = JSON.parse(dataString);
-        if (data[0].pwd == req.body.data.current) {
-            const result1 = await userpro.updateUserPw(req.body.data);
-            // dataString = JSON.stringify(result1);
-            // data = JSON.parse(dataString);
+        try {
+            const result = await userpro.updateUserPw(req.body.data.pnumber, req.body.data.pwd, req.body.data.newpwd);
+            //変更されないの場合はsuccessので、修正要
             res.json({"status": "success"});
-        } else {
+            res.end();
+        } catch (e) {
+            console.log(e);
             res.json({"status": "failed"});
+            res.end();
         }
+
     } else {
         res.json({"status": "failed"});
+        res.end();
     }
 });
 

@@ -7,7 +7,8 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const session = require('express-session');
 const redisStore = require('connect-redis')(session);
-const redis = require('redis')
+const redis = require('redis');
+const cors = require('cors');
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.set('views',path.join(__dirname,'public'));
 const ejs = require('ejs');
 app.engine('html',ejs.__express);
 app.set('view engine','html');
+
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

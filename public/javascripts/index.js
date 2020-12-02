@@ -1,10 +1,14 @@
 let map;
 let indoormap;
 let markerCluster = null;
+let leafmarker = new Array();
 const cookie_value = $.cookie("enabermap.uid");
 const companycode = cookie_value.substring(0, 5);
+const adminpnumber = cookie_value.substring(14);
 let uidlist = [];
 let pnumberlist = [];
+let userdetaillist = [];
+let pnamelist = [];
 //console for dev test
 let test;
 
@@ -111,6 +115,24 @@ var drawcurrentindoormap = function (filename, keypoint) {
 
 }
 
+var getpersondetail = function () {
+    for (let i = 0; i < pnumberlist.length; i++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            url: 'http://localhost:3000/user/' + pnumberlist[i],
+            success: function (data) {
+                userdetaillist.push(data);
+                pnamelist.push(data[0].pname);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+}
+
 var drawPosition = function () {
     $.ajax({
         type: 'GET',
@@ -130,7 +152,8 @@ var drawPosition = function () {
         }
     })
 
-    timedraw(showallposition,1000);
+    getpersondetail();
+    timedraw(showallposition, 3000);
 
     console.log(pnumberlist);
     console.log(uidlist);
@@ -142,56 +165,42 @@ var showallposition = function () {
     if (markerCluster != null) {
         markerCluster.clearMarkers();
     }
-    for (let i = 0; i < 2; i++) {
-        if (i == 0) {
-            $.ajax({
-                type: 'GET',
-                async: false,
-                url: 'http://104.198.245.131/getlocation/9999908100100100016',
-                success: function (data) {
-                    var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
-                    locations.push(latlng);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
+
+    if (leafmarker != "") {
+        for (let i = 0; i < leafmarker.length; i++) {
+            indoormap.removeLayer(leafmarker[i]);
         }
-        ;
-        if (i == 1) {
-            $.ajax({
-                type: 'GET',
-                async: false,
-                url: 'http://104.198.245.131/getlocation/9999908100100100017',
-                success: function (data) {
-                    var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
-                    locations.push(latlng);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        }
+        leafmarker.length = 0;
     }
-    // for(let i=0;i<uidlist.length;i++){
-    //     $.ajax({
-    //         type: 'GET',
-    //         async: false,
-    //         url: 'http://localhost:3000/getlocation/' + uidlist[i],
-    //         success: function (data) {
-    //             var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
-    //             locations.push(latlng);
-    //         },
-    //         error: function (err) {
-    //             console.log(err);
-    //         }
-    //     })
-    // }
+
+    for (let i = 0; i < uidlist.length; i++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            url: 'http://localhost:3000/getlocation/' + uidlist[i],
+            success: function (data) {
+                if (data != null) {
+                    var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
+                        {
+                            permanent: true,
+                            direction: 'right'
+                        });
+                    leafmarker.push(lamMarker);
+                    indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+                    var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
+                    locations.push(latlng);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
 
     var markers = locations.map((location, i) => {
         return new google.maps.Marker({
             position: location,
-            // label: userlist[i % userlist.length],
+            label: pnamelist[i % pnamelist.length],
         })
     })
 
@@ -201,11 +210,12 @@ var showallposition = function () {
 
 }
 
-var timedraw = function(fn, millisec) {
+var timedraw = function (fn, millisec) {
     function interval() {
         setTimeout(interval, millisec);
         fn();
     }
+
     setTimeout(interval, millisec)
 }
 
@@ -229,138 +239,6 @@ var init = function () {
 }
 
 init();
-
-// /**
-//  * Tag clustering
-//  * maker---Liu Mingnian
-//  **/
-// const locations = [
-//     {lat: 35.684489, lng: 139.753646},
-//     {lat: 35.684768, lng: 139.703178},
-//     {lat: 35.697316, lng: 139.826774},
-//     {lat: 35.654367, lng: 139.788322},
-// ]
-// const markers = locations.map((location, i) => {
-//     return new google.maps.Marker({
-//         position: location,
-//         label: userlist[i % userlist.length],
-//     })
-// })
-// markerCluster = new MarkerClusterer(map, markers, {
-//     imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
-// })
-//
-// //自定义png，需要设置图片原始大小，然后定位一个锚点anchor
-// const icon = {
-//     url: "http://localhost:3000/icon/door.png",
-//     size: new google.maps.Size(24, 24),
-//     origin: new google.maps.Point(0, 0),
-//     anchor: new google.maps.Point(12, 12),
-// }
-// const features = [
-//     {
-//         position: new google.maps.LatLng(35.661330, 139.745224),
-//         type: "info",
-//     }
-// ]
-// const shape = {
-//     coords: [1, 1, 1, 20, 18, 20, 18, 1],
-//     type: "poly",
-// };
-// for (let i = 0; i < features.length; i++) {
-//     const marker = new google.maps.Marker({
-//         position: features[i].position,
-//         icon: icon,
-//         shape: shape,
-//         map: map
-//     })
-
-
-// /**
-//  * googoleMap エリア
-//  * maker---Liu Mingnian
-//  **/
-// let drawplace = function (IndoorMap) {
-//     for (let i = 0; i < IndoorMap.values().length; i++) {
-//         let placemark = new google.maps.Marker({
-//             position: IndoorMap.values()[i][0],
-//             map: map,
-//         });
-//         setMClickEvent(placemark, IndoorMap.values()[i][0]);
-//
-//         let temp = new google.maps.Polygon({
-//             paths: IndoorMap.values()[i],
-//             // strokeColor: '',
-//             strokeOpacity: 0.5,
-//             strokeWeight: 1,
-//             // fillColor: '',
-//             fillOpacity: 0.35,
-//         });
-//         temp.setMap(map);
-//         // setPClickEvent(temp,IndoorMap.keySet()[i]);
-//         place_list.put(IndoorMap.keySet()[i], temp);
-//     }
-// };
-
-// let setMClickEvent = function (marker, position) {
-//     google.maps.event.addListener(marker, 'click', function (event) {
-//         map.setZoom(20);
-//         map.setCenter(position);
-//     });
-// };
-
-
-//draw one person position
-// let drawMark = function (uid, lat, lng) {
-//     if (target_list.get(uid) != null) {
-//         var temp = target_list.get(uid);
-//         temp[0].setMap(null);
-//         temp[0] = null;
-//         var marker = new google.maps.Marker({
-//             position: {lat: lat, lng: lng},
-//             label: uid,
-//             map: map,
-//         });
-//         temp[0] = marker;
-//         target_list.put(uid, temp);
-//
-//     } else {
-//         var temp = [];
-//         var marker = new google.maps.Marker({
-//             position: {lat: lat, lng: lng},
-//             label: uid,
-//             map: map,
-//         });
-//         temp.push(marker);
-//         target_list.put(uid, temp);
-//
-//     }
-// };
-//
-//
-// //follow one person
-// var fperson = function () {
-//     var uid = selectUid;
-//     $.ajax({
-//         timeout: 3000,
-//         type: 'GET',
-//         url: 'http://localhost:3000/users/' + uid,
-//         success: function (data) {
-//             if (data != null) {
-//                 //   console.log('3s test');
-//                 drawMark(uid, Number(data.lat), Number(data.lon));
-//                 if (viewauto) {
-//                     map.setCenter({lat: Number(data.lat), lng: Number(data.lon)});
-//                     map.setZoom(19);
-//                 }
-//             }
-//         },
-//         error: function (err) {
-//             console.log(err);
-//         }
-//     })
-//
-// };
 
 /**
  * SwitchBtn
@@ -501,13 +379,89 @@ var generatorOptions = function (wrapper, groupIndex, max, min, sort = true, suf
 }
 // 0: Year
 const yearPageSize = 20
-generatorOptions(wrappers[0], 0, date.getFullYear(), date.getFullYear() - yearPageSize, false, '年')
-generatorOptions(wrappers[1], 1, 12, 1, true, '月')
-generatorOptions(wrappers[2], 2, 31, 1, true, '日')
-generatorOptions(wrappers[3], 3, 24, 1, true, '時')
-generatorOptions(wrappers[4], 4, 59, 1, true, '分')
-generatorOptions(wrappers[5], 5, 23, 1, true, '時間前')
-generatorOptions(wrappers[6], 6, 10, 1, true, 'x')
+generatorOptions(wrappers[0], 0, date.getFullYear(), date.getFullYear() - yearPageSize, false, '')
+generatorOptions(wrappers[1], 1, 12, 1, true, '')
+generatorOptions(wrappers[2], 2, 31, 1, true, '')
+generatorOptions(wrappers[3], 3, 24, 1, true, '')
+generatorOptions(wrappers[4], 4, 59, 1, true, '')
+generatorOptions(wrappers[5], 5, 23, 1, true, '')
+generatorOptions(wrappers[6], 6, 10, 1, true, '')
 
 
+//パスワード変更機能
+document.getElementById('submit-btn').addEventListener('click', function () {
+    var currentpd = document.getElementById('current-pw').value;
+    var newpd = document.getElementById('new-pw').value;
+    var againpd = document.getElementById('confirm-new-pw').value;
+    if (againpd != newpd) {
+        alert("please enter the same password !");
+    } else {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/changepw',
+            contentType: "application/json",
+            dataType: "text",
+            data: JSON.stringify({
+                "data": {
+                    "pnumber": adminpnumber,
+                    "pwd": currentpd,
+                    "newpwd": newpd
+                }
+            }),
+            success: function (data) {
+                if (JSON.parse(data).status == 'success') {
+                    alert("updata password success!");
+                } else {
+                    alert("updata password failed!");
+                }
+            },
+            error: function () {
+                alert('Please check your network,if it is still not work.Please look admin for help!');
+            }
+        })
+    }
+})
+
+//履歴表示機能
+document.getElementById('start-btn').addEventListener('click', function () {
+    var year = document.getElementById('historyyear').innerText;
+    var month = document.getElementById('historymonth').innerText;
+    var day = document.getElementById('historyday').innerText;
+    var hour = document.getElementById('historyhour').innerText;
+    var min = document.getElementById('historymin').innerText;
+    var longtime = document.getElementById('historytime').innerText;
+    var speed = document.getElementById('historyspeed').innerText;
+    if (Number(month) < 10) {
+        month = "0" + month;
+    }
+    if (Number(day) < 10) {
+        day = "0" + day;
+    }
+    if (Number(hour) < 10) {
+        hour = "0" + hour;
+    }
+    if (Number(min) < 10) {
+        min = "0" + min;
+    }
+    var japantime = new Date();
+    japantime.setFullYear(Number(year));
+    japantime.setMonth(Number(month) - 1);
+    japantime.setDate(Number(day));
+    japantime.setHours(Number(hour));
+    japantime.setMinutes(Number(min));
+    var mintimets = japantime.getTime() - (3600000 * Number(longtime));
+    var mintimetemp = new Date(mintimets);
+    var target_time_min = mintimetemp.getUTCFullYear() + "-" + Number(mintimetemp.getUTCMonth() + 1) + "-" + mintimetemp.getUTCDate() + "T" + mintimetemp.getUTCHours() + ":" + mintimetemp.getUTCMinutes() + ":00.000Z";
+    var target_time_max = japantime.getUTCFullYear() + "-" + Number(japantime.getUTCMonth() + 1) + "-" + japantime.getUTCDate() + "T" + japantime.getUTCHours() + ":" + japantime.getUTCMinutes() + ":00.000Z";
+
+    var playspeed = 1000 / Number(speed);
+
+    $.cookie('userlist', '9999908100100100017');
+    $.cookie('target_time_min', target_time_min);
+    $.cookie('target_time_max', target_time_max);
+    $.cookie('speed', playspeed.toString());
+
+    window.open("http://localhost:3000/historyshow");
+
+})
 

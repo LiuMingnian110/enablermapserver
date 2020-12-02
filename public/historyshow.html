@@ -131,14 +131,10 @@
                 zoom: 10
             });
 
-            // var cookie_value = $.cookie("enabermap.uid");
-            // var companycode = cookie_value.substring(0, 5);
-            getmapdetail('00001');
+            var cookie_value = $.cookie("enabermap.uid");
+            var companycode = cookie_value.substring(0, 5);
+            getmapdetail(companycode);
 
-            $.cookie('userlist', '9999908100100100016,9999908100100100017');
-            $.cookie('target_time_min', '2020-11-05T04:38:45.244Z');
-            $.cookie('target_time_max', '2020-12-01T04:43:22.744Z');
-            $.cookie('speed', '10');
             var time = $.cookie("speed");
             var targetlist = $.cookie("userlist");
             var target_time_min = $.cookie("target_time_min");

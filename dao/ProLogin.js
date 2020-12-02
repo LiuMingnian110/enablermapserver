@@ -10,13 +10,8 @@ const insertUser = function (mail, pwd, prole, displayicon, displaycolor, pnumbe
     return pros(sql);
 }
 
-const confrimPw = function (userInfo) {
-    const sql = "select pwd from enablermap.user where pnumber = " + "'" + userInfo.pnumber + "';"
-    return pros(sql);
-}
-
-const updateUserPw = function (userInfo) {
-    const sql = "update enablermap.user set pwd = " + "'" + userInfo.new + "'" + "where pnumber =" + "'" + userInfo.pnumber + "';"
+const updateUserPw = function (pnumber, pwd, newpwd) {
+    const sql = "update enablermap.user set pwd = " + "'" + newpwd + "'" + "where pnumber =" + "'" + pnumber + "'and pwd =" + "'" + pwd + "';"
     return pros(sql);
 }
 
@@ -31,7 +26,7 @@ const checkerpnumber = function (pnumber) {
 }
 
 const getuserlist = function (pcompanycode) {
-    const sql = "select * from enablermap.company where pcompanycode = "+"'"+pcompanycode+"';"
+    const sql = "select * from enablermap.company where pcompanycode = " + "'" + pcompanycode + "';"
     return pros(sql);
 }
 
@@ -71,8 +66,8 @@ const getlastpnumber = function () {
     return pros(sql);
 }
 
-const insertIndoorMap = function (pcompanycode,pcountry,svgfile,building,floor,position) {
-    const sql = "insert ignore into enablermap.indoormap values ("+"'"+pcompanycode+"','"+pcountry+"','"+svgfile+"','"+building+"','"+floor+"','"+position+"',null);"
+const insertIndoorMap = function (pcompanycode, pcountry, svgfile, building, floor, position) {
+    const sql = "insert ignore into enablermap.indoormap values (" + "'" + pcompanycode + "','" + pcountry + "','" + svgfile + "','" + building + "','" + floor + "','" + position + "',null);"
     return pros(sql);
 }
 
@@ -98,7 +93,6 @@ module.exports = {
     checkerpnumber,
     getuserlist,
     getcompanydetail,
-    confrimPw,
     getindoordetail,
     updatakeypoints,
     getcompanyname,
