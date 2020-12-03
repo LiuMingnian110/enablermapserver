@@ -5,6 +5,7 @@ let leafmarker = new Array();
 const cookie_value = $.cookie("enabermap.uid");
 const companycode = cookie_value.substring(0, 5);
 const adminpnumber = cookie_value.substring(14);
+let UserListData = null;
 let uidlist = [];
 let pnumberlist = [];
 let userdetaillist = [];
@@ -133,6 +134,112 @@ var getpersondetail = function () {
 
 }
 
+var companyNameEle = document.querySelector('#user-title');
+
+var userlistmake = function () {
+    console.log(pnamelist);
+    console.log(uidlist);
+    console.log(userdetaillist);
+    companyNameEle.innerText = companycode;
+    const treeitem = document.querySelector('.treeitem');
+    const treeData = {};
+    for (let i = 0; i < UserListData.length; i++) {
+        const user = UserListData[i];
+        var companyCode = user.pcompanycode;
+        var country = user.pcountry;
+        var office = user.poffice;
+        var userDep = user.pdep;
+        var userNumber = user.pnumber;
+
+        if (!treeData.hasOwnProperty(office)) treeData[office] = {};
+        if (!treeData[office].hasOwnProperty(userDep)) treeData[office][userDep] = [];
+
+        //userName color
+        var userName = userdetaillist[i][0].pname;
+        var userColor = userdetaillist[i][0].displaycolor;
+        treeData[office][userDep].push({
+            name: userName,
+            number: userNumber,
+            office: office,
+            dep: userDep,
+            country: country,
+            companyName: companyCode,
+            color: `#${userColor}`
+        })
+    }
+    createCompanyTree(treeitem, treeData);
+
+
+}
+
+var checkEvent = function () {
+    var currentNode = this.parentNode
+    var levelClass = currentNode.classList[1]
+    var currentChecked = this.classList.contains('checkbox-active')
+    var level = levelClass.split('-')[1]
+    if (currentChecked) {
+        this.classList.remove('checkbox-active')
+    } else {
+        this.classList.add('checkbox-active')
+    }
+    if (currentNode.nextSibling !== null) {
+        var nextLevel = currentNode.nextSibling.classList[1].split('-')[1]
+        var nextEle = currentNode
+        while (nextLevel > level) {
+            nextEle = nextEle.nextSibling
+            var checkbox = nextEle.querySelector('.checkbox')
+            if (currentChecked) {
+                checkbox.classList.remove('checkbox-active')
+            } else {
+                checkbox.classList.add('checkbox-active')
+            }
+            if (nextEle.nextSibling === null) break
+            nextLevel = nextEle.nextSibling.classList[1].split('-')[1]
+        }
+    }
+    if (currentNode.previousSibling !== null) {
+        // // var prevLevel = currentNode.previousSibling.classList[1].split('-')[1]
+        // var prevEle = currentNode
+        // while (prevLevel <= level) {
+        //     prevEle = prevEle.previousSibling
+        //     if (level !== prevLevel) {
+        //         level = prevLevel
+        //         var checkbox = prevEle.querySelector('.checkbox')
+        //         if (!currentChecked && !checkbox.classList.contains('checkbox-active')) {
+        //             checkbox.classList.add('checkbox-active')
+        //         }
+        //     }
+        //     if (prevEle.previousSibling === null) break
+        //     // prevLevel = prevEle.previousSibling.classList[1].split('-')[1]
+        // }
+    }
+}
+
+
+var createCompanyTree = function (parent, treeData, level = 1) {
+    const genDom = new GenDOM()
+    for (let key in treeData) {
+        treeData[key]
+        var user = treeData[key]
+        if (level === 3) {
+            genDom.createTreeNode(parent, user.name, level, '', true, user.color,
+                true, {}, {
+                    handlerName: 'click',
+                    bindData: user,
+                    event: checkEvent
+                })
+        } else {
+            genDom.createTreeNode(parent, key, level, svgIcons.trangle, true, user.color,
+                false, {}, {
+                    handlerName: 'click',
+                    bindData: user,
+                    event: checkEvent
+                })
+            createCompanyTree(parent, treeData[key], level + 1)
+        }
+    }
+}
+
 var drawPosition = function () {
     $.ajax({
         type: 'GET',
@@ -140,6 +247,7 @@ var drawPosition = function () {
         url: 'http://localhost:3000/getuserlist/' + companycode,
         success: function (data) {
             if (data != null) {
+                UserListData = data;
                 for (let i = 0; i < data.length; i++) {
                     pnumberlist.push(data[i].pnumber);
                     var uid = data[i].pcompanycode + data[i].pcountry + data[i].poffice + data[i].pdep + data[i].pnumber;
@@ -153,14 +261,16 @@ var drawPosition = function () {
     })
 
     getpersondetail();
+
+    userlistmake();
+
     timedraw(showallposition, 3000);
 
-    console.log(pnumberlist);
-    console.log(uidlist);
 
 }
 
 var showallposition = function () {
+    var tempnamelist = [];
     var locations = [];
     if (markerCluster != null) {
         markerCluster.clearMarkers();
@@ -180,6 +290,7 @@ var showallposition = function () {
             url: 'http://localhost:3000/getlocation/' + uidlist[i],
             success: function (data) {
                 if (data != null) {
+                    tempnamelist.push(pnamelist[i]);
                     var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
                         {
                             permanent: true,
@@ -200,7 +311,7 @@ var showallposition = function () {
     var markers = locations.map((location, i) => {
         return new google.maps.Marker({
             position: location,
-            label: pnamelist[i % pnamelist.length],
+            label: tempnamelist[i % tempnamelist.length],
         })
     })
 
@@ -385,7 +496,7 @@ generatorOptions(wrappers[2], 2, 31, 1, true, '')
 generatorOptions(wrappers[3], 3, 24, 1, true, '')
 generatorOptions(wrappers[4], 4, 59, 1, true, '')
 generatorOptions(wrappers[5], 5, 23, 1, true, '')
-generatorOptions(wrappers[6], 6, 10, 1, true, '')
+generatorOptions(wrappers[6], 6, 100, 1, true, '')
 
 
 //パスワード変更機能
@@ -422,6 +533,15 @@ document.getElementById('submit-btn').addEventListener('click', function () {
     }
 })
 
+var stringpluszero = function (num) {
+    if (num < 10) {
+        return "0" + num.toString();
+    } else {
+        return num.toString();
+    }
+
+}
+
 //履歴表示機能
 document.getElementById('start-btn').addEventListener('click', function () {
     var year = document.getElementById('historyyear').innerText;
@@ -431,18 +551,7 @@ document.getElementById('start-btn').addEventListener('click', function () {
     var min = document.getElementById('historymin').innerText;
     var longtime = document.getElementById('historytime').innerText;
     var speed = document.getElementById('historyspeed').innerText;
-    if (Number(month) < 10) {
-        month = "0" + month;
-    }
-    if (Number(day) < 10) {
-        day = "0" + day;
-    }
-    if (Number(hour) < 10) {
-        hour = "0" + hour;
-    }
-    if (Number(min) < 10) {
-        min = "0" + min;
-    }
+
     var japantime = new Date();
     japantime.setFullYear(Number(year));
     japantime.setMonth(Number(month) - 1);
@@ -451,12 +560,30 @@ document.getElementById('start-btn').addEventListener('click', function () {
     japantime.setMinutes(Number(min));
     var mintimets = japantime.getTime() - (3600000 * Number(longtime));
     var mintimetemp = new Date(mintimets);
-    var target_time_min = mintimetemp.getUTCFullYear() + "-" + Number(mintimetemp.getUTCMonth() + 1) + "-" + mintimetemp.getUTCDate() + "T" + mintimetemp.getUTCHours() + ":" + mintimetemp.getUTCMinutes() + ":00.000Z";
-    var target_time_max = japantime.getUTCFullYear() + "-" + Number(japantime.getUTCMonth() + 1) + "-" + japantime.getUTCDate() + "T" + japantime.getUTCHours() + ":" + japantime.getUTCMinutes() + ":00.000Z";
+    var target_time_min = mintimetemp.getUTCFullYear() + "-" + stringpluszero(Number(mintimetemp.getUTCMonth() + 1)) + "-" + stringpluszero(mintimetemp.getUTCDate()) + "T" + stringpluszero(mintimetemp.getUTCHours()) + ":" + stringpluszero(mintimetemp.getUTCMinutes()) + ":00.000Z";
+    var target_time_max = japantime.getUTCFullYear() + "-" + stringpluszero(Number(japantime.getUTCMonth() + 1)) + "-" + stringpluszero(japantime.getUTCDate()) + "T" + stringpluszero(japantime.getUTCHours()) + ":" + stringpluszero(japantime.getUTCMinutes()) + ":00.000Z";
 
-    var playspeed = 1000 / Number(speed);
+    var playspeed = Number(1000 / Number(speed));
 
-    $.cookie('userlist', '9999908100100100017');
+    var levelNo = document.querySelectorAll('.level-3')
+    var data = []
+    var flag = false
+    for (var i = 0; i < levelNo.length; i++) {
+        var checkbox = levelNo[i].querySelector('.checkbox-active')
+        if (checkbox) {
+            var companyName = checkbox.bindData.companyName
+            var country = checkbox.bindData.country
+            var office = checkbox.bindData.office
+            var dep = checkbox.bindData.dep
+            var number = checkbox.bindData.number
+            data.push(companyName + country + office + dep + number)
+            flag = true
+        }
+    }
+    if (!flag) {
+        alert('choose at lest one person');
+    }
+    $.cookie('userlist', data.toString());
     $.cookie('target_time_min', target_time_min);
     $.cookie('target_time_max', target_time_max);
     $.cookie('speed', playspeed.toString());

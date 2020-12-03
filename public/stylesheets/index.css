@@ -246,7 +246,7 @@ canvas{
 }
 #YX{
   position: absolute;
-  height: 40px; 
+  height: 40px;
   width: 300px;
   background-color: #fff;
   right: 60px;
@@ -287,7 +287,7 @@ canvas{
   width: 100%;
   position: relative;
   margin-bottom: 0px;
-  
+
 }
 .form-group label{
   /* padding-right: 10px; */
@@ -307,7 +307,7 @@ canvas{
   border-radius: 3px !important;
   position: absolute;
   left: 50%;
-  
+
 }
 #pw-chagen-btn,#time-btn,#mobile-record-btn{
   position: absolute;
@@ -406,7 +406,7 @@ canvas{
   margin-left: -50px;
 }
 /* .gm-style img[src='cat.jpg'] {
-  border-radius:50% !important; 
+  border-radius:50% !important;
 } */
 .time-form{
   display: flex;
@@ -428,10 +428,16 @@ canvas{
   padding: 3px 8px;
   margin-left: 4px;
 }
-.set-val{
-  width: 55px;
-  overflow: hidden;
+
+.set-text{
+  padding-left: 40px;
+  margin-top: -32px;
 }
+
+/*.set-val{*/
+/*  width: 55px;*/
+/*  overflow: hidden;*/
+/*}*/
 #selector-icon{
   width: 14px;
   height: 14px;

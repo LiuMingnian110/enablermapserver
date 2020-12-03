@@ -109,10 +109,17 @@ router.post('/newuser', async function (req, res, next) {
 router.post('/changepw', async function (req, res, next) {
     if (req.body.data != null) {
         try {
-            const result = await userpro.updateUserPw(req.body.data.pnumber, req.body.data.pwd, req.body.data.newpwd);
-            //変更されないの場合はsuccessので、修正要
-            res.json({"status": "success"});
-            res.end();
+            await userpro.updateUserPw(req.body.data.pnumber, req.body.data.pwd, req.body.data.newpwd);
+            const result = await userpro.getNewPw(req.body.data.pnumber);
+            var dataString = JSON.stringify(result);
+            var data = JSON.parse(dataString);
+            if (data[0].pwd == req.body.data.newpwd) {
+                res.json({"status": "success"});
+                res.end();
+            } else {
+                res.json({"status": "failed"});
+                res.end();
+            }
         } catch (e) {
             console.log(e);
             res.json({"status": "failed"});
@@ -217,9 +224,16 @@ router.post('/uploadtime', async function (req, res, next) {
 });
 
 
-// router.get('/jsontest',function (req,res,next) {
-//     res.json({"uid":"00001"});
-// })
-
+router.get('/getuploadtime/:companycode', async function (req, res, next) {
+        const result = await userpro.getuploadtime(req.params.companycode);
+        if (result.length != 0) {
+            var dataString = JSON.stringify(result);
+            var data = JSON.parse(dataString);
+            res.json({"time": data[0].uploadtime});
+        } else {
+            res.json({"time": "unknow"})
+        }
+    }
+)
 
 module.exports = router;

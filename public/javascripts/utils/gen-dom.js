@@ -1,0 +1,86 @@
+class GenDOM {
+    constructor() {}
+    createTreeNode(parent,
+                   text = '',
+                   indent = 1,
+                   svgIcon = '',
+                   checkboxFlag = false,
+                   color = '',
+                   menu = false,
+                   menuOpts = {},
+                   checkOpts = {}
+    ) {
+        // peer node
+        const ele_node = document.createElement('div')
+        ele_node.classList.add('peer-node')
+        ele_node.classList.add(`level-${indent}`)
+        // Indent Block
+        for(let i = 0; i < indent; i++) {
+            if(i === 0) continue
+            const ele_indentBox = document.createElement('div')
+            ele_indentBox.classList.add('indentation-box')
+            ele_node.appendChild(ele_indentBox)
+        }
+        // icon
+        const ele_svgIcon = document.createElement('div')
+        ele_svgIcon.classList.add('icon-svg')
+        ele_svgIcon.innerHTML = svgIcon
+        ele_node.appendChild(ele_svgIcon)
+        // checkbox
+        const ele_checkbox = document.createElement('div')
+        // ele_checkbox.type = 'checkbox'
+        ele_checkbox.classList.add('checkbox')
+        if(checkboxFlag) {
+            const ele_img = document.createElement('img')
+            ele_img.src = '/icon/correct.png'
+            ele_img.classList.add('checkbox-img')
+            ele_checkbox.appendChild(ele_img)
+            ele_checkbox[`on${checkOpts.handlerName}`] = checkOpts.event
+            ele_checkbox.bindData = checkOpts.bindData
+        }
+        ele_node.appendChild(ele_checkbox)
+        // text
+        const ele_text = document.createElement('div')
+        ele_text.classList.add('node-text')
+        if(text) {
+            const ele_textItem = document.createElement('span')
+            ele_textItem.classList.add('node-text-name')
+            ele_textItem.appendChild(document.createTextNode(text))
+            ele_text.appendChild(ele_textItem)
+        }
+        ele_node.appendChild(ele_text)
+        // 颜色
+        if(color) {
+            const ele_textColor = document.createElement('div')
+            ele_textColor.classList.add('node-text-color')
+            ele_textColor.style.backgroundColor = color
+            ele_node.appendChild(ele_textColor)
+        }
+        // 菜单
+        if(menu) {
+            const ele_menuBtn = document.createElement('div')
+            ele_menuBtn.classList.add('menu-btn-box')
+            // 菜单事件
+            ele_menuBtn[`on${menuOpts.handlerName}`] = menuOpts.event
+            ele_menuBtn.bindData = menuOpts.bindData
+            ele_menuBtn.innerHTML = `
+        <img src="/icon/muen-btn.png" alt="" class="menu-btn">
+        <div class="menu-options-btn" style="display: none;">
+            <ul>
+                <li>
+                    <img src="/icon/map.png" alt="">
+                    <span>行动履历表示</span>
+                </li>
+                <li>
+                    <img src="/icon/user.png" alt="">
+                    <span>用户情报变更</span>
+                </li>
+            </ul>
+        </div>
+      `
+            ele_node.appendChild(ele_menuBtn)
+        }
+
+        parent.appendChild(ele_node)
+    }
+}

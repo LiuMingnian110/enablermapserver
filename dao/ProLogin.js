@@ -15,6 +15,11 @@ const updateUserPw = function (pnumber, pwd, newpwd) {
     return pros(sql);
 }
 
+const getNewPw = function (pnumber){
+    const sql = "select pwd from enablermap.user where pnumber="+"'"+pnumber+"';"
+    return pros(sql);
+}
+
 const checker = function (mail, pwd) {
     const sql = "select pnumber from enablermap.user where mail =" + "'" + mail + "' and pwd = " + "'" + pwd + "';"
     return pros(sql);
@@ -71,6 +76,11 @@ const insertIndoorMap = function (pcompanycode, pcountry, svgfile, building, flo
     return pros(sql);
 }
 
+const getuploadtime = function (companycode){
+    const sql = "select * from enablermap.uploadtime where companycode = " + "'" + companycode + "';"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -99,5 +109,7 @@ module.exports = {
     uploadtime,
     newpnumber,
     getlastpnumber,
-    insertIndoorMap
+    insertIndoorMap,
+    getNewPw,
+    getuploadtime
 }

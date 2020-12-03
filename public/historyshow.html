@@ -85,7 +85,7 @@
         var getmapdetail = function (companycode) {
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:3000/getindoordetail/' + companycode,
+                url: 'http://104.198.245.131:3000/getindoordetail/' + companycode,
                 success: function (data) {
                     indoordetail = data;
                     for (let i = 0, len = indoordetail.length; i < len; i++) {
@@ -139,7 +139,10 @@
             var targetlist = $.cookie("userlist");
             var target_time_min = $.cookie("target_time_min");
             var target_time_max = $.cookie("target_time_max");
-            var userlist = targetlist.split(',');
+
+            // var userlist = targetlist.split(',');
+            var userlist = [];
+            userlist.push(targetlist);
             for (let i = 0; i < userlist.length; i++) {
                 let uid = userlist[i];
                 resultArr = [];
@@ -221,7 +224,7 @@
                 document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
             });
 
-            var imageUrl = 'http://localhost/' + filename,
+            var imageUrl = 'http://104.198.245.131/' + filename,
                 imageBounds = [
                     [Number(keypoints[0]), Number(keypoints[1])],
                     [Number(keypoints[2]), Number(keypoints[3])]
@@ -239,7 +242,7 @@
         }
 
         var drawPoint = function (i, target, time) {
-            if (i < target.length) {
+            if (i == 0) {
                 var lat = Number(target[i].lat);
                 var lng = Number(target[i].lon);
                 var marker = new google.maps.Marker({
@@ -249,8 +252,42 @@
                 var lmarker = L.marker([lat, lng]).addTo(indoormap);
                 i += 1;
                 delay(i, target, time);
-            } else {
+            } else if (i == target.length - 1) {
+                var lat = Number(target[i].lat);
+                var lng = Number(target[i].lon);
+                var marker = new google.maps.Marker({
+                    position: {lat: lat, lng: lng},
+                    map: map,
+                });
+                var lmarker = L.marker([lat, lng]).addTo(indoormap);
+                i += 1;
                 console.log("end");
+            } else if (i < target.length) {
+                var flightPath = new google.maps.Polyline({
+                    path: [{
+                        lat: Number(target[i - 1].lat),
+                        lng: Number(target[i - 1].lon)
+                    }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}],
+                    geodesic: true,
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                });
+                flightPath.setMap(map);
+
+                var firstpolyline = new L.Polyline( [{
+                    lat: Number(target[i - 1].lat),
+                    lng: Number(target[i - 1].lon)
+                }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}], {
+                    color: 'blue',
+                    weight: 3,
+                    opacity: 1,
+                    smoothFactor: 1
+                });
+
+                firstpolyline.addTo(indoormap);
+                i += 1;
+                delay(i, target, time);
             }
         }
 
