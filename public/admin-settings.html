@@ -48,7 +48,6 @@
       var cookie_value = $.cookie("enabermap.uid");
       var companycode = cookie_value.substring(0,5);
       $.ajax({
-        timeout: 3000,
         type: 'POST',
         url: 'http://localhost:3000/uploadtime',
         contentType: "application/json",

@@ -5,32 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>login</title>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
 </head>
 <style>
-    *{
+    * {
         padding: 0;
         margin: 0;
     }
-    html,body,#login-box{
+
+    html, body, #login-box {
         width: 100%;
         height: 100%;
         position: relative;
     }
-    #form-box{
+
+    #form-box {
         width: 50%;
         height: 100%;
         position: relative;
         float: left;
     }
-    #form-box form{
+
+    #form-box form {
         padding: 0px 100px;
         position: relative;
         margin-top: 50%;
         transform: translateY(-50%);
     }
-    #title{
+
+    #title {
         font-size: 2.9em;
         width: 100%;
         text-align: center;
@@ -39,38 +46,42 @@
         position: absolute;
         top: 50px;
     }
-    #img-box{
+
+    #img-box {
         width: 50%;
         height: 100%;
         position: relative;
     }
-    .row{
+
+    .row {
         margin-left: 0px !important;
         margin-right: 0px !important;
     }
-    .col{
+
+    .col {
         padding-left: 0px !important;
         padding-right: 0px !important;
     }
-    #map,#floor-plan{
+
+    #map, #floor-plan {
         height: 50%;
     }
-    #map{
+
+    #map {
         background: url(/images/bg1.jpg) no-repeat 0 0;
-        background-size:100% 100%;
+        background-size: 100% 100%;
     }
-    #floor-plan{
+
+    #floor-plan {
         background: url(/images/bg2.jpg) no-repeat 0 0;
-        background-size:100% 100%;
+        background-size: 100% 100%;
 
     }
+
     .btn {
         width: 100% !important;
     }
-    /* .pw-form{
-        width: 100%;
-        height: 100%;
-    } */
+
 
 </style>
 <body>
@@ -101,10 +112,29 @@
 </body>
 <script>
 
-    function dataUp(){
-        if($("#company").val() == "" || $("#email").val() == "" || $("#password").val() == ""){
+    $("#company").blur(function () {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3000/getcompanyname/' + $("#company").val(),
+            async: true,
+            success: function (data) {
+                if (data.length == 0) {
+                    alert("company is not exist!");
+                    document.getElementById('company').value = "";
+                } else {
+                    document.getElementById('company').value = $("#company").val() + "-" + data[0].companyname;
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    })
+
+    function dataUp() {
+        if ($("#company").val() == "" || $("#email").val() == "" || $("#password").val() == "") {
             alert("情報を全部入力してください。");
-        }else{
+        } else {
             $.ajax({
                 timeout: 3000,
                 type: 'POST',
@@ -113,16 +143,23 @@
                 dataType: "text",
                 async: true,
                 withCredentials: true,
-                data: JSON.stringify({"data": {"pcompanycode": $("#company").val(), "mail": $("#email").val(),"pwd": $("#password").val()}}),
+                data: JSON.stringify({
+                    "data": {
+                        "pcompanycode": $("#company").val().split("-")[0],
+                        "mail": $("#email").val(),
+                        "pwd": $("#password").val()
+                    }
+                }),
                 success: function (data) {
-                    if(data.uid == 'error'){
+                    if (JSON.parse(data).uid == 'error') {
+                        alert("mailaddress or password error!");
                         window.location.href = '/login';
-                    }else{
+                    } else {
                         window.location.href = '/mainmap';
                     }
                 },
                 error: function () {
-                    alert('Please check your network,if it is still not work.Please look admin for help!');
+                    alert('Please check your network,if it still does not work.Please look admin for help!');
                 }
             })
         }

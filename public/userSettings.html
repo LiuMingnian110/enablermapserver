@@ -13,23 +13,20 @@
     <link rel="stylesheet" href="/stylesheets/farbtastic.css">
     <title>Document</title>
     <style>
-        * {
+        *{
             padding: 0;
             margin: 0;
-            list-style-type: none;
+            list-style-type:none;
         }
-
-        html, body, #userSettings-box {
+        html,body,#userSettings-box{
             width: 100%;
             height: 100%;
             position: relative;
         }
-
-        body {
+        body{
             display: flex;
         }
-
-        #userSettings-box {
+        #userSettings-box{
             /* padding: 20px 40px; */
             position: relative;
             background-color: #fff;
@@ -41,8 +38,7 @@
             border-radius: 3px;
             border: 1px solid #cccccc;
         }
-
-        #navigation-box {
+        #navigation-box{
             width: 100%;
             height: 38px;
             position: relative;
@@ -51,84 +47,69 @@
             padding: 0px 20px;
             border-radius: 3px 3px 0 0;
         }
-
-        #userSettings-bnt {
+        #userSettings-bnt{
             height: 38px;
             float: left;
         }
-
-        #userSettings-bnt img {
+        #userSettings-bnt img{
             height: 24px;
             float: left;
             position: absolute;
             top: 50%;
             margin-top: -12px;
         }
-
-        #userSettings-bnt h3 {
+        #userSettings-bnt h3{
             line-height: 38px;
             margin-left: 34px;
             margin-bottom: 0px !important;
             font-size: 18px;
             color: #fff;
         }
-
-        #return-bnt {
+        #return-bnt{
             position: absolute;
             right: 20px;
         }
-
-        #return-bnt img {
+        #return-bnt img{
             height: 20px;
         }
-
-        #form-box {
+        #form-box{
             width: 100%;
             position: relative;
             padding: 0px 20px;
         }
-
-        .form-group {
+        .form-group{
             width: 50%;
             /* padding-right: 20px; */
             /* padding: 5px 20px; */
             position: relative;
         }
-
-        .company-no {
+        .company-no{
             margin-right: 20px;
         }
-
-        .form-row {
+        .form-row{
             margin: 0px !important;
         }
-
-        .form-control {
+        .form-control{
             width: 90% !important;
             display: initial !important;
         }
-
-        .input-btn {
+        .input-btn{
             margin-top: -6px !important;
         }
-
-        #sign-btn {
+        #sign-btn{
             padding: 50px 20px;
         }
-
-        #sign-btn button {
+        #sign-btn button{
             width: 20%;
             position: absolute;
             left: 50%;
             margin-left: -10%;
             bottom: 30px;
         }
-
-        #colors {
+        #colors{
             width: 80% !important;
         }
-
-        #picker .farbtastic {
+        #picker .farbtastic{
             margin-top: 20px;
             background-color: #fff;
             box-shadow: 0.1px 10px 15px 2px rgba(0, 0, 0, 0.1) !important;
@@ -136,12 +117,10 @@
             position: absolute !important;
             right: 0px;
         }
-
-        .form-group label {
+        .form-group label{
             width: 300px !important;
         }
-
-        #new-offlce {
+        #new-offlce{
             width: 360px;
             height: 260px;
             box-shadow: 0.1px 10px 15px 2px rgba(0, 0, 0, 0.1) !important;
@@ -154,8 +133,7 @@
             margin-top: -180px;
             margin-left: -130px;
         }
-
-        .pw-chagen-title {
+        .pw-chagen-title{
             width: 100%;
             height: 40px;
             line-height: 40px;
@@ -164,58 +142,48 @@
             color: #fff;
             border-radius: 3px 3px 0px 0px;
         }
-
-        #pw-chagen-btn {
+        #pw-chagen-btn{
             position: absolute;
             width: 22px;
             height: 22px;
             right: 20px;
             top: 9px;
         }
-
-        #pw-chagen-btn img {
+        #pw-chagen-btn img{
             width: 22px;
             height: 22px;
             margin-top: -22px;
         }
-
-        #pw-chagen-btn:hover {
+        #pw-chagen-btn:hover{
             cursor: pointer;
         }
-
-        .pw-form {
+        .pw-form{
             width: 100%;
             position: relative;
         }
-
-        .form-group label {
+        .form-group label{
             padding-right: 10px;
             height: 38px;
             float: left;
             line-height: 38px;
             margin-bottom: 0px;
         }
-
-        #office-no {
+        #office-no{
             width: 100%;
             padding: 0px 20px;
             color: #212529;
             margin-bottom: 0px !important;
         }
-
-        #office-no label {
+        #office-no label{
             width: 100px !important;
         }
-
-        #exampleInputPassword1 {
+        #exampleInputPassword1{
             width: 100% !important;
         }
-
-        #submit-btn {
+        #submit-btn{
             margin-top: 12px;
         }
-
-        #user-btn {
+        #user-btn{
             height: 38px;
             width: 200px;
             position: absolute;
@@ -223,29 +191,25 @@
             left: 50%;
             margin-left: -100px;
         }
-
-        #icon-box {
+        #icon-box{
             height: 38px;
             margin-top: 37px;
             position: relative;
         }
-
-        #icon {
+        #icon{
             width: 100px;
             height: 100%;
             border: 1px solid #ccc;
             border-radius: 5px;
             position: relative;
         }
-
-        #icon-select {
+        #icon-select{
             width: 62px;
             height: 100%;
             position: relative;
             float: left;
         }
-
-        #icon-select img {
+        #icon-select img{
             width: 38px;
             height: 38px;
             padding: 5px;
@@ -253,8 +217,7 @@
             left: 50%;
             margin-left: -19px;
         }
-
-        .icon-btn {
+        .icon-btn{
             width: 37px;
             height: 37px;
             background-color: #007bff;
@@ -262,19 +225,16 @@
             right: 0px;
             border-radius: 0px 5px 5px 0px;
         }
-
-        .icon-btn:hover {
+        .icon-btn:hover{
             cursor: pointer;
             background-color: #0069d9;
         }
-
-        .icon-btn svg {
+        .icon-btn svg{
             width: 38px;
             height: 38px;
             padding: 5px;
         }
-
-        .icon-display {
+        .icon-display{
             position: relative;
             margin-top: 40px;
             border: 1px solid #ccc;
@@ -282,24 +242,20 @@
             margin-bottom: 20px;
             border-radius: 5px;
         }
-
-        .icon-display img {
+        .icon-display img{
             width: 38px;
             height: 38px;
             margin-left: 12px;
             padding: 8px;
         }
-
-        .icon-display ul {
+        .icon-display ul{
             margin-bottom: 0px !important;
         }
-
-        .icon-display li {
+        .icon-display li{
             width: 100%;
             height: 38px;
         }
-
-        .icon-display li:hover {
+        .icon-display li:hover{
             background-color: #f8f8f8;
             cursor: pointer;
         }
@@ -328,21 +284,21 @@
     </div>
     <form id="form-box" class="form-row" onsubmit="return false">
         <div class="form-group">
-            <label for="exampleInputEmail1" class="company-no">企業番号/Company no.</label>
+            <label  class="company-no">企業番号/Company no.</label>
             <input class="form-control" type="text" id="company" name="company" onblur="inputELe()">
         </div>
         <div class="form-group">
-            <label for="inputState">国.地域/Country.Area</label>
+            <label >国.地域/Country.Area</label>
             <select id="country" name="pcountry" class="form-control country demos"></select>
             <button type="button" class="btn btn-primary input-btn up-btn" id="country-btn">+</button>
         </div>
         <div class="form-group">
-            <label for="inputState">事業所番号/Office no.</label>
+            <label >事業所番号/Office no.</label>
             <select id="poffice" class="form-control demos" name="offlce"></select>
             <button type="button" class="btn btn-primary input-btn up-btn" id="offlce-btn">+</button>
         </div>
         <div class="form-group">
-            <label for="inputState">部門番号/Department no.</label>
+            <label >部門番号/Department no.</label>
             <select id="department" class="form-control demos" name="pdep"></select>
             <button type="button" class="btn btn-primary input-btn up-btn" id="department-btn">+</button>
         </div>
@@ -351,15 +307,15 @@
             <input type="text" class="form-control" id="users" value="" name="userName">
         </div>
         <div class="form-group">
-            <label for="exampleFormControlInput1">メールアドレス/Mail address</label>
+            <label >メールアドレス/Mail address</label>
             <input type="email" class="form-control" id="email" value="" name="email">
         </div>
         <div class="form-group">
-            <label for="exampleInputPassword1">パスワード/Password</label>
+            <label >パスワード/Password</label>
             <input type="password" class="form-control" id="password" name="password">
         </div>
         <div class="form-group">
-            <label for="inputState">権限/Role</label>
+            <label >権限/Role</label>
             <select id="role" class="form-control country" name="role">
                 <option selected>1</option>
                 <option>2</option>
@@ -368,7 +324,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="inputState">表示アイコン/Display Icon</label>
+            <label >表示アイコン/Display Icon</label>
             <div id="icon-box">
                 <div id="icon">
                     <div id="icon-select" name="iconSelect"></div>
@@ -388,7 +344,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="inputState">表示色/Display Color</label>
+            <label >表示色/Display Color</label>
             <input class="form-control" type="text" id="colors" value='#ffffff' name="colors">
             <button type="button" class="btn btn-primary input-btn" id="color-btn">color</button>
             <div id="picker" style="display: none;"></div>
@@ -406,8 +362,12 @@
                     <label id="numbering"></label>
                     <input type="text" class="form-control" id="n-input" value="" autocomplete="off">
                 </div>
-                <button type="button" class="btn btn-primary" id="submit-btn">Submit</button>
+                <div class="form-group" id="office-no">
+                    <label id="name"></label>
+                    <input type="text" class="form-control" id="name-input" value="" autocomplete="off">
+                </div>
             </form>
+            <button type="button" class="btn btn-primary" id="submit-btn">Submit</button>
         </div>
     </div>
 </div>
@@ -437,6 +397,7 @@
         })
         let title = document.getElementById('title')
         let numbering = document.getElementById('numbering')
+        let names = document.getElementById('name')
         for (let i = 0; i < upBtn.length; i++) {
             upBtn[i].index = i
             upBtn[i].addEventListener('click', function () {
@@ -448,14 +409,17 @@
                     case 0:
                         title.innerText = '国.地域登録'
                         numbering.innerText = '国.地域番号'
+                        names.innerText = '国.地域名'
                         break
                     case 1:
                         title.innerText = '事業所登録'
                         numbering.innerText = '事業所番号'
+                        names.innerText = '事業所名'
                         break
                     case 2:
                         title.innerText = '部門登録'
                         numbering.innerText = '部門番号'
+                        names.innerText = '部門名'
                         break
                 }
             })
@@ -467,16 +431,19 @@
     let submitBtn = document.getElementById('submit-btn')
     let demos = document.querySelectorAll('.demos')
     let nInput = document.getElementById('n-input')
+    let nameInput = document.getElementById('name-input')
     submitBtn.addEventListener('click', () => {
         let nValue = nInput.value;
-        let values = nValue;
+        let nameValue = nameInput.value
+        let values = nValue + ' ' +nameValue
 
-        if (nValue.value != '') {
+        if(nValue.value != '' && nameValue.value != ''){
             demos[seletedType].options.add(new Option(values))
             newOfflce.style.display = 'none'
         }
-        if (nInput.value != '') {
+        if(nInput.value != '' && nameInput.value != ''){
             nInput.value = ''
+            nameInput.value = ''
         }
     })
 
@@ -557,15 +524,16 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.length != 0) {
-                        //遍历获取到的所有数据，存入companys
                         for (let i = 0; i < data.length; i++) {
                             companys.push(data[i])
                         }
-                        for (let n = 0; n < companys.length; n++) {
-                            pcountrys.push(companys[n].pcountry)
-                            poffices.push(companys[n].poffice)
-                            pdeps.push(companys[n].pdep)
-                        }
+
+
+                        // for (let n = 0; n < companys.length; n++) {
+                        //     pcountrys.push(companys[n].pcountry)
+                        //     poffices.push(companys[n].poffice)
+                        //     pdeps.push(companys[n].pdep)
+                        // }
 
                         function optionDom(dom, idName) {
                             for (let i = 0; i < dom.length; i++) {

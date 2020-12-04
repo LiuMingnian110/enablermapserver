@@ -151,7 +151,7 @@ router.post('/loginbypd', async function (req, res, next) {
             res.json({"uid": str});
             res.end();
         } else {
-            res.json({"uid": "unknow! Please check the person number in DB"});
+            res.json({"uid": "error"});
             res.end();
         }
     }
