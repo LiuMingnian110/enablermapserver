@@ -81,6 +81,21 @@ const getuploadtime = function (companycode){
     return pros(sql);
 }
 
+const getcountryname = function (){
+    const sql = "select * from enablermap.countryall;"
+    return pros(sql);
+}
+
+const getofficename = function (){
+    const sql = "select * from enablermap.officeall;"
+    return pros(sql);
+}
+
+const getdepname = function (){
+    const sql = "select * from enablermap.depall;"
+    return pros(sql);
+}
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -111,5 +126,8 @@ module.exports = {
     getlastpnumber,
     insertIndoorMap,
     getNewPw,
-    getuploadtime
+    getuploadtime,
+    getcountryname,
+    getofficename,
+    getdepname
 }

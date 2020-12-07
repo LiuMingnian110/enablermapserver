@@ -223,7 +223,7 @@ router.post('/uploadtime', async function (req, res, next) {
     res.end();
 });
 
-
+//get upload time
 router.get('/getuploadtime/:companycode', async function (req, res, next) {
         const result = await userpro.getuploadtime(req.params.companycode);
         if (result.length != 0) {
@@ -235,5 +235,14 @@ router.get('/getuploadtime/:companycode', async function (req, res, next) {
         }
     }
 )
+
+//
+router.get('/getcodnamelist', async function (req, res, next) {
+    const result = [];
+    result.push(JSON.parse(JSON.stringify(await userpro.getcountryname())));
+    result.push(JSON.parse(JSON.stringify(await userpro.getofficename())));
+    result.push(JSON.parse(JSON.stringify(await userpro.getdepname())));
+    res.send(result);
+})
 
 module.exports = router;
