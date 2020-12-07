@@ -28,6 +28,11 @@ router.get('/userSettings', function (req, res, next) {
     res.render('userSettings');
 });
 
+//indoor画面
+router.get('/mapindoor', function (req, res, next) {
+    res.render('mapindoor');
+});
+
 //履歴表示画面
 router.get('/historyshow', function (req, res, next) {
     res.render('historyshow');

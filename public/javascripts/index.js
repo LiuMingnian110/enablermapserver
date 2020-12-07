@@ -1,18 +1,12 @@
 let map;
-let indoormap;
 let markerCluster = null;
-let leafmarker = new Array();
-const cookie_value = $.cookie("enabermap.uid");
-const companycode = cookie_value.substring(0, 5);
+const companycode = $.cookie("enabermap.uid").substring(0, 5);
 const adminpnumber = cookie_value.substring(14);
 let UserListData = null;
 let uidlist = [];
 let pnumberlist = [];
 let userdetaillist = [];
 let pnamelist = [];
-//console for dev test
-let test;
-
 
 //屋内地図Map上に書く
 var getmapdetail = function (companycode) {
@@ -52,68 +46,9 @@ var getmapdetail = function (companycode) {
 };
 
 var showindoormap = function (filename, keypoint) {
-    document.getElementById("map").style.display = "none";
-    document.getElementById("IndoorMap").style.display = "block";
-    drawcurrentindoormap(filename, keypoint);
-}
-
-var drawcurrentindoormap = function (filename, keypoint) {
-    var keypoints = keypoint.split(",");
-    //quit
-    L.Control.quitpage = L.Control.extend({
-
-        quitmain: function () {
-            document.getElementById("map").style.display = "block";
-            document.getElementById("IndoorMap").style.display = "none";
-            test.remove();
-            test1.remove();
-            test2.remove();
-        },
-
-        onAdd: function (map) {
-            var img = L.DomUtil.create('img');
-            img.src = '/icon/shut.png';
-            img.style.width = '50px'
-            L.DomEvent.addListener(img, 'click', this.quitmain, this);
-            return img;
-        },
-
-    });
-    L.control.quitpage = function (opts) {
-        return new L.Control.quitpage(opts);
-    }
-
-    var test1 = L.control.quitpage({position: 'topright'}).addTo(indoormap);
-
-    //showmessage
-    L.Control.showbox = L.Control.extend({
-
-        onAdd: function (map) {
-            var divbox = L.DomUtil.create('div');
-            divbox.id = "info";
-            return divbox;
-        },
-
-    });
-    L.control.showbox = function (opts) {
-        return new L.Control.showbox(opts);
-    }
-
-    var test2 = L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
-
-    indoormap.on('mousemove', function (e) {
-        document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
-    });
-
-    var imageUrl = 'http://localhost/' + filename,
-        imageBounds = [
-            [Number(keypoints[0]), Number(keypoints[1])],
-            [Number(keypoints[2]), Number(keypoints[3])]
-        ];
-    test = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
-    indoormap.fitBounds(imageBounds);
-    indoormap.setZoom(22);
-
+    $.cookie('filename', filename);
+    $.cookie('keypoints', keypoint);
+    window.open("http://localhost:3000/mapindoor");
 }
 
 var getpersondetail = function () {
@@ -137,9 +72,6 @@ var getpersondetail = function () {
 var companyNameEle = document.querySelector('#user-title');
 
 var userlistmake = function () {
-    console.log(pnamelist);
-    console.log(uidlist);
-    console.log(userdetaillist);
     companyNameEle.innerText = companycode;
     const treeitem = document.querySelector('.treeitem');
     const treeData = {};
@@ -197,22 +129,6 @@ var checkEvent = function () {
             nextLevel = nextEle.nextSibling.classList[1].split('-')[1]
         }
     }
-    if (currentNode.previousSibling !== null) {
-        // // var prevLevel = currentNode.previousSibling.classList[1].split('-')[1]
-        // var prevEle = currentNode
-        // while (prevLevel <= level) {
-        //     prevEle = prevEle.previousSibling
-        //     if (level !== prevLevel) {
-        //         level = prevLevel
-        //         var checkbox = prevEle.querySelector('.checkbox')
-        //         if (!currentChecked && !checkbox.classList.contains('checkbox-active')) {
-        //             checkbox.classList.add('checkbox-active')
-        //         }
-        //     }
-        //     if (prevEle.previousSibling === null) break
-        //     // prevLevel = prevEle.previousSibling.classList[1].split('-')[1]
-        // }
-    }
 }
 
 
@@ -264,6 +180,8 @@ var drawPosition = function () {
 
     userlistmake();
 
+    $.cookie('uidlist', uidlist.toString());
+    $.cookie('pnamelist', pnamelist.toString());
     timedraw(showallposition, 3000);
 
 
@@ -276,13 +194,6 @@ var showallposition = function () {
         markerCluster.clearMarkers();
     }
 
-    if (leafmarker != "") {
-        for (let i = 0; i < leafmarker.length; i++) {
-            indoormap.removeLayer(leafmarker[i]);
-        }
-        leafmarker.length = 0;
-    }
-
     for (let i = 0; i < uidlist.length; i++) {
         $.ajax({
             type: 'GET',
@@ -291,13 +202,6 @@ var showallposition = function () {
             success: function (data) {
                 if (data != null) {
                     tempnamelist.push(pnamelist[i]);
-                    var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
-                        {
-                            permanent: true,
-                            direction: 'right'
-                        });
-                    leafmarker.push(lamMarker);
-                    indoormap.addLayer(leafmarker[leafmarker.length - 1]);
                     var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
                     locations.push(latlng);
                 }
@@ -337,11 +241,6 @@ var init = function () {
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 10,
         center: Tokyo,
-    });
-
-    indoormap = L.map('IndoorMap', {
-        center: [40.75, -74.2],
-        zoom: 10
     });
 
     getmapdetail(companycode);

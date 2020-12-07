@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnablerMapIndoorDemo</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <style>
+        html, body, #indoormap{
+            height: 100%;
+            width: 100%;
+        }
+
+
+    </style>
+</head>
+<body >
+<div id="indoormap"></div>
+<script>
+    var indoormap;
+    const companycode = $.cookie("enabermap.uid").substring(0, 5);
+    const keypoint = $.cookie("keypoints");
+    const filename = $.cookie("filename");
+    const uidlist = $.cookie("uidlist").split(",");
+    const pnamelist = $.cookie("pnamelist").split(",");
+    var leafmarker=[];
+
+    var timedraw = function (fn, millisec) {
+        function interval() {
+            setTimeout(interval, millisec);
+            fn();
+        }
+
+        setTimeout(interval, millisec)
+    }
+
+    var showallposition = function () {
+        var tempnamelist = [];
+
+        if (leafmarker != "") {
+            for (let i = 0; i < leafmarker.length; i++) {
+                indoormap.removeLayer(leafmarker[i]);
+            }
+            leafmarker.length = 0;
+        }
+
+        for (let i = 0; i < uidlist.length; i++) {
+            $.ajax({
+                type: 'GET',
+                async: false,
+                url: 'http://localhost:3000/getlocation/' + uidlist[i],
+                success: function (data) {
+                    if (data != null) {
+                        tempnamelist.push(pnamelist[i]);
+                        var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
+                            {
+                                permanent: true,
+                                direction: 'right'
+                            });
+                        leafmarker.push(lamMarker);
+                        indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+
+    }
+
+    const init = function () {
+        indoormap = L.map('indoormap', {
+            center: [40.75, -74.2],
+            zoom: 10
+        });
+
+        var keypoints = keypoint.split(",");
+
+        //showmessage
+        L.Control.showbox = L.Control.extend({
+
+            onAdd: function (map) {
+                var divbox = L.DomUtil.create('div');
+                divbox.id = "info";
+                return divbox;
+            },
+
+        });
+        L.control.showbox = function (opts) {
+            return new L.Control.showbox(opts);
+        }
+
+        L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
+
+        indoormap.on('mousemove', function (e) {
+            document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
+        });
+
+        var imageUrl = 'http://localhost/' + filename,
+            imageBounds = [
+                [Number(keypoints[0]), Number(keypoints[1])],
+                [Number(keypoints[2]), Number(keypoints[3])]
+            ];
+        L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
+        indoormap.fitBounds(imageBounds);
+        indoormap.setZoom(22);
+
+        timedraw(showallposition, 3000);
+    };
+    init();
+
+
+</script>
+</body>
+</html>
