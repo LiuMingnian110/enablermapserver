@@ -8,29 +8,56 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/mapmanage.css"/>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/cake.generic.css"/>
     <link rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/style1.css"/>
-
     <style>
-        .mbox button {
+        html, body, #wrapper {
             width: 100%;
-            padding: 10px;
+            height: 100%;
         }
+
+        #map {
+            width: 100%;
+            height: 85%;
+        }
+
+        #showbar {
+            width: 100%;
+            height: 15%;
+        }
+
+        .container {
+            width: 450px;
+            border: 1px solid #6C9C2C;
+            height: 25px;
+        }
+
+        #bar {
+            background: #95CA0D;
+            float: left;
+            height: 100%;
+            text-align: center;
+            line-height: 150%;
+        }
+
 
     </style>
 </head>
 <body>
 <div id="wrapper">
+    <div id="map"></div>
+    <div id="showbar">
+        <div>
+            <button id="replay">REPLAY</button>
+            <label>Speed(s)</label>
+            <input id="playspeed" type="text"/>
+        </div>
+        <div class="container">
+            <div id="bar" style="width:0%;"></div>
+        </div>
+        <span id="total"></span>
 
-    <div id="map" style="display: block"></div>
-    <div id="IndoorMap" style="display: none;flex-grow: 1"></div>
-
+    </div>
     <script>
-
         //Java　Hashmap 自分を定義する
         function HashMap() {
             this.map = {};
@@ -51,35 +78,19 @@
                     return delete this.map[key];
                 }
                 return false;
-            },
-            values: function () {
-                var _values = new Array();
-                for (var key in this.map) {
-                    _values.push(this.map[key]);
-                }
-                return _values;
-            },
-            removeAll: function () {
-                this.map = {};
-            },
-            keySet: function () {
-                var _keys = [];
-                for (var i in this.map) {
-                    _keys.push(i);
-                }
-                return _keys;
             }
         };
-        HashMap.prototype.constructor = HashMap;
-
 
         var dataArr;
         var resultArr;
         var map;
-        var indoormap;
         var indoordetail = [];
         var test;
         let file_data = new HashMap();
+        var layerlst = [];
+        var userlist = [];
+        var target_time_min = $.cookie("target_time_min");
+        var target_time_max = $.cookie("target_time_max");
 
         //屋内地図Map上に書く
         var getmapdetail = function (companycode) {
@@ -118,6 +129,41 @@
             })
         };
 
+        var sedistance;
+        var perdistance;
+        var smallTime;
+        var timelinebar = function (target_time_min, target_time_max,speed) {
+            smallTime = new Date(target_time_min);
+            var bigTime = new Date(target_time_max);
+            sedistance = (bigTime.getTime() - smallTime.getTime()) / 1000;
+            perdistance = 100 / sedistance;
+            console.log(smallTime);
+            delaydraw(0, speed);
+
+        }
+
+        function delaydraw(i, time) {
+            setTimeout(function () {
+                drawbar(i, time);
+            }, Number(time));
+        }
+
+        var drawbar = function (i, time) {
+            var bar = document.getElementById("bar");
+            var total = document.getElementById("total");
+            if (i < sedistance) {
+                bar.style.width = i * perdistance + "%";
+                var temptime = new Date(smallTime.getTime() + i * 1000);
+                total.innerHTML = temptime.toString();
+                for (let j = 0; j < userlist.length; j++) {
+                    drawPoint(file_data.get(userlist[j]), j, temptime);
+                }
+                i += 1;
+                delaydraw(i, Number(time));
+            }
+        }
+
+
         //google map and leaflet map 初期化
         var initMap = function () {
             const Tokyo = {lat: 35.68, lng: 139.75};
@@ -126,23 +172,15 @@
                 center: Tokyo,
             });
 
-            indoormap = L.map('IndoorMap', {
-                center: [40.75, -74.2],
-                zoom: 10
-            });
-
             var cookie_value = $.cookie("enabermap.uid");
             var companycode = cookie_value.substring(0, 5);
             getmapdetail(companycode);
 
             var time = $.cookie("speed");
             var targetlist = $.cookie("userlist");
-            var target_time_min = $.cookie("target_time_min");
-            var target_time_max = $.cookie("target_time_max");
 
-            // var userlist = targetlist.split(',');
-            var userlist = [];
-            userlist.push(targetlist);
+            document.getElementById("playspeed").value = time;
+            userlist = targetlist.split(',');
             for (let i = 0; i < userlist.length; i++) {
                 let uid = userlist[i];
                 resultArr = [];
@@ -169,133 +207,68 @@
                 })
             }
             alert("load log file success!")
-            for (let i = 0; i < userlist.length; i++) {
-                delay(0, file_data.get(userlist[i]), Number(time));
-            }
+
+            timelinebar(target_time_min, target_time_max,Number(time));
 
         };
         initMap();
 
-        var drawcurrentindoormap = function (filename, keypoint) {
-            var keypoints = keypoint.split(",");
-            //quit
-            L.Control.quitpage = L.Control.extend({
-
-                quitmain: function () {
-                    document.getElementById("map").style.display = "block";
-                    document.getElementById("IndoorMap").style.display = "none";
-                    test.remove();
-                    test1.remove();
-                    test2.remove();
-                },
-
-                onAdd: function (map) {
-                    var img = L.DomUtil.create('img');
-                    img.src = '/icon/shut.png';
-                    img.style.width = '50px'
-                    L.DomEvent.addListener(img, 'click', this.quitmain, this);
-                    return img;
-                },
-
-            });
-            L.control.quitpage = function (opts) {
-                return new L.Control.quitpage(opts);
-            }
-
-            var test1 = L.control.quitpage({position: 'topright'}).addTo(indoormap);
-
-            //showmessage
-            L.Control.showbox = L.Control.extend({
-
-                onAdd: function (map) {
-                    var divbox = L.DomUtil.create('div');
-                    divbox.id = "info";
-                    return divbox;
-                },
-
-            });
-            L.control.showbox = function (opts) {
-                return new L.Control.showbox(opts);
-            }
-
-            var test2 = L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
-
-            indoormap.on('mousemove', function (e) {
-                document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
-            });
-
-            var imageUrl = 'http://104.198.245.131/' + filename,
-                imageBounds = [
-                    [Number(keypoints[0]), Number(keypoints[1])],
-                    [Number(keypoints[2]), Number(keypoints[3])]
-                ];
-            test = L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
-            indoormap.fitBounds(imageBounds);
-            indoormap.setZoom(22);
-
-        }
-
         var showindoormap = function (filename, keypoint) {
-            document.getElementById("map").style.display = "none";
-            document.getElementById("IndoorMap").style.display = "block";
-            drawcurrentindoormap(filename, keypoint);
+            $.cookie('filename-history', filename);
+            $.cookie('keypoints-history', keypoint);
+            window.open("http://104.198.245.131:3000/historyshowindoor");
         }
 
-        var drawPoint = function (i, target, time) {
-            if (i == 0) {
-                var lat = Number(target[i].lat);
-                var lng = Number(target[i].lon);
-                var marker = new google.maps.Marker({
-                    position: {lat: lat, lng: lng},
-                    map: map,
-                });
-                var lmarker = L.marker([lat, lng]).addTo(indoormap);
-                i += 1;
-                delay(i, target, time);
-            } else if (i == target.length - 1) {
-                var lat = Number(target[i].lat);
-                var lng = Number(target[i].lon);
-                var marker = new google.maps.Marker({
-                    position: {lat: lat, lng: lng},
-                    map: map,
-                });
-                var lmarker = L.marker([lat, lng]).addTo(indoormap);
-                i += 1;
-                console.log("end");
-            } else if (i < target.length) {
-                var flightPath = new google.maps.Polyline({
-                    path: [{
-                        lat: Number(target[i - 1].lat),
-                        lng: Number(target[i - 1].lon)
-                    }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}],
-                    geodesic: true,
-                    strokeColor: "#FF0000",
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2,
-                });
-                flightPath.setMap(map);
-
-                var firstpolyline = new L.Polyline( [{
-                    lat: Number(target[i - 1].lat),
-                    lng: Number(target[i - 1].lon)
-                }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}], {
-                    color: 'blue',
-                    weight: 3,
-                    opacity: 1,
-                    smoothFactor: 1
-                });
-
-                firstpolyline.addTo(indoormap);
-                i += 1;
-                delay(i, target, time);
+        var drawPoint = function (target, j, temptime) {
+            for (let i = 0; i < target.length; i++) {
+                var targettime = new Date(target[i].tim);
+                if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
+                    if (i == 0) {
+                        var lat = Number(target[i].lat);
+                        var lng = Number(target[i].lon);
+                        var marker = new google.maps.Marker({
+                            position: {lat: lat, lng: lng},
+                            map: map,
+                        });
+                        layerlst.push(marker);
+                    } else if (i == target.length - 1) {
+                        var lat = Number(target[i].lat);
+                        var lng = Number(target[i].lon);
+                        var marker = new google.maps.Marker({
+                            position: {lat: lat, lng: lng},
+                            map: map,
+                        });
+                        layerlst.push(marker);
+                        console.log("end");
+                    } else {
+                        var flightPath = new google.maps.Polyline({
+                            path: [{
+                                lat: Number(target[i - 1].lat),
+                                lng: Number(target[i - 1].lon)
+                            }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}],
+                            geodesic: true,
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 1.0,
+                            strokeWeight: 2,
+                        });
+                        flightPath.setMap(map);
+                        layerlst.push(flightPath);
+                    }
+                }
             }
         }
 
-        function delay(i, target, time) {
-            setTimeout(function () {
-                drawPoint(i, target, time);
-            }, Number(time));
-        }
+        document.getElementById("replay").addEventListener('click', function () {
+            if (layerlst.length != 0) {
+                for (let i = 0; i < layerlst.length; i++) {
+                    layerlst[i].setMap(null);
+                }
+            }
+            layerlst = [];
+            var changetime = document.getElementById('playspeed').value;
+            timelinebar(target_time_min, target_time_max,Number(changetime));
+
+        })
 
     </script>
 </div>

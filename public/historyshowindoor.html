@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HistoryLoactionIndoorMap</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <style>
+        html, body, #indoormap {
+            height: 100%;
+            width: 100%;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="indoormap"></div>
+<script>
+
+    //Java　Hashmap 自分を定義する
+    function HashMap() {
+        this.map = {};
+    }
+
+    HashMap.prototype = {
+        put: function (key, value) {
+            this.map[key] = value;
+        },
+        get: function (key) {
+            if (this.map.hasOwnProperty(key)) {
+                return this.map[key];
+            }
+            return null;
+        },
+        remove: function (key) {
+            if (this.map.hasOwnProperty(key)) {
+                return delete this.map[key];
+            }
+            return false;
+        }
+    };
+    var indoormap;
+    const keypoint = $.cookie("keypoints-history");
+    const filename = $.cookie("filename-history");
+    let file_data = new HashMap();
+
+    const init = function () {
+        indoormap = L.map('indoormap', {
+            center: [40.75, -74.2],
+            zoom: 10
+        });
+
+        var keypoints = keypoint.split(",");
+
+        //showmessage
+        L.Control.showbox = L.Control.extend({
+
+            onAdd: function (map) {
+                var divbox = L.DomUtil.create('div');
+                divbox.id = "info";
+                return divbox;
+            },
+
+        });
+        L.control.showbox = function (opts) {
+            return new L.Control.showbox(opts);
+        }
+
+        L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
+
+        indoormap.on('mousemove', function (e) {
+            document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
+        });
+
+        var imageUrl = 'http://localhost/' + filename,
+            imageBounds = [
+                [Number(keypoints[0]), Number(keypoints[1])],
+                [Number(keypoints[2]), Number(keypoints[3])]
+            ];
+        L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
+        indoormap.fitBounds(imageBounds);
+        indoormap.setZoom(22);
+
+        var time = $.cookie("speed");
+        var targetlist = $.cookie("userlist");
+        var target_time_min = $.cookie("target_time_min");
+        var target_time_max = $.cookie("target_time_max");
+
+        var userlist = targetlist.split(',');
+        for (let i = 0; i < userlist.length; i++) {
+            let uid = userlist[i];
+            resultArr = [];
+            $.ajax({
+                type: 'GET',
+                async: false,
+                url: 'http://104.198.245.131:3000/historical/' + uid,
+                success: function (data) {
+                    if (data != null) {
+                        console.log(uid);
+                        dataArr = data.split(/[(\r\n)\r\n]+/);
+                        dataArr.pop();
+                        for (let j = 0; j < dataArr.length; j++) {
+                            dataArr[j] = JSON.parse(dataArr[j]);
+                            if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
+                                resultArr.push(dataArr[j]);
+                            }
+                        }
+                        file_data.put(uid, resultArr);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+        alert("load log file success!")
+        for (let i = 0; i < userlist.length; i++) {
+            delay(0, file_data.get(userlist[i]), Number(time));
+        }
+    }
+
+    init();
+
+    var drawPoint = function (i, target, time) {
+        if (i == 0) {
+            var lat = Number(target[i].lat);
+            var lng = Number(target[i].lon);
+            var lmarker = L.marker([lat, lng]).addTo(indoormap);
+            i += 1;
+            delay(i, target, time);
+        } else if (i == target.length - 1) {
+            var lat = Number(target[i].lat);
+            var lng = Number(target[i].lon);
+            var lmarker = L.marker([lat, lng]).addTo(indoormap);
+            console.log("end");
+        } else if (i < target.length) {
+            var firstpolyline = new L.Polyline([{
+                lat: Number(target[i - 1].lat),
+                lng: Number(target[i - 1].lon)
+            }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}], {
+                color: 'blue',
+                weight: 3,
+                opacity: 1,
+                smoothFactor: 1
+            });
+            firstpolyline.addTo(indoormap);
+            i += 1;
+            delay(i, target, time);
+        }
+    };
+
+    function delay(i, target, time) {
+        setTimeout(function () {
+            drawPoint(i, target, time);
+        }, Number(time));
+    };
+
+</script>
+</body>
+</html>

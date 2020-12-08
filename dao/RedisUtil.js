@@ -8,6 +8,7 @@ client.on('error',function (err){
     console.log('Redis Connection error:event - ' + client.host + ':' + client.port + '-' +err);
 })
 
+//hgetall
 client.synGet = async(key) => {
     const newGet = async(key) => {
         let val = await new Promise((resolve => {
@@ -20,12 +21,35 @@ client.synGet = async(key) => {
     return await newGet(key);
 }
 
+//hmset
 client.synPost = (uid,data)=>{
     client.hmset(uid,data,function (err){
         if(err){
             console.error(err);
         }
     });
+}
+
+//set
+client.Post = (uid,data)=>{
+    client.set(uid,data,function (err){
+        if(err){
+            console.error(err);
+        }
+    });
+}
+
+//mget
+client.synMGet = async(keys) => {
+    const newMGet = async(keys) => {
+        let val = await new Promise((resolve => {
+            client.mget(keys,function (err, res){
+                return resolve(res);
+            });
+        }));
+        return val;
+    };
+    return await newMGet(keys);
 }
 
 module.exports = {

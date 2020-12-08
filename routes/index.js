@@ -38,6 +38,11 @@ router.get('/historyshow', function (req, res, next) {
     res.render('historyshow');
 });
 
+//屋内地図履歴表示画面
+router.get('/historyshowindoor', function (req, res, next) {
+    res.render('historyshowindoor');
+});
+
 //MainPage
 router.get('/mainmap', function (req, res, next) {
     if (req.session.isLogin == 1) {
@@ -47,20 +52,32 @@ router.get('/mainmap', function (req, res, next) {
     }
 });
 
-//人位置情報取得
+//人位置情報取得(廃棄)
 router.get('/getlocation/:uid', async function (req, res, next) {
     const uid = req.params.uid;
     let result = await client.synGet(uid);
     res.json(result);
 });
 
+//人(多数)位置情報取得
+router.get('/getlocations/:uid', async function (req, res, next) {
+    const uid = req.params.uid.split(";");
+    let result = await client.synMGet(uid);
+    res.send(result);
+});
+
 //人位置情報送信
 router.post('/location/:uid', function (req, res, next) {
     const uid = req.params.uid;
     if (req.body.data != null) {
-        logger.logger(uid, JSON.stringify(req.body.data));
-        client.synPost(uid, req.body.data);
-        res.json({"result": "success"});
+        try{logger.logger(uid, JSON.stringify(req.body.data));
+            var val = req.body.data.lat+";"+req.body.data.lon+";"+req.body.data.alt;
+            client.Post(uid, val);
+            res.json({"result": "success"});}
+        catch (e) {
+            console.log(e);
+            res.json({"result": "failed"});
+        }
     } else {
         res.json({"result": "failed"});
     }

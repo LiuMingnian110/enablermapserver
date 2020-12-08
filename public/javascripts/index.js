@@ -1,12 +1,13 @@
 let map;
 let markerCluster = null;
 const companycode = $.cookie("enabermap.uid").substring(0, 5);
-const adminpnumber = cookie_value.substring(14);
+const adminpnumber = $.cookie("enabermap.uid").substring(14);
 let UserListData = null;
 let uidlist = [];
 let pnumberlist = [];
 let userdetaillist = [];
 let pnamelist = [];
+let uidlistforajax = null;
 
 //屋内地図Map上に書く
 var getmapdetail = function (companycode) {
@@ -175,6 +176,17 @@ var drawPosition = function () {
             console.log(err);
         }
     })
+    for (let i = 0; i < uidlist.length; i++) {
+
+        if (i == uidlist.length - 1) {
+            uidlistforajax = uidlistforajax + uidlist[i]
+        } else if (i == 0) {
+            uidlistforajax = uidlist[i] + ";"
+        } else {
+            uidlistforajax = uidlistforajax + uidlist[i] + ";"
+        }
+    }
+
 
     getpersondetail();
 
@@ -194,23 +206,46 @@ var showallposition = function () {
         markerCluster.clearMarkers();
     }
 
-    for (let i = 0; i < uidlist.length; i++) {
-        $.ajax({
-            type: 'GET',
-            async: false,
-            url: 'http://localhost:3000/getlocation/' + uidlist[i],
-            success: function (data) {
-                if (data != null) {
-                    tempnamelist.push(pnamelist[i]);
-                    var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
-                    locations.push(latlng);
+    // for (let i = 0; i < uidlist.length; i++) {
+    //     $.ajax({
+    //         type: 'GET',
+    //         async: false,
+    //         url: 'http://localhost:3000/getlocation/' + uidlist[i],
+    //         success: function (data) {
+    //             if (data != null) {
+    //                 tempnamelist.push(pnamelist[i]);
+    //                 var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
+    //                 locations.push(latlng);
+    //             }
+    //         },
+    //         error: function (err) {
+    //             console.log(err);
+    //         }
+    //     })
+    // }
+
+    $.ajax({
+        type: 'GET',
+        async: false,
+        url: 'http://localhost:3000/getlocations/' + uidlistforajax,
+        success: function (data) {
+            if (data != null) {
+                for (let i = 0; i < data.length; i++) {
+                    if(data[i] != null){
+                        var temp = data[i].split(";")
+                        tempnamelist.push(pnamelist[i]);
+                        var latlng = {lat: Number(temp[0]), lng: Number(temp[1])};
+                        locations.push(latlng);
+                    }
                 }
-            },
-            error: function (err) {
-                console.log(err);
+
             }
-        })
-    }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+
 
     var markers = locations.map((location, i) => {
         return new google.maps.Marker({
@@ -248,7 +283,6 @@ var init = function () {
     drawPosition();
 }
 
-init();
 
 /**
  * SwitchBtn
@@ -393,7 +427,7 @@ generatorOptions(wrappers[0], 0, date.getFullYear(), date.getFullYear() - yearPa
 generatorOptions(wrappers[1], 1, 12, 1, true, '')
 generatorOptions(wrappers[2], 2, 31, 1, true, '')
 generatorOptions(wrappers[3], 3, 24, 1, true, '')
-generatorOptions(wrappers[4], 4, 59, 1, true, '')
+generatorOptions(wrappers[4], 4, 59, 0, true, '')
 generatorOptions(wrappers[5], 5, 23, 1, true, '')
 generatorOptions(wrappers[6], 6, 100, 1, true, '')
 
@@ -440,6 +474,17 @@ var stringpluszero = function (num) {
     }
 
 }
+
+document.getElementById('ecording').addEventListener('click', function () {
+    var nowtime = new Date();
+    document.getElementById('historyyear').innerText = nowtime.getFullYear();
+    document.getElementById('historymonth').innerText = nowtime.getMonth() + 1;
+    document.getElementById('historyday').innerText = nowtime.getDate();
+    document.getElementById('historyhour').innerText = nowtime.getHours();
+    document.getElementById('historymin').innerText = nowtime.getMinutes();
+
+})
+
 
 //履歴表示機能
 document.getElementById('start-btn').addEventListener('click', function () {
