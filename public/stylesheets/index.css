@@ -427,6 +427,9 @@ canvas{
   margin-top: -32px;
 }
 
+.testcase{
+  padding-left: 20px;
+}
 /*.set-val{*/
 /*  width: 55px;*/
 /*  overflow: hidden;*/

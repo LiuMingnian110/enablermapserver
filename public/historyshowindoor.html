@@ -13,16 +13,55 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <style>
-        html, body, #indoormap {
-            height: 100%;
+        html, body, #wrapper {
             width: 100%;
+            height: 100%;
+        }
+
+        #map {
+            width: 100%;
+            height: 85%;
+        }
+
+        #showbar {
+            width: 100%;
+            height: 15%;
+        }
+
+        .container {
+            width: 450px;
+            border: 1px solid #6C9C2C;
+            height: 25px;
+        }
+
+        #bar {
+            background: #95CA0D;
+            float: left;
+            height: 100%;
+            text-align: center;
+            line-height: 150%;
         }
 
 
     </style>
 </head>
 <body>
-<div id="indoormap"></div>
+<div id="wrapper">
+    <div id="map"></div>
+    <div id="showbar">
+        <div>
+            <button id="replay">REPLAY</button>
+            <label>Speed(ms)</label>
+            <input id="playspeed" type="text"/>
+        </div>
+        <div class="container">
+            <div id="bar" style="width:0%;"></div>
+        </div>
+        <span id="total"></span>
+
+    </div>
+
+</div>
 <script>
 
     //Java　Hashmap 自分を定義する
@@ -47,18 +86,63 @@
             return false;
         }
     };
+
+
     var indoormap;
     const keypoint = $.cookie("keypoints-history");
     const filename = $.cookie("filename-history");
+    var time = $.cookie("speed");
+    var targetlist = $.cookie("userlist");
+    var userlist = targetlist.split(',');
+    var target_time_min = $.cookie("target_time_min");
+    var target_time_max = $.cookie("target_time_max");
     let file_data = new HashMap();
+    var layerlst = [];
+
+    var sedistance;
+    var perdistance;
+    var smallTime;
+    var timelinebar = function (target_time_min, target_time_max,speed) {
+        smallTime = new Date(target_time_min);
+        var bigTime = new Date(target_time_max);
+        sedistance = (bigTime.getTime() - smallTime.getTime()) / 1000;
+        perdistance = 100 / sedistance;
+        console.log(smallTime);
+        delaydraw(0, speed);
+    }
+
+    function delaydraw(i, time) {
+        setTimeout(function () {
+            drawbar(i, time);
+        }, Number(time));
+    }
+
+    var drawbar = function (i, time) {
+        var bar = document.getElementById("bar");
+        var total = document.getElementById("total");
+        if (i < sedistance) {
+            bar.style.width = i * perdistance + "%";
+            var temptime = new Date(smallTime.getTime() + i * 1000);
+            total.innerHTML = temptime.toString();
+            for (let j = 0; j < userlist.length; j++) {
+                drawPoint(file_data.get(userlist[j]), j, temptime);
+            }
+            i += 1;
+            delaydraw(i, Number(time));
+        }
+    }
+
+
+
 
     const init = function () {
-        indoormap = L.map('indoormap', {
+        indoormap = L.map('map', {
             center: [40.75, -74.2],
             zoom: 10
         });
 
         var keypoints = keypoint.split(",");
+        document.getElementById("playspeed").value = time;
 
         //showmessage
         L.Control.showbox = L.Control.extend({
@@ -80,7 +164,7 @@
             document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
         });
 
-        var imageUrl = 'http://localhost/' + filename,
+        var imageUrl = 'http://104.198.245.131/' + filename,
             imageBounds = [
                 [Number(keypoints[0]), Number(keypoints[1])],
                 [Number(keypoints[2]), Number(keypoints[3])]
@@ -89,12 +173,6 @@
         indoormap.fitBounds(imageBounds);
         indoormap.setZoom(22);
 
-        var time = $.cookie("speed");
-        var targetlist = $.cookie("userlist");
-        var target_time_min = $.cookie("target_time_min");
-        var target_time_max = $.cookie("target_time_max");
-
-        var userlist = targetlist.split(',');
         for (let i = 0; i < userlist.length; i++) {
             let uid = userlist[i];
             resultArr = [];
@@ -122,46 +200,56 @@
             })
         }
         alert("load log file success!")
-        for (let i = 0; i < userlist.length; i++) {
-            delay(0, file_data.get(userlist[i]), Number(time));
-        }
+
+        timelinebar(target_time_min, target_time_max,Number(time));
+
     }
 
     init();
 
-    var drawPoint = function (i, target, time) {
-        if (i == 0) {
-            var lat = Number(target[i].lat);
-            var lng = Number(target[i].lon);
-            var lmarker = L.marker([lat, lng]).addTo(indoormap);
-            i += 1;
-            delay(i, target, time);
-        } else if (i == target.length - 1) {
-            var lat = Number(target[i].lat);
-            var lng = Number(target[i].lon);
-            var lmarker = L.marker([lat, lng]).addTo(indoormap);
-            console.log("end");
-        } else if (i < target.length) {
-            var firstpolyline = new L.Polyline([{
-                lat: Number(target[i - 1].lat),
-                lng: Number(target[i - 1].lon)
-            }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}], {
-                color: 'blue',
-                weight: 3,
-                opacity: 1,
-                smoothFactor: 1
-            });
-            firstpolyline.addTo(indoormap);
-            i += 1;
-            delay(i, target, time);
+    var drawPoint = function (target, j, temptime) {
+        for (let i = 0; i < target.length; i++) {
+            var targettime = new Date(target[i].tim);
+            if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
+                if (i == 0) {
+                    var lat = Number(target[i].lat);
+                    var lng = Number(target[i].lon);
+                    var lmarker = L.marker([lat, lng]).addTo(indoormap);
+                    layerlst.push(lmarker);
+                } else if (i == target.length - 1) {
+                    var lat = Number(target[i].lat);
+                    var lng = Number(target[i].lon);
+                    var lmarker = L.marker([lat, lng]).addTo(indoormap);
+                    layerlst.push(lmarker);
+                    console.log("end");
+                } else {
+                    var firstpolyline = new L.Polyline([{
+                        lat: Number(target[i - 1].lat),
+                        lng: Number(target[i - 1].lon)
+                    }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}], {
+                        color: 'blue',
+                        weight: 3,
+                        opacity: 1,
+                        smoothFactor: 1
+                    });
+                    firstpolyline.addTo(indoormap);
+                    layerlst.push(firstpolyline);
+                }
+            }
         }
-    };
+    }
 
-    function delay(i, target, time) {
-        setTimeout(function () {
-            drawPoint(i, target, time);
-        }, Number(time));
-    };
+    document.getElementById("replay").addEventListener('click', function () {
+        if (layerlst.length != 0) {
+            for (let i = 0; i < layerlst.length; i++) {
+                indoormap.removeLayer(layerlst[i]);
+            }
+        }
+        layerlst = [];
+        var changetime = document.getElementById('playspeed').value;
+        timelinebar(target_time_min, target_time_max,Number(changetime));
+
+    })
 
 </script>
 </body>

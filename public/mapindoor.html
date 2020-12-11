@@ -13,7 +13,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <style>
-        html, body, #indoormap{
+        html, body, #indoormap {
             height: 100%;
             width: 100%;
         }
@@ -21,7 +21,7 @@
 
     </style>
 </head>
-<body >
+<body>
 <div id="indoormap"></div>
 <script>
     var indoormap;
@@ -30,7 +30,8 @@
     const filename = $.cookie("filename");
     const uidlist = $.cookie("uidlist").split(",");
     const pnamelist = $.cookie("pnamelist").split(",");
-    var leafmarker=[];
+    var leafmarker = [];
+    var uidlistforajax;
 
     var timedraw = function (fn, millisec) {
         function interval() {
@@ -42,37 +43,64 @@
     }
 
     var showallposition = function () {
-        var tempnamelist = [];
 
-        if (leafmarker != "") {
+        if (leafmarker.length != 0) {
             for (let i = 0; i < leafmarker.length; i++) {
                 indoormap.removeLayer(leafmarker[i]);
             }
             leafmarker.length = 0;
         }
 
-        for (let i = 0; i < uidlist.length; i++) {
-            $.ajax({
-                type: 'GET',
-                async: false,
-                url: 'http://localhost:3000/getlocation/' + uidlist[i],
-                success: function (data) {
-                    if (data != null) {
-                        tempnamelist.push(pnamelist[i]);
-                        var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
-                            {
-                                permanent: true,
-                                direction: 'right'
-                            });
-                        leafmarker.push(lamMarker);
-                        indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+
+        $.ajax({
+            type: 'GET',
+            async: false,
+            url: 'http://localhost:3000/getlocations/' + uidlistforajax,
+            success: function (data) {
+                if (data != null) {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i] != null) {
+                            var temp = data[i].split(";")
+                            var lamMarker = new L.marker([Number(temp[0]), Number(temp[1])]).bindTooltip(pnamelist[i],
+                                {
+                                    permanent: true,
+                                    direction: 'right'
+                                });
+                            leafmarker.push(lamMarker);
+                            indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+                        }
                     }
-                },
-                error: function (err) {
-                    console.log(err);
+
                 }
-            })
-        }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+
+
+        // for (let i = 0; i < uidlist.length; i++) {
+        //     $.ajax({
+        //         type: 'GET',
+        //         async: false,
+        //         url: 'http://localhost:3000/getlocation/' + uidlist[i],
+        //         success: function (data) {
+        //             if (data != null) {
+        //                 tempnamelist.push(pnamelist[i]);
+        //                 var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
+        //                     {
+        //                         permanent: true,
+        //                         direction: 'right'
+        //                     });
+        //                 leafmarker.push(lamMarker);
+        //                 indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+        //             }
+        //         },
+        //         error: function (err) {
+        //             console.log(err);
+        //         }
+        //     })
+        // }
 
     }
 
@@ -104,7 +132,7 @@
             document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
         });
 
-        var imageUrl = 'http://localhost/' + filename,
+        var imageUrl = 'http://104.198.245.131/' + filename,
             imageBounds = [
                 [Number(keypoints[0]), Number(keypoints[1])],
                 [Number(keypoints[2]), Number(keypoints[3])]
@@ -112,6 +140,19 @@
         L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
         indoormap.fitBounds(imageBounds);
         indoormap.setZoom(22);
+
+
+        for (let i = 0; i < uidlist.length; i++) {
+
+            if (i == uidlist.length - 1) {
+                uidlistforajax = uidlistforajax + uidlist[i]
+            } else if (i == 0) {
+                uidlistforajax = uidlist[i] + ";"
+            } else {
+                uidlistforajax = uidlistforajax + uidlist[i] + ";"
+            }
+        }
+
 
         timedraw(showallposition, 3000);
     };

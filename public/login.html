@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>login</title>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
@@ -82,6 +83,12 @@
         width: 100% !important;
     }
 
+    .submit{
+        width: 100%;
+        padding: 0px 100px;
+        position: relative;
+    }
+
 
 </style>
 <body>
@@ -102,7 +109,9 @@
                 <input type="password" class="form-control" id="password">
             </div>
         </form>
-        <button type="submit" class="btn btn-primary" onclick="dataUp()">Sign in</button>
+        <div class="submit">
+            <button type="submit" class="btn btn-primary" onclick="dataUp()">Sign in</button>
+        </div>
     </div>
     <div id="img-box" class="col align-self-end">
         <div id="map"></div>
@@ -155,6 +164,7 @@
                         alert("mailaddress or password error!");
                         window.location.href = '/login';
                     } else {
+                        $.cookie('enabermap.uid', JSON.parse(data).uid);
                         window.location.href = '/mainmap';
                     }
                 },

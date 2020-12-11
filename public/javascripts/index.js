@@ -71,17 +71,46 @@ var getpersondetail = function () {
 }
 
 var companyNameEle = document.querySelector('#user-title');
-
+var countrydic = {};
+const officedic = {};
+const depdic = {};
 var userlistmake = function () {
-    companyNameEle.innerText = companycode;
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:3000/getcodnamelist',
+        async: false,
+        success: function (data) {
+            for (let i = 0; i < data[0].length; i++) {
+                countrydic[data[0][i].countrycode] = data[0][i].countryname;
+            }
+
+            for (let i = 0; i < data[1].length; i++) {
+                officedic[data[1][i].officecode] = data[1][i].officename;
+            }
+
+            for (let i = 0; i < data[2].length; i++) {
+                depdic[data[2][i].depcode] = data[2][i].depname;
+            }
+        }
+    })
+
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:3000/getcompanyname/'+companycode,
+        async: false,
+        success: function (data) {
+            companyNameEle.innerText = data[0].companyname;
+        }
+    })
+
     const treeitem = document.querySelector('.treeitem');
     const treeData = {};
     for (let i = 0; i < UserListData.length; i++) {
         const user = UserListData[i];
         var companyCode = user.pcompanycode;
-        var country = user.pcountry;
-        var office = user.poffice;
-        var userDep = user.pdep;
+        var country = countrydic[user.pcountry];
+        var office = officedic[user.poffice];
+        var userDep = depdic[user.pdep];
         var userNumber = user.pnumber;
 
         if (!treeData.hasOwnProperty(office)) treeData[office] = {};
@@ -101,6 +130,9 @@ var userlistmake = function () {
         })
     }
     createCompanyTree(treeitem, treeData);
+    // treecontroller();
+    menuBtn();
+    treeDisplay();
 
 
 }
@@ -206,24 +238,6 @@ var showallposition = function () {
         markerCluster.clearMarkers();
     }
 
-    // for (let i = 0; i < uidlist.length; i++) {
-    //     $.ajax({
-    //         type: 'GET',
-    //         async: false,
-    //         url: 'http://localhost:3000/getlocation/' + uidlist[i],
-    //         success: function (data) {
-    //             if (data != null) {
-    //                 tempnamelist.push(pnamelist[i]);
-    //                 var latlng = {lat: Number(data.lat), lng: Number(data.lon)};
-    //                 locations.push(latlng);
-    //             }
-    //         },
-    //         error: function (err) {
-    //             console.log(err);
-    //         }
-    //     })
-    // }
-
     $.ajax({
         type: 'GET',
         async: false,
@@ -231,7 +245,7 @@ var showallposition = function () {
         success: function (data) {
             if (data != null) {
                 for (let i = 0; i < data.length; i++) {
-                    if(data[i] != null){
+                    if (data[i] != null) {
                         var temp = data[i].split(";")
                         tempnamelist.push(pnamelist[i]);
                         var latlng = {lat: Number(temp[0]), lng: Number(temp[1])};
@@ -384,7 +398,7 @@ panelChangePwdCloseBtn.onclick = function passChangeDemo() {
 let selector = document.querySelectorAll('.selector')
 let option = document.getElementById('option')
 let wrappers = document.querySelectorAll('.wrapper')
-
+var setVal  = document.querySelectorAll('.set-val')
 var activeSelectorIndex = 0
 for (let i = 0; i < selector.length; i++) {
     selector[i].index = i
@@ -395,6 +409,17 @@ for (let i = 0; i < selector.length; i++) {
         selectorPopover.style.display = selectorPopover.style.display == 'none' ? 'block' : 'none'
     })
 }
+
+function realTime(){
+    setVal[0].innerText = year
+    setVal[1].innerText = month+1
+    setVal[2].innerText = day
+    setVal[3].innerText = hh
+    setVal[4].innerText = mm
+}
+
+
+
 
 const date = new Date()
 const year = date.getFullYear()
@@ -426,7 +451,7 @@ const yearPageSize = 20
 generatorOptions(wrappers[0], 0, date.getFullYear(), date.getFullYear() - yearPageSize, false, '')
 generatorOptions(wrappers[1], 1, 12, 1, true, '')
 generatorOptions(wrappers[2], 2, 31, 1, true, '')
-generatorOptions(wrappers[3], 3, 24, 1, true, '')
+generatorOptions(wrappers[3], 3, 23, 0, true, '')
 generatorOptions(wrappers[4], 4, 59, 0, true, '')
 generatorOptions(wrappers[5], 5, 23, 1, true, '')
 generatorOptions(wrappers[6], 6, 100, 1, true, '')
@@ -486,6 +511,9 @@ document.getElementById('ecording').addEventListener('click', function () {
 })
 
 
+function findKey (obj,value, compare = (a, b) => a === b) {  return Object.keys(obj).find(k => compare(obj[k], value))
+}
+
 //履歴表示機能
 document.getElementById('start-btn').addEventListener('click', function () {
     var year = document.getElementById('historyyear').innerText;
@@ -516,9 +544,9 @@ document.getElementById('start-btn').addEventListener('click', function () {
         var checkbox = levelNo[i].querySelector('.checkbox-active')
         if (checkbox) {
             var companyName = checkbox.bindData.companyName
-            var country = checkbox.bindData.country
-            var office = checkbox.bindData.office
-            var dep = checkbox.bindData.dep
+            var country = findKey(countrydic,checkbox.bindData.country)
+            var office = findKey(officedic,checkbox.bindData.office)
+            var dep = findKey(depdic,checkbox.bindData.dep)
             var number = checkbox.bindData.number
             data.push(companyName + country + office + dep + number)
             flag = true
@@ -532,7 +560,164 @@ document.getElementById('start-btn').addEventListener('click', function () {
     $.cookie('target_time_max', target_time_max);
     $.cookie('speed', playspeed.toString());
 
+
     window.open("http://localhost:3000/historyshow");
 
 })
 
+document.getElementById("refresh-btn").addEventListener('click', function () {
+    location.reload();
+})
+
+//HistoryDisplayTime buttonwをクリックして、
+
+
+document.getElementById('start-btn').addEventListener('click',function(){
+    var levelNo = document.querySelectorAll('.level-3')
+    var data = []
+    var flag = false
+    for(var i = 0; i < levelNo.length; i++){
+        var checkbox = levelNo[i].querySelector('.checkbox-active')
+        if(checkbox) {
+            var companyName = checkbox.bindData.companyName
+            var country = checkbox.bindData.country
+            var office = checkbox.bindData.office
+            var dep = checkbox.bindData.dep
+            var number = checkbox.bindData.number
+            data.push(companyName + country + office + dep + number)
+            flag = true
+        }
+    }
+    if(!flag) {
+        alert('ユーザーを選択してください')
+    }
+})
+
+//user rigth btn
+function menuBtn(){
+    var levelNo = document.querySelectorAll('.level-3')
+    var flag = false
+    for(var i = 0; i < levelNo.length; i++){
+        var menuBtnBox = levelNo[i].querySelector('.menu-btn-box')
+        menuBtnBox.index = i
+
+        menuBtnBox.addEventListener('click',function(){
+            realTime()
+            var currentBox = this.parentNode.querySelector('.checkbox')
+            if(!currentBox.classList.contains('checkbox-active')){
+                currentBox.classList.add('checkbox-active')
+            }
+            // this --> levelNo
+            var currentNode = this.parentNode
+            //levelClass --> class[1] checkbox-active
+            var levelClass = currentNode.classList[1]
+            var level = levelClass.split('-')[1]
+
+            currentNode.parentNode.querySelectorAll('.menu-options-btn')
+                .forEach((ele, index) => {
+                    if(this.index !== index) {
+                        ele.style.display = 'none'
+                    }
+                })
+
+            var menuOptionsBtn = this.querySelector('.menu-options-btn')
+            menuOptionsBtn.style.display = menuOptionsBtn.style.display == 'block' ? 'none' : 'block'
+
+            if(currentNode.nextSibling !== null) {
+                var nextLevel = currentNode.nextSibling.classList[1].split('-')[1]
+                var nextEle = currentNode
+                while(nextLevel === level ) {
+                    nextEle = nextEle.nextSibling
+                    var checkbox = nextEle.querySelector('.checkbox')
+                    if(checkbox.classList.contains('checkbox-active')) {
+                        checkbox.classList.remove('checkbox-active')
+                    }
+                    if(nextEle.nextSibling === null) break
+                    nextLevel = nextEle.nextSibling.classList[1].split('-')[1]
+                }
+            }
+            if(currentNode.previousSibling !== null) {
+                var prevLevel = currentNode.previousSibling.classList[1].split('-')[1]
+                var prevEle = currentNode
+                while(prevLevel === level ) {
+                    prevEle = prevEle.previousSibling
+                    var checkbox = prevEle.querySelector('.checkbox')
+                    if(checkbox.classList.contains('checkbox-active')) {
+                        checkbox.classList.remove('checkbox-active')
+                    }
+                    if(prevEle.previousSibling === null) break
+                    prevLevel = prevEle.previousSibling.classList[1].split('-')[1]
+                }
+            }
+        })
+    }
+    // resumeDisplayBtnをクリックして、HistoryDisplayTimeのdisplayを変わる
+    var resumeDisplayBtn = document.querySelectorAll('.resume-display-btn')
+    for(var i = 0; i < resumeDisplayBtn.length; i++){
+        resumeDisplayBtn[i].index = i
+        resumeDisplayBtn[i].addEventListener('click',function(){
+            mobileRecord.style.display = mobileRecord.style.display == 'none' ? 'block' : 'block'
+        })
+    }
+}
+
+//企業名、右側更新ボタン
+var refreshBtn = document.getElementById('refresh-btn')
+refreshBtn.addEventListener('click',function(){
+    var userdetailshow = document.getElementById('userdetailshow')
+    for(var i = userdetailshow.childNodes.length - 1; i >= 0; i--){
+        if(userdetailshow.childNodes.length != 0){
+            userdetailshow.removeChild(userdetailshow.childNodes[i])
+        }
+    }
+    userlistmake()
+})
+
+//userlist tree
+function treeDisplay(){
+    var treeitem = document.querySelector('.treeitem')
+    var iconSvg = treeitem.querySelectorAll('.icon-svg')
+
+    for(var i = 0; i < iconSvg.length; i++){
+        iconSvg[i].addEventListener('click',function(){
+            var curNode = this.parentNode
+            var curLevel = parseInt(curNode.classList[1].split('-')[1])
+            var nextNode = curNode.nextSibling
+            var nextLevel = parseInt(nextNode.classList[1].split('-')[1])
+
+            if(nextLevel === curLevel) return false
+
+            // SVG Rotate
+            var curSvg = this.querySelector('svg')
+            curSvg.style.transform = curSvg.style.transform === 'rotate(0deg)' ? 'rotate(90deg)' : 'rotate(0deg)'
+
+            // Tree expand
+            if(nextNode.style.display === 'none') {
+                //開け
+                var openLevel = curLevel + 1
+                while(nextLevel >= openLevel) {
+                    if (nextLevel === curLevel) break
+                    if(nextLevel === openLevel) {
+                        nextNode.style.display = 'block'
+                    }
+                    if(nextNode.nextSibling === null) break
+                    nextNode = nextNode.nextSibling
+                    nextLevel = parseInt(nextNode.classList[1].split('-')[1])
+                }
+            } else {
+                // 閉め
+                var closeLevel = nextLevel
+                while(nextLevel >= closeLevel) {
+                    if (nextLevel === curLevel) break
+                    nextNode.style.display = 'none'
+                    var nextSvg = nextNode.querySelector('svg')
+                    if(nextSvg) nextSvg.style.transform = 'rotate(0deg)'
+                    if(nextNode.nextSibling === null) break
+                    nextNode = nextNode.nextSibling
+                    nextLevel = parseInt(nextNode.classList[1].split('-')[1])
+                }
+            }
+
+        })
+    }
+}

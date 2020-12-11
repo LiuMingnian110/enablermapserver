@@ -169,7 +169,6 @@ router.post('/loginbypd', async function (req, res, next) {
             data = JSON.parse(dataString);
             var str = data[0].pcompanycode + data[0].pcountry + data[0].poffice + data[0].pdep + data[0].pnumber;
             req.session.isLogin = 1;
-            res.setHeader('Set-Cookie', ['enabermap.uid=' + str]);
             res.json({"uid": str});
             res.end();
         } else {

@@ -48,7 +48,7 @@
     <div id="showbar">
         <div>
             <button id="replay">REPLAY</button>
-            <label>Speed(s)</label>
+            <label>Speed(ms)</label>
             <input id="playspeed" type="text"/>
         </div>
         <div class="container">
@@ -58,6 +58,7 @@
 
     </div>
     <script>
+
         //Java　Hashmap 自分を定義する
         function HashMap() {
             this.map = {};
@@ -216,7 +217,7 @@
         var showindoormap = function (filename, keypoint) {
             $.cookie('filename-history', filename);
             $.cookie('keypoints-history', keypoint);
-            window.open("http://104.198.245.131:3000/historyshowindoor");
+            window.open("http://localhost:3000/historyshowindoor");
         }
 
         var drawPoint = function (target, j, temptime) {
