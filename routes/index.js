@@ -38,6 +38,11 @@ router.get('/historyshow', function (req, res, next) {
     res.render('historyshow');
 });
 
+//ロジック計算画面
+router.get('/logic', function (req, res, next) {
+    res.render('logic');
+});
+
 //屋内地図履歴表示画面
 router.get('/historyshowindoor', function (req, res, next) {
     res.render('historyshowindoor');

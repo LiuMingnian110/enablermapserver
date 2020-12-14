@@ -308,7 +308,9 @@
             mimeType: "multipart/form-data",
             success: function (data) {
                 if(data.status == 'success'){
-                    alert("updata success!");
+                    alert("insert success!Please add keypoints next!");
+                    $.cookie('setkeyfilename', filename);
+                    window.location.href = '/logic';
                 }
             },
             error: function () {
@@ -318,6 +320,7 @@
 
 
     })
+
 
 </script>
 </html>

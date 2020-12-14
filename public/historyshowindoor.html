@@ -97,12 +97,13 @@
     var target_time_min = $.cookie("target_time_min");
     var target_time_max = $.cookie("target_time_max");
     let file_data = new HashMap();
+    let drawlocation = new HashMap();
     var layerlst = [];
 
     var sedistance;
     var perdistance;
     var smallTime;
-    var timelinebar = function (target_time_min, target_time_max,speed) {
+    var timelinebar = function (target_time_min, target_time_max, speed) {
         smallTime = new Date(target_time_min);
         var bigTime = new Date(target_time_max);
         sedistance = (bigTime.getTime() - smallTime.getTime()) / 1000;
@@ -125,14 +126,12 @@
             var temptime = new Date(smallTime.getTime() + i * 1000);
             total.innerHTML = temptime.toString();
             for (let j = 0; j < userlist.length; j++) {
-                drawPoint(file_data.get(userlist[j]), j, temptime);
+                drawPoint(file_data.get(userlist[j]), userlist[j], temptime);
             }
             i += 1;
             delaydraw(i, Number(time));
         }
     }
-
-
 
 
     const init = function () {
@@ -192,6 +191,7 @@
                             }
                         }
                         file_data.put(uid, resultArr);
+                        drawlocation.put(uid, 0);
                     }
                 },
                 error: function (err) {
@@ -201,42 +201,54 @@
         }
         alert("load log file success!")
 
-        timelinebar(target_time_min, target_time_max,Number(time));
+        timelinebar(target_time_min, target_time_max, Number(time));
 
     }
 
     init();
 
-    var drawPoint = function (target, j, temptime) {
-        for (let i = 0; i < target.length; i++) {
-            var targettime = new Date(target[i].tim);
+    var drawPoint = function (target, uid, temptime) {
+        var k = drawlocation.get(uid);
+        if (k == 0) {
+            var targettime = new Date(target[0].tim);
             if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
-                if (i == 0) {
-                    var lat = Number(target[i].lat);
-                    var lng = Number(target[i].lon);
-                    var lmarker = L.marker([lat, lng]).addTo(indoormap);
-                    layerlst.push(lmarker);
-                } else if (i == target.length - 1) {
-                    var lat = Number(target[i].lat);
-                    var lng = Number(target[i].lon);
-                    var lmarker = L.marker([lat, lng]).addTo(indoormap);
-                    layerlst.push(lmarker);
-                    console.log("end");
-                } else {
-                    var firstpolyline = new L.Polyline([{
-                        lat: Number(target[i - 1].lat),
-                        lng: Number(target[i - 1].lon)
-                    }, {lat: Number(target[i].lat), lng: Number(target[i].lon)}], {
-                        color: 'blue',
-                        weight: 3,
-                        opacity: 1,
-                        smoothFactor: 1
-                    });
-                    firstpolyline.addTo(indoormap);
-                    layerlst.push(firstpolyline);
-                }
+                var lat = Number(target[0].lat);
+                var lng = Number(target[0].lon);
+                var lmarker = L.marker([lat, lng]).addTo(indoormap);
+                layerlst.push(lmarker);
+                k += 1;
+                drawlocation.put(uid, k);
+            }
+        } else if (k == target.length - 1) {
+            var targettime = new Date(target[k].tim);
+            if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
+                var lat = Number(target[k].lat);
+                var lng = Number(target[k].lon);
+                var lmarker = L.marker([lat, lng]).addTo(indoormap);
+                layerlst.push(lmarker);
+                console.log("end");
+                k += 1;
+                drawlocation.put(uid, k);
+            }
+        } else if (k < target.length - 1) {
+            var targettime = new Date(target[k].tim);
+            if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
+                var firstpolyline = new L.Polyline([{
+                    lat: Number(target[k - 1].lat),
+                    lng: Number(target[k - 1].lon)
+                }, {lat: Number(target[k].lat), lng: Number(target[k].lon)}], {
+                    color: 'blue',
+                    weight: 3,
+                    opacity: 1,
+                    smoothFactor: 1
+                });
+                firstpolyline.addTo(indoormap);
+                layerlst.push(firstpolyline);
+                k += 1;
+                drawlocation.put(uid, k);
             }
         }
+
     }
 
     document.getElementById("replay").addEventListener('click', function () {
@@ -246,8 +258,11 @@
             }
         }
         layerlst = [];
+        for (let i = 0; i < userlist.length; i++) {
+            drawlocation.put(userlist[i], 0);
+        }
         var changetime = document.getElementById('playspeed').value;
-        timelinebar(target_time_min, target_time_max,Number(changetime));
+        timelinebar(target_time_min, target_time_max, Number(changetime));
 
     })
 
