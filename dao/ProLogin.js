@@ -15,8 +15,8 @@ const updateUserPw = function (pnumber, pwd, newpwd) {
     return pros(sql);
 }
 
-const getNewPw = function (pnumber){
-    const sql = "select pwd from enablermap.user where pnumber="+"'"+pnumber+"';"
+const getNewPw = function (pnumber) {
+    const sql = "select pwd from enablermap.user where pnumber=" + "'" + pnumber + "';"
     return pros(sql);
 }
 
@@ -76,23 +76,33 @@ const insertIndoorMap = function (pcompanycode, pcountry, svgfile, building, flo
     return pros(sql);
 }
 
-const getuploadtime = function (companycode){
+const getuploadtime = function (companycode) {
     const sql = "select * from enablermap.uploadtime where companycode = " + "'" + companycode + "';"
     return pros(sql);
 }
 
-const getcountryname = function (){
+const getcountryname = function () {
     const sql = "select * from enablermap.countryall;"
     return pros(sql);
 }
 
-const getofficename = function (){
+const getofficename = function () {
     const sql = "select * from enablermap.officeall;"
     return pros(sql);
 }
 
-const getdepname = function (){
+const getdepname = function () {
     const sql = "select * from enablermap.depall;"
+    return pros(sql);
+}
+
+const getbuildname = function (filename) {
+    const sql = "select building from enablermap.indoormap where svgfile=" + "'" + filename + "';"
+    return pros(sql);
+}
+
+const getbuilddetail = function (buildname) {
+    const sql = "select * from enablermap.indoormap where building=" + "'" + buildname + "';"
     return pros(sql);
 }
 
@@ -129,5 +139,7 @@ module.exports = {
     getuploadtime,
     getcountryname,
     getofficename,
-    getdepname
+    getdepname,
+    getbuildname,
+    getbuilddetail
 }

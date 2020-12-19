@@ -49,8 +49,8 @@ var getmapdetail = function (companycode) {
 var showindoormap = function (filename, keypoint) {
     $.cookie('filename', filename);
     $.cookie('keypoints', keypoint);
-    window.open("http://localhost:3000/mapindoor");
-}
+    window.open("http://localhost:3000/indoorfloor");
+};
 
 var getpersondetail = function () {
     for (let i = 0; i < pnumberlist.length; i++) {

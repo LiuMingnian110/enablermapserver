@@ -32,6 +32,19 @@
     const pnamelist = $.cookie("pnamelist").split(",");
     var leafmarker = [];
     var uidlistforajax;
+    var targetmap;
+    var targetimage = new Image();
+    var imagescale;
+    var temp = keypoint.split(",");
+    var imgkeypoint1x;
+    var imgkeypoint1y;
+    var imgkeypoint2x;
+    var imgkeypoint2y;
+    var realkeypoint1x;
+    var realkeypoint1y;
+    var realkeypoint2x;
+    var realkeypoint2y;
+
 
     var timedraw = function (fn, millisec) {
         function interval() {
@@ -61,7 +74,9 @@
                     for (let i = 0; i < data.length; i++) {
                         if (data[i] != null) {
                             var temp = data[i].split(";")
-                            var lamMarker = new L.marker([Number(temp[0]), Number(temp[1])]).bindTooltip(pnamelist[i],
+                            // var xy=indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]);
+                            // var latlng = logicdraw(xy.x,xy.y)
+                            var lamMarker = new L.marker([Number(temp[0]),Number(temp[1])]).bindTooltip(pnamelist[i],
                                 {
                                     permanent: true,
                                     direction: 'right'
@@ -78,68 +93,67 @@
             }
         })
 
-
-        // for (let i = 0; i < uidlist.length; i++) {
-        //     $.ajax({
-        //         type: 'GET',
-        //         async: false,
-        //         url: 'http://localhost:3000/getlocation/' + uidlist[i],
-        //         success: function (data) {
-        //             if (data != null) {
-        //                 tempnamelist.push(pnamelist[i]);
-        //                 var lamMarker = new L.marker([Number(data.lat), Number(data.lon)]).bindTooltip(pnamelist[i],
-        //                     {
-        //                         permanent: true,
-        //                         direction: 'right'
-        //                     });
-        //                 leafmarker.push(lamMarker);
-        //                 indoormap.addLayer(leafmarker[leafmarker.length - 1]);
-        //             }
-        //         },
-        //         error: function (err) {
-        //             console.log(err);
-        //         }
-        //     })
-        // }
-
     }
 
     const init = function () {
-        indoormap = L.map('indoormap', {
-            center: [40.75, -74.2],
-            zoom: 10
-        });
-
         var keypoints = keypoint.split(",");
 
-        //showmessage
-        L.Control.showbox = L.Control.extend({
-
-            onAdd: function (map) {
-                var divbox = L.DomUtil.create('div');
-                divbox.id = "info";
-                return divbox;
-            },
-
-        });
-        L.control.showbox = function (opts) {
-            return new L.Control.showbox(opts);
-        }
-
-        L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
-
-        indoormap.on('mousemove', function (e) {
-            document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
-        });
-
-        var imageUrl = 'http://104.198.245.131/' + filename,
+        var imageUrl = 'http://localhost/' + filename,
             imageBounds = [
                 [Number(keypoints[0]), Number(keypoints[1])],
                 [Number(keypoints[2]), Number(keypoints[3])]
             ];
-        L.imageOverlay(imageUrl, imageBounds).addTo(indoormap);
-        indoormap.fitBounds(imageBounds);
-        indoormap.setZoom(22);
+
+        targetimage.src = imageUrl;
+
+
+        targetimage.onload = function () {
+            var width = targetimage.width;
+            var height = targetimage.height;
+            imagescale = height / width;
+            indoormap = L.map('indoormap', {
+                center: [40.75, -74.2],
+                zoom: 10
+            });
+
+            //showmessage
+            L.Control.showbox = L.Control.extend({
+
+                onAdd: function (map) {
+                    var divbox = L.DomUtil.create('div');
+                    divbox.id = "info";
+                    return divbox;
+                },
+
+            });
+            L.control.showbox = function (opts) {
+                return new L.Control.showbox(opts);
+            }
+
+            L.control.showbox({position: 'bottomleft'}).addTo(indoormap);
+
+            indoormap.on('mousemove', function (e) {
+                document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
+            });
+
+
+            targetmap = L.imageOverlay(targetimage, imageBounds, {className: "targetmapclass"}).addTo(indoormap);
+            indoormap.fitBounds(imageBounds);
+            indoormap.setZoom(22);
+
+            indoormap.on("zoomend", function () {
+                document.querySelector('.targetmapclass').style.height = Number(parseInt(document.querySelector('.targetmapclass').style.width) * imagescale) + "px";
+                imgkeypoint1x = targetmap.getElement().getBoundingClientRect().x;
+                imgkeypoint1y = targetmap.getElement().getBoundingClientRect().y;
+                imgkeypoint2x = targetmap.getElement().getBoundingClientRect().x + targetmap.getElement().getBoundingClientRect().width;
+                imgkeypoint2y = targetmap.getElement().getBoundingClientRect().y + targetmap.getElement().getBoundingClientRect().height;
+                realkeypoint1x = indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]).x
+                realkeypoint1y = indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]).y
+                realkeypoint2x = indoormap.latLngToContainerPoint([Number(temp[2]), Number(temp[3])]).x
+                realkeypoint2y = indoormap.latLngToContainerPoint([Number(temp[2]), Number(temp[3])]).y
+
+            })
+        }
 
 
         for (let i = 0; i < uidlist.length; i++) {
@@ -157,6 +171,22 @@
         timedraw(showallposition, 3000);
     };
     init();
+
+
+    const logicdraw = function (x, y) {
+
+        if (x >= realkeypoint1x && x <= realkeypoint2x) {
+            var scalex = (x - realkeypoint1x) / (realkeypoint2x - realkeypoint1x);
+            if (y >= realkeypoint1y && y <= realkeypoint2y) {
+                var scaley = (x - realkeypoint1y) / (realkeypoint2y - realkeypoint1y);
+                var drawx = scalex * (imgkeypoint2x - imgkeypoint1x) + imgkeypoint1x;
+                var drawy = scaley * (imgkeypoint2y - imgkeypoint1y) + imgkeypoint1y;
+                var latlng = indoormap.containerPointToLatLng([Number(drawx), Number(drawy)]);
+                return latlng;
+            }
+        }
+
+    }
 
 
 </script>

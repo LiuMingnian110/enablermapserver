@@ -23,6 +23,11 @@ router.get('/indoor-map', function (req, res, next) {
     res.render('indoor-map');
 });
 
+//屋内地図画面
+router.get('/indoorfloor', function (req, res, next) {
+    res.render('indoorfloor');
+});
+
 //ユーザ設定画面
 router.get('/userSettings', function (req, res, next) {
     res.render('userSettings');
@@ -75,11 +80,12 @@ router.get('/getlocations/:uid', async function (req, res, next) {
 router.post('/location/:uid', function (req, res, next) {
     const uid = req.params.uid;
     if (req.body.data != null) {
-        try{logger.logger(uid, JSON.stringify(req.body.data));
-            var val = req.body.data.lat+";"+req.body.data.lon+";"+req.body.data.alt;
+        try {
+            logger.logger(uid, JSON.stringify(req.body.data));
+            var val = req.body.data.lat + ";" + req.body.data.lon + ";" + req.body.data.alt;
             client.Post(uid, val);
-            res.json({"result": "success"});}
-        catch (e) {
+            res.json({"result": "success"});
+        } catch (e) {
             console.log(e);
             res.json({"result": "failed"});
         }
@@ -270,5 +276,17 @@ router.get('/getcodnamelist', async function (req, res, next) {
     result.push(JSON.parse(JSON.stringify(await userpro.getdepname())));
     res.send(result);
 })
+
+//get upload time
+router.get('/getfloordetail/:filename', async function (req, res, next) {
+        const result = await userpro.getbuildname(req.params.filename);
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        const result1 = await userpro.getbuilddetail(data[0].building);
+        dataString = JSON.stringify(result1);
+        data = JSON.parse(dataString);
+        res.json(data);
+    }
+)
 
 module.exports = router;
