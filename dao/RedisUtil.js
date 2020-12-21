@@ -1,8 +1,9 @@
 const redis = require('redis');
 const async = require('async');
+const config = require('../config/pathsetting')
 
 
-const client = redis.createClient({"host": "127.0.0.1", "port": "6379"});
+const client = redis.createClient({"host": config.redis_host, "port": config.redis_port});
 
 client.on('error',function (err){
     console.log('Redis Connection error:event - ' + client.host + ':' + client.port + '-' +err);

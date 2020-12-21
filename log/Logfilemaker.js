@@ -1,4 +1,5 @@
 const fs = require('fs');
+const config = require('../config/pathsetting')
 
 const options = {
     flags: 'a',
@@ -6,7 +7,7 @@ const options = {
 };
 
 const logger = function (uid, messageJson) {
-    const stout = fs.createWriteStream('./log/logfile/' + uid + '.log', options);
+    const stout = fs.createWriteStream(config.logfilepath + uid + '.log', options);
     const logger = new console.Console(stout);
     logger.log(messageJson);
 };

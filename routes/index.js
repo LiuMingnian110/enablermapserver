@@ -6,6 +6,7 @@ const logger = require('../log/Logfilemaker');
 const filereader = require('../log/Filereader');
 const upload = require('../filepro/svgfile');
 const {reader} = require('../filepro/getmap');
+const config = require('../config/pathsetting');
 
 
 //ログイン画面
@@ -58,7 +59,7 @@ router.get('/mainmap', function (req, res, next) {
     if (req.session.isLogin == 1) {
         res.render('map');
     } else {
-        res.redirect('http://localhost:3000/login');
+        res.redirect(config.url+'login');
     }
 });
 

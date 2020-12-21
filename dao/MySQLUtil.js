@@ -1,15 +1,11 @@
 const mysql = require('mysql');
+const config = require('../config/pathsetting')
 
 const connection = mysql.createConnection({
-    //GCP環境
-    // host: '35.223.47.97',
-    // user: 'root',
-    // password: 'enabler',
-    // database: 'enablermap'
-    host: 'localhost',
-    user: 'root',
-    password: 'laotao13CV',
-    database: 'enablermap'
+    host: config.mysql_host,
+    user: config.mysql_user,
+    password: config.mysql_password,
+    database: config.mysql_database
 });
 
 connection.connect();
