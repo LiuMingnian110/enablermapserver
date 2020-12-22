@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
+    <script src="/javascripts/configsetting.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
@@ -63,6 +64,8 @@
 
 </div>
 <script>
+
+    mapconfig = new mapconfig();
 
     //Java　Hashmap 自分を定義する
     function HashMap() {
@@ -163,7 +166,7 @@
             document.getElementById('info').innerHTML = JSON.stringify(e.latlng);
         });
 
-        var imageUrl = 'http://104.198.245.131/' + filename,
+        var imageUrl = mapconfig.geturl() + filename,
             imageBounds = [
                 [Number(keypoints[0]), Number(keypoints[1])],
                 [Number(keypoints[2]), Number(keypoints[3])]
@@ -178,7 +181,7 @@
             $.ajax({
                 type: 'GET',
                 async: false,
-                url: 'http://104.198.245.131:3000/historical/' + uid,
+                url: mapconfig.gethistorical() + uid,
                 success: function (data) {
                     if (data != null) {
                         console.log(uid);

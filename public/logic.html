@@ -2,6 +2,7 @@
 <head>
     <meta name="viewport" id="vp" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width"/>
     <meta charset="utf-8"/>
+    <script src="/javascripts/configsetting.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
@@ -17,6 +18,7 @@
 <div id="map"></div>
 <button id="draw">Draw</button>
 <script>
+    mapconfig=new mapconfig();
     const filename = $.cookie("setkeyfilename");
 
     var keypointmarkers = [0, 0, 0, 0];
@@ -30,7 +32,7 @@
     var result;
 
 
-    targetimage.src = 'http://localhost/' + filename;
+    targetimage.src = mapconfig.geturl() + filename;
 
     targetimage.onload = function () {
 
@@ -106,7 +108,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: 'http://localhost:3000/updatakeypoint/',
+                url: mapconfig.updatakeypoint(),
                 contentType: "application/json",
                 data: JSON.stringify({
                     "data": {

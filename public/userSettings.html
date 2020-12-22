@@ -304,6 +304,7 @@
             cursor: pointer;
         }
     </style>
+    <script src="/javascripts/configsetting.js"></script>
     <script>
         $(document).ready(function () {
             $('#picker').farbtastic('#colors')
@@ -417,6 +418,7 @@
 </div>
 </body>
 <script>
+    mapconfig = new mapconfig();
     let seletedType = 0
     let colorBtn = document.getElementById('color-btn')
     let picker = document.getElementById('picker')
@@ -568,7 +570,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:3000/getcodnamelist',
+                url: mapconfig.getcodnamelist(),
                 async: false,
                 success: function (data) {
                     for (let i = 0; i < data[0].length; i++) {
@@ -588,7 +590,7 @@
 
             $.ajax({
                 type: 'get',
-                url: 'http://localhost:3000/getcompanydetail/' + company.value,
+                url: mapconfig.getcompanydetail() + company.value,
                 async: false,
                 dataType: 'json',
                 success: function (data) {
@@ -632,7 +634,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:3000/getcompanyname/' + company.value,
+                url: mapconfig.getcompanyname() + company.value,
                 async: true,
                 success: function (data) {
                     if (data.length == 0) {
@@ -672,7 +674,7 @@
         $.ajax({
             timeout: 5000,
             type: 'POST',
-            url: 'http://localhost:3000/newuser',
+            url: mapconfig.newuser(),
             contentType: "application/json",
             dataType: "text",
             data: JSON.stringify({

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
+    <script src="/javascripts/configsetting.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
@@ -24,6 +25,7 @@
 <body>
 <div id="indoormap"></div>
 <script>
+    mapconfig = new mapconfig();
     var indoormap;
     const companycode = $.cookie("enabermap.uid").substring(0, 5);
     const keypoint = $.cookie("keypoints");
@@ -68,7 +70,7 @@
         $.ajax({
             type: 'GET',
             async: false,
-            url: 'http://localhost:3000/getlocations/' + uidlistforajax,
+            url: mapconfig.getlocations() + uidlistforajax,
             success: function (data) {
                 if (data != null) {
                     for (let i = 0; i < data.length; i++) {
@@ -98,7 +100,7 @@
     const init = function () {
         var keypoints = keypoint.split(",");
 
-        var imageUrl = 'http://localhost/' + filename,
+        var imageUrl = mapconfig.geturl() + filename,
             imageBounds = [
                 [Number(keypoints[0]), Number(keypoints[1])],
                 [Number(keypoints[2]), Number(keypoints[3])]

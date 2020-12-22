@@ -1,3 +1,4 @@
+mapconfig= new mapconfig();
 let map;
 let markerCluster = null;
 const companycode = $.cookie("enabermap.uid").substring(0, 5);
@@ -13,7 +14,7 @@ let uidlistforajax = null;
 var getmapdetail = function (companycode) {
     $.ajax({
         type: 'GET',
-        url: 'http://localhost:3000/getindoordetail/' + companycode,
+        url: mapconfig.getindoordetail() + companycode,
         success: function (data) {
             indoordetail = data;
             for (let i = 0, len = indoordetail.length; i < len; i++) {
@@ -49,7 +50,7 @@ var getmapdetail = function (companycode) {
 var showindoormap = function (filename, keypoint) {
     $.cookie('filename', filename);
     $.cookie('keypoints', keypoint);
-    window.open("http://localhost:3000/indoorfloor");
+    window.open(mapconfig.getbaseurl()+'indoorfloor');
 };
 
 var getpersondetail = function () {
@@ -57,7 +58,7 @@ var getpersondetail = function () {
         $.ajax({
             type: 'GET',
             async: false,
-            url: 'http://localhost:3000/user/' + pnumberlist[i],
+            url: mapconfig.user() + pnumberlist[i],
             success: function (data) {
                 userdetaillist.push(data);
                 pnamelist.push(data[0].pname);
@@ -77,7 +78,7 @@ const depdic = {};
 var userlistmake = function () {
     $.ajax({
         type: 'GET',
-        url: 'http://localhost:3000/getcodnamelist',
+        url: mapconfig.getcodnamelist(),
         async: false,
         success: function (data) {
             for (let i = 0; i < data[0].length; i++) {
@@ -96,7 +97,7 @@ var userlistmake = function () {
 
     $.ajax({
         type: 'GET',
-        url: 'http://localhost:3000/getcompanyname/'+companycode,
+        url: mapconfig.getcompanyname()+companycode,
         async: false,
         success: function (data) {
             companyNameEle.innerText = data[0].companyname;
@@ -193,7 +194,7 @@ var drawPosition = function () {
     $.ajax({
         type: 'GET',
         async: false,
-        url: 'http://localhost:3000/getuserlist/' + companycode,
+        url: mapconfig.getuserlist() + companycode,
         success: function (data) {
             if (data != null) {
                 UserListData = data;
@@ -241,7 +242,7 @@ var showallposition = function () {
     $.ajax({
         type: 'GET',
         async: false,
-        url: 'http://localhost:3000/getlocations/' + uidlistforajax,
+        url: mapconfig.getlocations() + uidlistforajax,
         success: function (data) {
             if (data != null) {
                 for (let i = 0; i < data.length; i++) {
@@ -467,7 +468,7 @@ document.getElementById('submit-btn').addEventListener('click', function () {
     } else {
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:3000/changepw',
+            url: mapconfig.changepw(),
             contentType: "application/json",
             dataType: "text",
             data: JSON.stringify({
@@ -561,7 +562,7 @@ document.getElementById('start-btn').addEventListener('click', function () {
     $.cookie('speed', playspeed.toString());
 
 
-    window.open("http://localhost:3000/historyshow");
+    window.open(mapconfig.getbaseurl()+'historyshow');
 
 })
 
