@@ -32,6 +32,7 @@
     const filename = $.cookie("filename");
     const uidlist = $.cookie("uidlist").split(",");
     const pnamelist = $.cookie("pnamelist").split(",");
+    const flooralt = $.cookie("flooralt").split(";");
     var leafmarker = [];
     var uidlistforajax;
     var targetmap;
@@ -78,13 +79,18 @@
                             var temp = data[i].split(";")
                             // var xy=indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]);
                             // var latlng = logicdraw(xy.x,xy.y)
-                            var lamMarker = new L.marker([Number(temp[0]),Number(temp[1])]).bindTooltip(pnamelist[i],
-                                {
-                                    permanent: true,
-                                    direction: 'right'
-                                });
-                            leafmarker.push(lamMarker);
-                            indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+                            if (temp[2] == "" || temp[2] == null) {
+                                temp[2] = 0;
+                            }
+                            if (Number(flooralt[0]) <= Number(temp[2]) && Number(temp[2]) <= Number(flooralt[1])) {
+                                var lamMarker = new L.marker([Number(temp[0]), Number(temp[1])]).bindTooltip(pnamelist[i],
+                                    {
+                                        permanent: true,
+                                        direction: 'right'
+                                    });
+                                leafmarker.push(lamMarker);
+                                indoormap.addLayer(leafmarker[leafmarker.length - 1]);
+                            }
                         }
                     }
 
@@ -143,18 +149,20 @@
             indoormap.fitBounds(imageBounds);
             indoormap.setZoom(22);
 
-            indoormap.on("zoomend", function () {
-                document.querySelector('.targetmapclass').style.height = Number(parseInt(document.querySelector('.targetmapclass').style.width) * imagescale) + "px";
-                imgkeypoint1x = targetmap.getElement().getBoundingClientRect().x;
-                imgkeypoint1y = targetmap.getElement().getBoundingClientRect().y;
-                imgkeypoint2x = targetmap.getElement().getBoundingClientRect().x + targetmap.getElement().getBoundingClientRect().width;
-                imgkeypoint2y = targetmap.getElement().getBoundingClientRect().y + targetmap.getElement().getBoundingClientRect().height;
-                realkeypoint1x = indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]).x
-                realkeypoint1y = indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]).y
-                realkeypoint2x = indoormap.latLngToContainerPoint([Number(temp[2]), Number(temp[3])]).x
-                realkeypoint2y = indoormap.latLngToContainerPoint([Number(temp[2]), Number(temp[3])]).y
 
-            })
+            //地图修正
+            // indoormap.on("zoomend", function () {
+            //     document.querySelector('.targetmapclass').style.height = Number(parseInt(document.querySelector('.targetmapclass').style.width) * imagescale) + "px";
+            //     imgkeypoint1x = targetmap.getElement().getBoundingClientRect().x;
+            //     imgkeypoint1y = targetmap.getElement().getBoundingClientRect().y;
+            //     imgkeypoint2x = targetmap.getElement().getBoundingClientRect().x + targetmap.getElement().getBoundingClientRect().width;
+            //     imgkeypoint2y = targetmap.getElement().getBoundingClientRect().y + targetmap.getElement().getBoundingClientRect().height;
+            //     realkeypoint1x = indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]).x
+            //     realkeypoint1y = indoormap.latLngToContainerPoint([Number(temp[0]), Number(temp[1])]).y
+            //     realkeypoint2x = indoormap.latLngToContainerPoint([Number(temp[2]), Number(temp[3])]).x
+            //     realkeypoint2y = indoormap.latLngToContainerPoint([Number(temp[2]), Number(temp[3])]).y
+            //
+            // })
         }
 
 

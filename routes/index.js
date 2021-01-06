@@ -14,6 +14,44 @@ router.get('/login', function (req, res, next) {
     res.render('login');
 });
 
+//
+router.get('/updataservicesetting/:companycode', function (req, res, next) {
+    res.render('updataservicesetting');
+});
+
+router.get('/updatauserset/:pnumber', function (req, res, next) {
+    res.render('updatauserset');
+});
+
+//
+router.get('/departmentset', function (req, res, next) {
+    res.render('departmentset');
+});
+
+router.get('/userset', function (req, res, next) {
+    res.render('userset');
+});
+
+//ユーザ一覧
+router.get('/userlist', function (req, res, next) {
+    res.render('userList');
+});
+
+//Map一覧
+router.get('/picturelist', function (req, res, next) {
+    res.render('picturelist');
+});
+
+//enterprise setting
+router.get('/enterpriseSettings', function (req, res, next) {
+    res.render('enterprisesetting');
+});
+
+//service setting
+router.get('/servicesetting', function (req, res, next) {
+    res.render('servicesetting');
+});
+
 //admin-settings画面
 router.get('/admin-settings', function (req, res, next) {
     res.render('admin-settings');
@@ -59,7 +97,7 @@ router.get('/mainmap', function (req, res, next) {
     if (req.session.isLogin == 1) {
         res.render('map');
     } else {
-        res.redirect(config.url+'login');
+        res.redirect(config.url + 'login');
     }
 });
 
@@ -247,6 +285,12 @@ router.post('/updatakeypoint', async function (req, res, next) {
     res.send(result);
 });
 
+//delete user
+router.post('/deleteuser', async function (req, res, next) {
+    const result = await userpro.deleteuser(req.body.data.pnumber);
+    res.send(result);
+});
+
 //updata upload time
 router.post('/uploadtime', async function (req, res, next) {
     const result = await userpro.uploadtime(req.body.data.companycode, req.body.data.uploadtime);
@@ -289,5 +333,71 @@ router.get('/getfloordetail/:filename', async function (req, res, next) {
         res.json(data);
     }
 )
+
+//SVGファイル情報取得
+router.get('/getallindoordetail', async function (req, res, next) {
+    const result = await userpro.queryallindoordetail();
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    res.json(data);
+});
+
+//role sevice情報
+router.get('/getroleservicedetail', async function (req, res, next) {
+    const result = await userpro.getroleservicedetail();
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    res.json(data);
+});
+
+//servicesetting情報
+router.get('/getallservicedetail', async function (req, res, next) {
+    const result = await userpro.getallservicedetail();
+    var dataString = JSON.stringify(result);
+    var data = JSON.parse(dataString);
+    res.json(data);
+});
+
+//insert servicesetting
+router.post('/insertservicesetting', async function (req, res, next) {
+    const result = await userpro.insertservicesetting(req.body.data.companyid, req.body.data.companyname, req.body.data.outdoormap, req.body.data.indoormap, req.body.data.beacon, req.body.data.area, req.body.data.calutor, req.body.data.usernumber, req.body.data.conpanynameeng, req.body.data.servicestatus, req.body.data.note);
+    res.send(result);
+});
+
+//updata servicesetting
+router.post('/updataservicesetting', async function (req, res, next) {
+    const result = await userpro.updataservicesetting(req.body.data.companyid, req.body.data.companyname, req.body.data.outdoormap, req.body.data.indoormap, req.body.data.beacon, req.body.data.area, req.body.data.calutor, req.body.data.usernumber, req.body.data.conpanynameeng, req.body.data.servicestatus, req.body.data.note);
+    res.send(result);
+});
+
+//delete servicesetting
+router.post('/deleteservicesetting', async function (req, res, next) {
+    const result = await userpro.deleteservicesetting(req.body.data.companyid);
+    res.send(result);
+});
+
+//GET servicesetting
+router.get('/getservicesetting/:companyid', async function (req, res, next) {
+    const result = await userpro.getservicesetting(req.params.companyid);
+    res.send(result);
+});
+
+//GET servicesetting
+router.get('/getsysroledetail', async function (req, res, next) {
+    const result = await userpro.getsysroledetail();
+    res.send(result);
+});
+
+//GET
+router.get('/getpersoncompanydetail/:pnumber', async function (req, res, next) {
+    const result = await userpro.checkerpnumber(req.params.pnumber);
+    res.send(result);
+});
+
+//updata person detail
+router.post('/updatapersontail', async function (req, res, next) {
+    const result = await userpro.updatapersontail(req.body.data.pnumber,req.body.data.officecode,req.body.data.depcode,req.body.data.username,req.body.data.mail,req.body.data.password,req.body.data.role,req.body.data.icon,req.body.data.color);
+    res.send(result);
+});
 
 module.exports = router;

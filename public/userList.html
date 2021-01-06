@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー一覧</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/stylesheets/user-list.css">
+</head>
+<body>
+<div class="form-box">
+    <div class="user-list-box">
+        <div class="navigation-box">
+            <div class="user-list-bnt">
+                <img src="icon/Settings.png" alt="">
+                <h3>ユーザー設定</h3>
+            </div>
+            <div class="return-bnt">
+                <a href="map.html">
+                    <button type="button" class="btn btn-primary">
+                        <img src="icon/return.png" alt="">
+                    </button>
+                </a>
+            </div>
+        </div>
+        <table id="target">
+            <tr class="title-1">
+                <th id="office" class="office">事業所</th>
+                <th id="department" class="department">部門</th>
+                <th id="edit" class="edit">Edit</th>
+                <th id="userNo" class="user-no">User No.</th>
+                <th id="userName" class="user-name">ユーザー名</th>
+                <th id="mailAddress" class="mail-address">Mail Address</th>
+                <th id="root" class="root">権限</th>
+                <th id="icon" class="icon">Icon</th>
+                <th id="note" class="note">Note</th>
+            </tr>
+
+        </table>
+        <div class="append-btn">
+            <button type="button" class="btn btn-primary">
+                <a href="/userset">ユーザー追加</a>
+            </button>
+        </div>
+        <div class="display-quantity">
+            <div class="display-text">表示件数</div>
+            <select name="" id="">
+                <option value="">50</option>
+                <option value="">100</option>
+                <option value="">200</option>
+                <option value="">300</option>
+            </select>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/javascripts/configsetting.js"></script>
+<script src="/javascripts/user-list.js"></script>
+</html>

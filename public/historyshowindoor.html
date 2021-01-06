@@ -138,6 +138,8 @@
 
 
     const init = function () {
+
+        document.getElementById("replay").disabled = true;
         indoormap = L.map('map', {
             center: [40.75, -74.2],
             zoom: 10
@@ -230,6 +232,7 @@
                 var lmarker = L.marker([lat, lng]).addTo(indoormap);
                 layerlst.push(lmarker);
                 console.log("end");
+                document.getElementById("replay").disabled = false;
                 k += 1;
                 drawlocation.put(uid, k);
             }
@@ -255,6 +258,7 @@
     }
 
     document.getElementById("replay").addEventListener('click', function () {
+        document.getElementById("replay").disabled = true;
         if (layerlst.length != 0) {
             for (let i = 0; i < layerlst.length; i++) {
                 indoormap.removeLayer(layerlst[i]);

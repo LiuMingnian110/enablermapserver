@@ -1,0 +1,111 @@
+*{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+html,body{
+    width: 100%;
+    position: relative;
+}
+ul{
+    margin-bottom: 0px !important;
+}
+.userSet-box{
+    width: 95%;
+    box-shadow: 0.1px 0px 0px 2px rgba(134, 134, 134, 0.1);
+    position: relative;
+    margin: 20px auto;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    position: relative;
+}
+.navigation-box{
+    height: 38px;
+    position: relative;
+    background-color: #007bff;
+    padding: 0px 20px;
+    border-radius: 3px 3px 0 0;
+}
+.user-list-bnt{
+    height: 38px;
+    float: left;
+}
+.user-list-bnt img{
+    height: 24px;
+    float: left;
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+}
+.user-list-bnt h3{
+    line-height: 38px;
+    margin-left: 34px;
+    margin-bottom: 0px !important;
+    font-size: 18px;
+    color: #fff;
+}
+.return-bnt{
+    position: absolute;
+    right: 20px;
+}
+.return-bnt img{
+    height: 20px;
+}
+
+.edit {
+    position: relative;
+    padding: 20px;
+}
+.edit ul{
+    width: 100%;
+    position: relative;
+    display: -webkit-flex;
+    display: flex;
+    flex-wrap: wrap;
+}
+.edit ul li{
+    width: 50%;
+    float: left;
+    margin-bottom: 20px;
+    padding-right: 20px;
+    position: relative;
+}
+.edit ul li p{
+    width: 20%;
+    float: left;
+}
+.edit ul li select,.edit ul li .email{
+    width: 80%;
+}
+.edit ul li .pass{
+    width: 80%;
+    float: left;
+}
+.display-icon{
+    position: absolute;
+    right: 20px;
+}
+.user-name{
+    position: relative;
+}
+.user-name .jp{
+    float: left;
+}
+.user-name .en{
+    position: absolute;
+    right: 0px;
+    margin-right: 20px;
+}
+.user-name .jp,.en{
+    width: 38%;
+}
+
+.footer-btn{
+    margin-bottom: 20px;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: center ;
+}
+.footer-btn button{
+    margin: 0px 10px;
+}

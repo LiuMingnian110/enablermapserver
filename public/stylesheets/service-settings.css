@@ -1,0 +1,118 @@
+*{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+html,body,.setting-box{
+    width: 100%;
+    position: relative;
+}
+.setting-box{
+    width: 95%;
+    box-shadow: 0.1px 0px 0px 2px rgba(134, 134, 134, 0.1);
+    position: relative;
+    margin: 20px auto;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    position: relative;
+}
+.navigation-box{
+    height: 38px;
+    position: relative;
+    background-color: #007bff;
+    padding: 0px 20px;
+    border-radius: 3px 3px 0 0;
+}
+.user-list-bnt{
+    height: 38px;
+    float: left;
+}
+.user-list-bnt img{
+    height: 24px;
+    float: left;
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+}
+.user-list-bnt h3{
+    line-height: 38px;
+    margin-left: 34px;
+    margin-bottom: 0px !important;
+    font-size: 18px;
+    color: #fff;
+}
+.return-bnt{
+    position: absolute;
+    right: 20px;
+}
+.return-bnt img{
+    height: 20px;
+}
+.edit-box{
+    width: 100%;
+    position: relative;
+    padding:20px;
+    display:flex;
+    flex-wrap:wrap;
+}
+.edit{
+    width: 50%;
+    height: 38px;
+    position: relative;
+    margin-bottom: 20px;
+}
+.text{
+    width: 20%;
+    float: left;
+    line-height: 38px;
+    margin-right: 10px;
+}
+.form-control{
+    width: 50% !important;
+    float: left;
+}
+/* #company-num{
+  width: 150px !important;
+} */
+#company-en{
+    margin-right: 20px;
+}
+#company-en,#company-jp{
+    width: 37% !important;
+}
+.service-box{
+    width: 100%;
+    position: relative;
+}
+.service-title{
+    margin: 20px 0px;
+    font-weight: bold;
+}
+.service-box .edit{
+    float: left;
+}
+.service-box .service-type .edit .text{
+    width: 35% !important;
+}
+.note-box{
+    margin-top: 20px;
+    width: 100%;
+    position: relative;
+}
+.note-title{
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+#note-text{
+    width: 45%;
+    height: 200px;
+    border-color: #ccc;
+    padding: 10px;
+    outline: none;
+}
+#submit-btn{
+    width: 200px;
+    position: relative;
+    margin: 0px auto;
+    margin-top: 20px;
+}

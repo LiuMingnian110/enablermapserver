@@ -455,7 +455,29 @@ generatorOptions(wrappers[2], 2, 31, 1, true, '')
 generatorOptions(wrappers[3], 3, 23, 0, true, '')
 generatorOptions(wrappers[4], 4, 59, 0, true, '')
 generatorOptions(wrappers[5], 5, 23, 1, true, '')
-generatorOptions(wrappers[6], 6, 100, 1, true, '')
+// generatorOptions(wrappers[6], 6, 100, 1, true, '')
+
+//倍率スピード
+var speed = [ 1, 50, 100, 200, 500, 1000 ]
+function steSpeed(wrapper,groupIndex, sort = true, suffix = ''){
+    for(var i = 0; i < speed.length; i++){
+        var option = document.createElement('div')
+        var text = document.createTextNode(speed[i])
+        option.val = speed[i]
+        option.groupIndex = groupIndex
+        option.appendChild(text)
+        // asc 升序
+        if (wrapper.childNodes[0] && !sort) {
+            wrapper.insertBefore(option, wrapper.childNodes[0]);
+        } else {
+            wrapper.appendChild(option)
+        }
+        option.onclick = function () {
+            selector[this.groupIndex].getElementsByClassName('set-val')[0].innerText = this.val + suffix
+        }
+    }
+}
+steSpeed(wrappers[6], 6)
 
 
 //パスワード変更機能

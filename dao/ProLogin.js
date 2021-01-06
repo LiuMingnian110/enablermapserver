@@ -6,7 +6,7 @@ const queryUserByUid = function (pnumber) {
 }
 
 const insertUser = function (mail, pwd, prole, displayicon, displaycolor, pnumber, pname) {
-    const sql = "insert ignore into enablermap.user values (" + "'" + mail + "'," + "'" + pwd + "'," + "'" + prole + "'," + "'" + displayicon + "'," + "'" + displaycolor + "'," + "'" + pnumber + "'," + "'" + pname + "');"
+    const sql = "insert ignore into enablermap.user (mail,pwd,prole,displayicon,displaycolor,pnumber,pname) values (" + "'" + mail + "'," + "'" + pwd + "'," + "'" + prole + "'," + "'" + displayicon + "'," + "'" + displaycolor + "'," + "'" + pnumber + "'," + "'" + pname + "');"
     return pros(sql);
 }
 
@@ -106,6 +106,61 @@ const getbuilddetail = function (buildname) {
     return pros(sql);
 }
 
+const queryallindoordetail = function () {
+    const sql = "select * from enablermap.indoormap;"
+    return pros(sql);
+}
+
+const getroleservicedetail = function () {
+    const sql = "SELECT * FROM enablermap.servicerole;"
+    return pros(sql);
+}
+
+const getallservicedetail = function () {
+    const sql = "SELECT * FROM enablermap.servicesetting;"
+    return pros(sql);
+}
+
+const deleteuser = function (pnumber) {
+    let sql = "DELETE  FROM enablermap.user WHERE pnumber = " + "'" + pnumber + "';"
+    pros(sql);
+    sql = "DELETE  FROM enablermap.company WHERE pnumber = " + "'" + pnumber + "';"
+    return pros(sql);
+}
+
+const insertservicesetting = function (companyid, companyname, outdoormap, indoormap, beacon, area, calutor, usernumber, conpanynameeng, servicestatus, note) {
+    const sql = "insert into enablermap.servicesetting values (" + "'" + companyid + "','" + companyname + "','" + outdoormap + "','" + indoormap + "','" + beacon + "','" + area + "','" + calutor + "','" + usernumber + "','" + conpanynameeng + "','" + servicestatus + "','" + note + "');"
+    return pros(sql);
+}
+
+const getservicesetting = function (companyid) {
+    const sql = "select * from enablermap.servicesetting where companyid = " + "'" + companyid + "';"
+    return pros(sql);
+}
+
+const updataservicesetting = function (companyid, companyname, outdoormap, indoormap, beacon, area, calutor, usernumber, conpanynameeng, servicestatus, note) {
+    const sql = "REPLACE into enablermap.servicesetting values (" + "'" + companyid + "','" + companyname + "','" + outdoormap + "','" + indoormap + "','" + beacon + "','" + area + "','" + calutor + "','" + usernumber + "','" + conpanynameeng + "','" + servicestatus + "','" + note + "');"
+    return pros(sql);
+}
+
+const deleteservicesetting = function (companyid) {
+    const sql = "delete from enablermap.servicesetting where companyid = " + "'" + companyid + "';"
+    return pros(sql);
+}
+
+const getsysroledetail = function () {
+    const sql = "select * from enablermap.systemrole;"
+    return pros(sql);
+}
+
+// const updatapersontail = function (pnumber) {
+//     let sql = "DELETE  FROM enablermap.user WHERE pnumber = " + "'" + pnumber + "';"
+//     pros(sql);
+//     sql = "DELETE  FROM enablermap.company WHERE pnumber = " + "'" + pnumber + "';"
+//     return pros(sql);
+// }
+
+
 const pros = function (sql) {
     return new Promise((resolve, reject) => {
         client.connection.query(sql, (error, result, fields) => {
@@ -141,5 +196,15 @@ module.exports = {
     getofficename,
     getdepname,
     getbuildname,
-    getbuilddetail
+    getbuilddetail,
+    queryallindoordetail,
+    getroleservicedetail,
+    deleteuser,
+    getallservicedetail,
+    insertservicesetting,
+    getservicesetting,
+    updataservicesetting,
+    deleteservicesetting,
+    getsysroledetail,
+    updatapersontail
 }

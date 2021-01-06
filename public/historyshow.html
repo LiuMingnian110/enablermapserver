@@ -170,6 +170,7 @@
 
         //google map and leaflet map 初期化
         var initMap = function () {
+            document.getElementById("replay").disabled=true;
             const Tokyo = {lat: 35.68, lng: 139.75};
             map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
@@ -250,6 +251,7 @@
                     });
                     layerlst.push(marker);
                     console.log("end");
+                    document.getElementById("replay").disabled=false;
                     k += 1;
                     drawlocation.put(uid, k);
                 }
@@ -276,6 +278,7 @@
         }
 
         document.getElementById("replay").addEventListener('click', function () {
+            document.getElementById("replay").disabled=true;
             if (layerlst.length != 0) {
                 for (let i = 0; i < layerlst.length; i++) {
                     layerlst[i].setMap(null);

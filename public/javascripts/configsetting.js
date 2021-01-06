@@ -82,5 +82,41 @@ class mapconfig {
         return this.baseurl + 'changepw'
     }
 
+    getallservicedetail(){
+        return this.baseurl + 'getallservicedetail'
+    }
+
+    insertservicesetting(){
+        return this.baseurl + 'insertservicesetting'
+    }
+
+    getservicesetting(){
+        return this.baseurl + 'getservicesetting/'
+    }
+
+    updataservicesetting(){
+        return this.baseurl + 'updataservicesetting'
+    }
+
+    deleteservicesetting(){
+        return this.baseurl + 'deleteservicesetting'
+    }
+
+    getsysroledetail(){
+        return this.baseurl + 'getsysroledetail'
+    }
+
+    deleteuser(){
+        return this.baseurl + 'deleteuser'
+    }
+
+    getpersoncompanydetail(){
+        return this.baseurl + 'getpersoncompanydetail/'
+    }
+
+    updatapersontail(){
+        return this.baseurl + 'updatapersontail'
+    }
+
 
 }

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提供先企業.サービス設定</title>
+    <script src="/javascripts/configsetting.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/stylesheets/service-settings.css">
+</head>
+
+<body>
+<div class="setting-box">
+    <div class="setting">
+        <div class="navigation-box">
+            <div class="user-list-bnt">
+                <img src="/icon/Settings.png" alt="">
+                <h3>提供先企業.サービス設定</h3>
+            </div>
+            <div class="return-bnt">
+                <a href="../enterpriseSettings">
+                    <button type="button" class="btn btn-primary">
+                        <img src="/icon/return.png" alt="">
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div class="edit-box">
+            <div class="edit">
+                <div class="text">企業番号</div>
+                <input class="form-control" id="company-num" type="text" placeholder="例）01111" value="">
+            </div>
+            <div class="edit">
+                <div class="text">企業名</div>
+                <input class="form-control" id="company-en" type="text" placeholder="English" value="">
+                <input class="form-control" id="company-jp" type="text" placeholder="日本語" value="">
+            </div>
+            <div class="edit">
+                <div class="text">契約ユーザー数</div>
+                <input class="form-control" id="quantity" type="text" placeholder="例）100" value="">
+            </div>
+            <div class="edit">
+                <div class="text">契約状態</div>
+                <select class="form-control" id="status">
+                    <option>有効/無効</option>
+                    <option>有効</option>
+                    <option>無効</option>
+                </select>
+            </div>
+            <div class="service-box">
+                <div class="service-title">契約サービス</div>
+                <div class="service-type">
+                    <div class="edit">
+                        <div class="text">屋外　位置情報サービス</div>
+                        <select class="form-control" id="outdoor">
+                            <option>有効/無効</option>
+                            <option>有効</option>
+                            <option>無効</option>
+                        </select>
+                    </div>
+                    <div class="edit">
+                        <div class="text">屋内　位置情報サービス</div>
+                        <select class="form-control" id="indoor">
+                            <option>有効/無効</option>
+                            <option>有効</option>
+                            <option>無効</option>
+                        </select>
+                    </div>
+                    <div class="edit">
+                        <div class="text">Beacon 位置情報サービス</div>
+                        <select class="form-control" id="beacon">
+                            <option>有効/無効</option>
+                            <option>有効</option>
+                            <option>無効</option>
+                        </select>
+                    </div>
+                    <div class="edit">
+                        <div class="text">エリア情報サービス</div>
+                        <select class="form-control" id="area">
+                            <option>有効/無効</option>
+                            <option>有効</option>
+                            <option>無効</option>
+                        </select>
+                    </div>
+                    <div class="edit">
+                        <div class="text">統計サービス</div>
+                        <select class="form-control" id="statistics">
+                            <option>有効/無効</option>
+                            <option>有効</option>
+                            <option>無効</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="note-box">
+                <div class="note-title">Note</div>
+                <textarea name="" id="note-text" cols="30" rows="10"></textarea>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" id="submit-btn">Submit</button>
+                <button type="button" class="btn btn-danger" id="delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    mapconfig = new mapconfig();
+
+    var companycode = document.URL.substring(document.URL.length - 5);
+
+    $.ajax({
+        type: 'GET',
+        url: mapconfig.getservicesetting() + companycode,
+        async: false,
+        success: function (data) {
+            document.getElementById('company-num').value = data[0].companyid;
+            document.getElementById('company-jp').value = data[0].companyname;
+            document.getElementById('company-en').value = data[0].conpanynameeng;
+            document.getElementById('quantity').value = data[0].usernumber;
+            if (data[0].servicestatus == "1") {
+                document.getElementById('status').value = "有効";
+            } else {
+                document.getElementById('status').value = "無効";
+            }
+            if (data[0].outdoormap == "1") {
+                document.getElementById('outdoor').value = "有効";
+            } else {
+                document.getElementById('outdoor').value = "無効";
+            }
+            if (data[0].indoormap == "1") {
+                document.getElementById('indoor').value = "有効";
+            } else {
+                document.getElementById('indoor').value = "無効";
+            }
+            if (data[0].beacon == "1") {
+                document.getElementById('beacon').value = "有効";
+            } else {
+                document.getElementById('beacon').value = "無効";
+            }
+            if (data[0].area == "1") {
+                document.getElementById('area').value = "有効";
+            } else {
+                document.getElementById('area').value = "無効";
+            }
+            if (data[0].calutor == "1") {
+                document.getElementById('statistics').value = "有効";
+            } else {
+                document.getElementById('statistics').value = "無効";
+            }
+            document.getElementById('note-text').value = data[0].note;
+
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+
+    var companycodechange = document.getElementById('company-num').value;
+
+    document.getElementById('delete-btn').addEventListener('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: mapconfig.deleteservicesetting(),
+            contentType: "application/json",
+            data: JSON.stringify({
+                "data": {
+                    "companyid": companycodechange,
+                }
+            }),
+            success: function (data) {
+                alert("success");
+                window.location.href = '/enterpriseSettings';
+
+            },
+            error: function () {
+                alert('Please check your network,if it still does not work.Please look admin for help!');
+            }
+        })
+    })
+
+
+    document.getElementById('submit-btn').addEventListener('click', function () {
+        var companyid = document.getElementById('company-num').value;
+        if(companycodechange != companyid){
+            $.ajax({
+                type: 'POST',
+                url: mapconfig.deleteservicesetting(),
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "data": {
+                        "companyid": companycodechange,
+                    }
+                }),
+                success: function (data) {
+                    console.log(data)
+                },
+                error: function () {
+                    alert('Please check your network,if it still does not work.Please look admin for help!');
+                }
+            })
+        }
+        var companyname = document.getElementById('company-jp').value;
+        var conpanynameeng = document.getElementById('company-en').value;
+        var usernumber = document.getElementById('quantity').value;
+        if (document.getElementById('status').value == "有効/無効") {
+            alert('please choose service status')
+        } else if (document.getElementById('status').value == "有効") {
+            var servicestatus = "1";
+        } else {
+            var servicestatus = "0";
+        }
+
+        if (document.getElementById('outdoor').value == "有効/無効") {
+            alert('please choose service status')
+        } else if (document.getElementById('outdoor').value == "有効") {
+            var outdoormap = "1";
+        } else {
+            var outdoormap = "0";
+        }
+
+        if (document.getElementById('indoor').value == "有効/無効") {
+            alert('please choose service status')
+        } else if (document.getElementById('indoor').value == "有効") {
+            var indoormap = "1";
+        } else {
+            var indoormap = "0";
+        }
+
+        if (document.getElementById('beacon').value == "有効/無効") {
+            alert('please choose service status')
+        } else if (document.getElementById('beacon').value == "有効") {
+            var beacon = "1";
+        } else {
+            var beacon = "0";
+        }
+
+        if (document.getElementById('area').value == "有効/無効") {
+            alert('please choose service status')
+        } else if (document.getElementById('area').value == "有効") {
+            var area = "1";
+        } else {
+            var area = "0";
+        }
+
+        if (document.getElementById('statistics').value == "有効/無効") {
+            alert('please choose service status')
+        } else if (document.getElementById('statistics').value == "有効") {
+            var calutor = "1";
+        } else {
+            var calutor = "0";
+        }
+
+        var note = document.getElementById('note-text').value;
+
+        $.ajax({
+            type: 'POST',
+            url: mapconfig.updataservicesetting(),
+            contentType: "application/json",
+            data: JSON.stringify({
+                "data": {
+                    "companyid": companyid,
+                    "companyname": companyname,
+                    "outdoormap": outdoormap,
+                    "indoormap": indoormap,
+                    "beacon": beacon,
+                    "area": area,
+                    "calutor": calutor,
+                    "usernumber": usernumber,
+                    "conpanynameeng": conpanynameeng,
+                    "servicestatus": servicestatus,
+                    "note": note
+                }
+            }),
+            success: function (data) {
+                alert("success");
+                window.location.href = '/enterpriseSettings';
+
+            },
+            error: function () {
+                alert('Please check your network,if it still does not work.Please look admin for help!');
+            }
+        })
+
+    })
+</script>
+</body>
+
+</html>

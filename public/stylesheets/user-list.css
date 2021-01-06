@@ -1,138 +1,87 @@
-.tree-box{
-  width: 100%;
-  height: 600px;
+html,
+body {
   position: relative;
-  border: 1px solid #ccc;
 }
-.tree-box .treeitem{
-  width: 100%;
-  height: 600px;
-  padding: 5px 10px;
+
+.form-box {
+  width: 2100px;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  margin: 20px;
 }
-.tree-box .treeitem .peer-node{
-  width: 100%;
-  height: 30px;
+.user-list-box{
+  width: 2100px;
+  box-shadow: 0.1px 0px 0px 2px rgba(134, 134, 134, 0.1);
   position: relative;
-  margin-bottom: 5px;
-  padding: 0px 10px;
-}
-.peer-node .icon-svg,.peer-node .checkbox ,.indentation-box{
+  border-radius: 5px;
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  float: left;
-  margin-right: 5px;
+  margin-right: 20px;
 }
-.icon-svg:hover{
-  cursor: pointer;
-}
-.peer-node .icon-svg,.peer-node .icon-svg svg{
-  width: 12px;
-  height: 12px;
-}
-.peer-node .icon-svg svg{
-  padding: 2px;
-}
-.peer-node .node-text{
-  height: 30px;
-  line-height: 30px;
-  float: left;
-}
-.peer-node .indentation-box{
-  width: 12px;
-  height: 12px;
-}
-.peer-node .checkbox{
-  border: 1px solid #ccc;
-  border-radius: 2px;
-}
-.peer-node .checkbox-active{
+.navigation-box{
+  height: 38px;
+  position: relative;
   background-color: #007bff;
+  padding: 0px 20px;
+  border-radius: 3px 3px 0 0;
 }
-.checkbox:hover{
-  cursor: pointer;
-}
-.checkbox .checkbox-index{
-  padding: 1px;
-  background-color: #fff;
-  position: relative;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 14px;
-  height: 14px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-}
-.peer-node .node-text-color{
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background-color: blue;
-  right: 35px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 16px;
-  z-index: 1;
-  border:  2px solid #e6e6e6;
-}
-.peer-node .menu-btn-box{
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 9999;
-}
-.menu-btn-box .menu-btn{
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-.menu-btn:hover{
-  cursor: pointer;
-}
-.menu-btn-box .menu-options-btn{
-  width: 180px;
-  background-color: #fff;
-  position: absolute;
-  right: 30px;
-  top: 0px;
-  border-radius: 2px;
-  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
-}
-.menu-options-btn ul{
-  margin-bottom: 0px !important;
-  padding: 10px;
-  width: 100%;
-  height: 100%;
-}
-.menu-options-btn ul li{
-  height: 30px;
-  padding: 5px 10px;
-  line-height: 16px;
-}
-.menu-options-btn ul li img{
-  width: 20px;
-  height: 20px;
+.user-list-bnt{
+  height: 38px;
   float: left;
+}
+.user-list-bnt img{
+  height: 24px;
+  float: left;
+  position: absolute;
+  top: 50%;
+  margin-top: -12px;
+}
+.user-list-bnt h3{
+  line-height: 38px;
+  margin-left: 34px;
+  margin-bottom: 0px !important;
+  font-size: 18px;
+  color: #fff;
+}
+.return-bnt{
+  position: absolute;
+  right: 20px;
+}
+.return-bnt img{
+  height: 20px;
+}
+table {
+  width: 2100px;
+  border-collapse: collapse;
+  text-align: center;
+  border-radius: 5px;
+}
+table tr th,
+table tr td {
+  border: 1px solid #ccc;
+  padding: 10px 0px;
+}
+.append-btn {
+  position: absolute;
+  margin-top: 20px;
+  /* float: left; */
+}
+.display-quantity {
+  position: absolute;
+  height: 38px;
+  left: 150px;
+  margin-top: 20px;
+}
+.display-text {
+  float: left;
+  line-height: 38px;
+  margin-right: 20px;
+}
+.display-quantity select {
+  padding: 4px 20px;
   position: relative;
-  margin-right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
-.menu-options-btn a{
-  text-decoration:none;
-}
-.checkbox-img{
-  width: 14px;
-  height: 14px;
-  padding: 2px;
-}
-.icon{
-  position: relative;
-  transform: rotate(0deg);
+.append-btn a{
+  color: #fff !important;
+  text-decoration: none;
 }
