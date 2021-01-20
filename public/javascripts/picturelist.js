@@ -1,52 +1,75 @@
 mapconfig = new mapconfig();
-const companycode = $.cookie('enabermap.uid').substring(0, 5);
-var indoordetail;
+const companyCode = $.cookie('enabermap.uid').substring(0, 5);
+//get building floor  svgFile
+var getBuilding = function () {
+    $.ajax({
+        type: 'GET',
+        url: mapconfig.getindoordetail() + companyCode,
+        async: false,
+        success: function (data) {
+            console.log(data)
+            for (var i = 0; i < data.length; i++) {
+                var table = document.querySelector('table')
+                var tr = document.createElement('tr')
+                var tdNum = document.createElement('td')
+                var tdBtn = document.createElement('td')
+                var tdJp = document.createElement('td')
+                var tdEn = document.createElement('td')
+                var tdF = document.createElement('td')
+                var tdImg = document.createElement('td')
+                var tdNote = document.createElement('td')
 
-$.ajax({
-    type: 'GET',
-    url: mapconfig.getindoordetail() + companycode,
-    async: false,
-    success: function (data) {
-        indoordetail = data;
-    },
-    error: function (err) {
-        console.log(err);
-    }
-})
+                var a = document.createElement('a')
+                var img = document.createElement('img')
 
-var imgData = []
-for (let i = 0; i < indoordetail.length; i++) {
-    var tempimgurl=mapconfig.geturl()+indoordetail[i].svgfile;
-    imgData.push(tempimgurl);
+                tr.classList.add('text')
+                img.classList.add('floor-plan')
+                tdNote.classList.add('not-text')
+                a.classList.add('tdBtn')
+                tdJp.classList.add('name-jp')
+                tdEn.classList.add('name-en')
+                tdF.classList.add('floor')
+                a.href = '#'
+                //href = indoorMap.html
+                img.src = mapconfig.geturl()+data[i].svgfile
+                tdNum.innerText = i + 1
+                a.innerText = '編集'
+                tdJp.innerText = data[i].building
+                tdEn.innerText = data[i].buildingeng
+                tdF.innerText = data[i].floor
+                tdNote.innerText = data[i].note
+
+                table.appendChild(tr)
+                tr.appendChild(tdNum)
+                tr.appendChild(tdBtn)
+                tr.appendChild(tdJp)
+                tr.appendChild(tdEn)
+                tr.appendChild(tdF)
+                tr.appendChild(tdImg)
+                tr.appendChild(tdNote)
+                tdBtn.appendChild(a)
+                tdImg.appendChild(img)
+            }
+            edit()
+        },
+        error: function(err){
+            console.log(err)
+        }
+    })
 }
+getBuilding()
 
+function edit(){
+    var tdBtn = document.querySelectorAll('.tdBtn')
+    for(var i = 0; i < tdBtn.length; i++){
+        tdBtn[i].index = i
+        tdBtn[i].addEventListener('click',function(){
+            var fatherNode =  tdBtn[this.index].parentNode.parentNode
+            var url = fatherNode.children[5].childNodes[0].src.toString();
+            var index = url.lastIndexOf("\/");
+            var str = url.substring(index + 1,url.length);
+            window.location.href = '/updatebuilding/'+str;
 
-var list = document.querySelector('.list')
-var ulEle = list.querySelector('ul')
-
-function getUserName() {
-    for (var i = 0; i < imgData.length; i++) {
-        var liEle = document.createElement('li')
-        var imgBox = document.createElement('div')
-        var imgEle = document.createElement('img')
-        var btnBox = document.createElement('div')
-        var editBtn = document.createElement('button')
-        var deleteBtn = document.createElement('button')
-        // textEle.innerText = pnamelist[i]
-        imgBox.classList.add('img-box')
-        btnBox.classList.add('btn-box')
-        editBtn.classList.add('btn', 'btn-primary')
-        deleteBtn.classList.add('btn', 'btn-danger')
-        editBtn.innerText = '編集'
-        deleteBtn.innerText = '削除'
-        imgEle.src = imgData[i]
-        imgBox.appendChild(imgEle)
-        imgBox.appendChild(btnBox)
-        btnBox.appendChild(editBtn)
-        btnBox.appendChild(deleteBtn)
-        liEle.appendChild(imgBox)
-        ulEle.appendChild(liEle)
+        })
     }
 }
-
-getUserName()

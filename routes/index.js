@@ -19,6 +19,10 @@ router.get('/updataservicesetting/:companycode', function (req, res, next) {
     res.render('updataservicesetting');
 });
 
+router.get('/addsetting', function (req, res, next) {
+    res.render('officesetting');
+});
+
 router.get('/updatauserset/:pnumber', function (req, res, next) {
     res.render('updatauserset');
 });
@@ -26,6 +30,11 @@ router.get('/updatauserset/:pnumber', function (req, res, next) {
 //
 router.get('/departmentset', function (req, res, next) {
     res.render('departmentset');
+});
+
+//
+router.get('/updataoffice/:officecode', function (req, res, next) {
+    res.render('updataofficedetail');
 });
 
 router.get('/userset', function (req, res, next) {
@@ -57,9 +66,14 @@ router.get('/admin-settings', function (req, res, next) {
     res.render('admin-settings');
 });
 
-//屋内地図画面
-router.get('/indoor-map', function (req, res, next) {
+//insert屋内地図画面
+router.get('/insertindoormap', function (req, res, next) {
     res.render('indoor-map');
+});
+
+//update屋内地図画面
+router.get('/updatebuilding/:filename', function (req, res, next) {
+    res.render('updateindoor-map');
 });
 
 //屋内地図画面
@@ -149,10 +163,15 @@ router.get('/historical/:uid', async function (req, res, next) {
 
 //ユーザー情報検索
 router.get('/user/:pnumber', async function (req, res, next) {
-    const result = await userpro.queryUserByUid(req.params.pnumber);
-    var dataString = JSON.stringify(result);
-    var data = JSON.parse(dataString);
-    res.json(data);
+    try {
+        const result = await userpro.queryUserByUid(req.params.pnumber);
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        res.json(data);
+    } catch (e) {
+        console.log(e);
+        res.json(null);
+    }
 });
 
 //ユーザ登録
@@ -230,9 +249,16 @@ router.post('/loginbypd', async function (req, res, next) {
 });
 
 
+//Update File UpLoad
+router.post('/updateindoordetail', upload.single('mapsvg'), async function (req, res, next) {
+    const result = await userpro.updateindoordetail(req.body.svgfilename, req.body.building, req.body.floor, req.body.position, req.body.alt, req.body.note, req.body.buildingeng);
+    res.json({"status": "success"});
+    res.end();
+});
+
 //SVG File UpLoad
 router.post('/singleUpload', upload.single('mapsvg'), async function (req, res, next) {
-    const result = await userpro.insertIndoorMap(req.body.companycode, req.body.countrycode, req.body.svgfilename, req.body.building, req.body.floor, req.body.position);
+    const result = await userpro.insertIndoorMap(req.body.companycode, req.body.countrycode, req.body.svgfilename, req.body.building, req.body.floor, req.body.position, req.body.alt, req.body.note, req.body.buildingeng);
     res.json({"status": "success"});
     res.end();
 });
@@ -334,6 +360,14 @@ router.get('/getfloordetail/:filename', async function (req, res, next) {
     }
 )
 
+//get indoormapdetail by filename
+router.get('/getdetailbyfilename/:filename', async function (req, res, next) {
+        const result = await userpro.getbuildname(req.params.filename);
+        res.send(result);
+    }
+)
+
+
 //SVGファイル情報取得
 router.get('/getallindoordetail', async function (req, res, next) {
     const result = await userpro.queryallindoordetail();
@@ -370,6 +404,13 @@ router.post('/updataservicesetting', async function (req, res, next) {
     res.send(result);
 });
 
+//delete indoormapby filename
+router.post('/deleteindoormap', async function (req, res, next) {
+        const result = await userpro.deleteindoormap(req.body.data.filename);
+        res.send(result);
+    }
+)
+
 //delete servicesetting
 router.post('/deleteservicesetting', async function (req, res, next) {
     const result = await userpro.deleteservicesetting(req.body.data.companyid);
@@ -394,9 +435,55 @@ router.get('/getpersoncompanydetail/:pnumber', async function (req, res, next) {
     res.send(result);
 });
 
+//GET
+router.get('/getcompandetailbyoffice/:poffice', async function (req, res, next) {
+    const result = await userpro.getcompandetailbyoffice(req.params.poffice);
+    res.send(result);
+});
+
 //updata person detail
 router.post('/updatapersontail', async function (req, res, next) {
-    const result = await userpro.updatapersontail(req.body.data.pnumber,req.body.data.officecode,req.body.data.depcode,req.body.data.username,req.body.data.mail,req.body.data.password,req.body.data.role,req.body.data.icon,req.body.data.color);
+    try {
+        const result = await userpro.updatapersontail(req.body.data.pnumber, req.body.data.officecode, req.body.data.depcode, req.body.data.username, req.body.data.mail, req.body.data.password, req.body.data.role, req.body.data.icon, req.body.data.color);
+        res.json({status: "success"});
+    } catch (e) {
+        res.json({status: "failed"});
+    }
+});
+
+//insert officeall
+router.post('/insertofficeall', async function (req, res, next) {
+    const result = await userpro.insertofficeall(req.body.data.officecode, req.body.data.officename, req.body.data.officenameeng);
+    res.send(result);
+});
+
+//insert depall
+router.post('/insertdepall', async function (req, res, next) {
+    const result = await userpro.insertdepall(req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng);
+    res.send(result);
+});
+
+//insert companydetail
+router.post('/insertcompanydetail', async function (req, res, next) {
+    const result = await userpro.insertcompanydetail(req.body.data.pcompanycode, req.body.data.pcountry, req.body.data.poffice, req.body.data.pdep, req.body.data.note);
+    res.send(result);
+});
+
+//update officedetail
+router.post('/updateofficedetail', async function (req, res, next) {
+    const result = await userpro.updateofficedetail(req.body.data.officecode, req.body.data.officename, req.body.data.officenameeng);
+    res.send(result);
+});
+
+//update depdetail
+router.post('/updatedepdetail', async function (req, res, next) {
+    const result = await userpro.updatedepdetail(req.body.data.poffice, req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng, req.body.data.note, req.body.data.usestatus);
+    res.send(result);
+});
+
+//stopoffice
+router.post('/stopoffice', async function (req, res, next) {
+    const result = await userpro.stopoffice(req.body.data.officecode);
     res.send(result);
 });
 

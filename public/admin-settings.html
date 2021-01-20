@@ -59,6 +59,7 @@
         success: function (data) {
           if(JSON.parse(data).result == 'success'){
             alert("updata success!");
+            window.location.href = '/mainmap';
           }else{
             alert("updata failed!");
           }

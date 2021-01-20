@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
             integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
             crossorigin="anonymous"></script>
+    <script src="/javascripts/configsetting.js"></script>
     <link rel="stylesheet" href="/stylesheets/picturelist.css">
 </head>
 
@@ -20,13 +21,13 @@
     <div class="position-box">
         <div class="navigation-box">
             <div class="user-list-bnt">
-                <img src="icon/Settings.png" alt="">
+                <img src="/icon/Settings.png" alt="">
                 <h3>屋内地図一覧</h3>
             </div>
             <div class="return-bnt">
-                <a href="map.html">
+                <a href="/mainmap">
                     <button type="button" class="btn btn-primary">
-                        <img src="icon/return.png" alt="">
+                        <img src="/icon/return.png" alt="">
                     </button>
                 </a>
             </div>
@@ -38,42 +39,16 @@
                 <th colspan="2" class="name">Building Name</th>
                 <th rowspan='2' class="floor">フロア</th>
                 <th rowspan='2' class="status">図面</th>
-                <th rowspan='2' class="status">地点番号</th>
-                <th colspan="3" class="contract-service">位置情報</th>
                 <th rowspan='2' class="note">Note</th>
             </tr>
-            <tr　class= "title-2">
+            <tr class = "title-2">
             <td class="language" style="width: 200px;">Japanese</td>
             <td class="language" style="width: 200px;">English</td>
-            <td class="service">緯度</td>
-            <td class="service">経度</td>
-            <td class="service">高度</td>
-            </tr>
-            <tr class="text">
-                <td>1</td>
-                <td>
-                    <a href="indoorMap.html">
-                        編集
-                    </a>
-                </td>
-                <td>城山トラストタワー</td>
-                <td>Shiroyama Trust Tower</td>
-                <td>29F</td>
-                <td>
-                    <img src="./images/svg/test.svg" alt="" class="floor-plan">
-                </td>
-                <td>1</td>
-                <td>35.664899</td>
-                <td> 139.742941</td>
-                <td> 72.501</td>
-                <td class="not-text">
-                    例通过把colspan设为“3”, 令所在单元格横跨了三列。如果我们将colspan设为“2”，则该单元格将只跨越两列，于是有必要在第一行插入另外一个单元格，以确保两行占据相同的列数
-                </td>
             </tr>
         </table>
         <div class="append-btn">
             <button type="button" class="btn btn-primary">
-                <a href="indoorMap.html">屋内地図追加</a>
+                <a href="/insertindoormap">屋内地図追加</a>
             </button>
         </div>
         <div class="display-quantity">
@@ -88,6 +63,6 @@
     </div>
 </div>
 </body>
-<script src="/javascripts/configsetting.js"></script>
 <script src="/javascripts/picturelist.js"></script>
+
 </html>

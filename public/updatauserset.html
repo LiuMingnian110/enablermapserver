@@ -35,7 +35,7 @@
             <ul>
                 <li>
                     <p>事業所</p>
-                    <select id="office" class="form-control">
+                    <select id="office" class="form-control" onchange="depselect()">
                     </select>
                 </li>
                 <li>
@@ -82,33 +82,106 @@
     </div>
 </div>
 <script>
+    function HashMap() {
+        this.map = {};
+    }
+
+    HashMap.prototype = {
+        put: function (key, value) {// 向Map中增加元素（key, value)
+            this.map[key] = value;
+        },
+        get: function (key) { //获取指定Key的元素值Value，失败返回Null
+            if (this.map.hasOwnProperty(key)) {
+                return this.map[key];
+            }
+            return null;
+        },
+        remove: function (key) { // 删除指定Key的元素，成功返回True，失败返回False
+            if (this.map.hasOwnProperty(key)) {
+                return delete this.map[key];
+            }
+            return false;
+        },
+        removeAll: function () {  //清空HashMap所有元素
+            this.map = {};
+        },
+        keySet: function () { //获取Map中所有KEY的数组（Array）
+            var _keys = [];
+            for (var i in this.map) {
+                _keys.push(i);
+            }
+            return _keys;
+        }
+    };
+    HashMap.prototype.constructor = HashMap;
+
+
     mapconfig = new mapconfig();
     var companycode = $.cookie('enabermap.uid').substring(0, 5);
     var countrycode = $.cookie('enabermap.uid').substring(5, 8);
     var pnumber = document.URL.substring(document.URL.length - 5);
 
 
-    const officedic = {};
-    const depdic = {};
+    var resultofficelist = [];
+    var officedep = new HashMap();
     $.ajax({
         type: 'GET',
         async: false,
-        url: mapconfig.getcodnamelist(),
+        url: mapconfig.getcompanydetail() + companycode,
         success: function (data) {
-            for (let i = 0; i < data[1].length; i++) {
-                officedic[data[1][i].officecode] = data[1][i].officename;
-                $('#office').append('<option value=' + data[1][i].officecode + '>' + data[1][i].officename + '</option>');
-            }
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].usestatus == 1) {
+                    if (resultofficelist.indexOf(data[i].poffice) == -1) {
+                        resultofficelist.push(data[i].poffice);
+                        officedep.put(data[i].poffice, []);
 
-            for (let i = 0; i < data[2].length; i++) {
-                depdic[data[2][i].depcode] = data[2][i].depname;
-                $('#dep').append('<option value=' + data[2][i].depcode + '>' + data[2][i].depname + '</option>');
+                    }
+
+                    if (officedep.get(data[i].poffice).indexOf(data[i].pdep) == -1) {
+                        var temp = officedep.get(data[i].poffice);
+                        temp.push("" + data[i].pdep);
+                        officedep.put(data[i].poffice, temp);
+                    }
+
+
+                }
             }
         },
         error: function (err) {
             console.log(err);
         }
     })
+
+    var depdic = {};
+    $.ajax({
+        type: 'GET',
+        async: false,
+        url: mapconfig.getcodnamelist(),
+        success: function (data) {
+            for (let i = 0; i < data[1].length; i++) {
+                if (resultofficelist.indexOf(data[1][i].officecode) != -1) {
+                    $('#office').append('<option value=' + data[1][i].officecode + '>' + data[1][i].officename + '</option>');
+                }
+            }
+
+            for (let i = 0; i < data[2].length; i++) {
+                depdic[data[2][i].depcode] = data[2][i].depname;
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+
+    function depselect(){
+        $("#dep").empty();
+        var resultdep=officedep.get(document.getElementById('office').value);
+        for(let i=0;i<resultdep.length;i++){
+            $('#dep').append('<option value=' + resultdep[i] + '>' + depdic[resultdep[i]] + '</option>');
+        }
+    }
+
+    depselect();
 
     $.ajax({
         type: 'GET',

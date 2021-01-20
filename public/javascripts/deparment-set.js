@@ -1,0 +1,68 @@
+mapconfig = new mapconfig();
+var companycode = $.cookie("enabermap.uid").toString().substring(0, 5);
+const officedic = {};
+const depdic = {};
+const officediceng = {};
+const depdiceng = {};
+
+$.ajax({
+    type: 'GET',
+    async: false,
+    url: mapconfig.getcodnamelist(),
+    success: function (data) {
+        for (let i = 0; i < data[1].length; i++) {
+            officedic[data[1][i].officecode] = data[1][i].officename;
+            officediceng[data[1][i].officecode] = data[1][i].officenameeng;
+        }
+
+        for (let i = 0; i < data[2].length; i++) {
+            depdic[data[2][i].depcode] = data[2][i].depname;
+            depdiceng[data[2][i].depcode] = data[2][i].depnameeng;
+        }
+    },
+    error: function (err) {
+        console.log(err);
+    }
+})
+
+$.ajax({
+    type: 'GET',
+    async: false,
+    url: mapconfig.getcompanydetail() + companycode,
+    success: function (data) {
+        for (let i = 0; i < data.length; i++) {
+            var temp = [];
+            temp[0] = data[i].poffice;
+            temp[1] = officedic[data[i].poffice];
+            temp[2] = officediceng[data[i].poffice];
+            temp[3] = data[i].pdep;
+            temp[4] = depdic[data[i].pdep];
+            temp[5] = depdiceng[data[i].pdep];
+            temp[6] = data[i].note;
+            if (data[i].usestatus == 1) {
+                temp[7] = "有効"
+            } else {
+                temp[7] = "無効"
+            }
+
+            var tr = `<td class="merge">${temp[0]}</td>
+        <td class="merge">
+            <a href="./updataoffice/${temp[0]}">
+                編集
+            </a>
+        </td>
+        <td class="merge">${temp[1]}</td>
+        <td class="merge">${temp[2]}</td>
+        <td class="merge">${temp[3]}</td>
+        <td class="merge">${temp[4]}</td>
+        <td class="merge">${temp[5]}</td>
+        <td class="merge">${temp[6]}</td>
+<td class="merge">${temp[7]}</td>`
+
+            $("#target").append('<tr>' + tr + '</tr>');
+        }
+    },
+    error: function (err) {
+        console.log(err);
+    }
+})

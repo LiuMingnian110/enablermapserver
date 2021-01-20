@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
             integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/stylesheets/indoor-map.css">
+    <link rel="stylesheet" href="/stylesheets/updateindoormap.css">
     <title>屋内地図設定</title>
 </head>
 <body>
@@ -31,9 +31,6 @@
                 </a>
             </div>
         </div>
-        <div id="form-title">
-            <span>地図上で屋内地図エリアを線で囲む</span>
-        </div>
         <form id="map-fom">
             <div class="form-file">
                 <div class="form-group">
@@ -49,13 +46,15 @@
             </div>
             <div class="form-file">
                 <div class="form-group">
-                    <label>ビル名</label>
+                    <label>建物名称(日本語/英語)</label>
                 </div>
-                <input type="text" id="bdname">
+                <input type="text" id="jp" class="form-control" placeholder="日本語">
+                <input type="text" id="en" class="form-control" placeholder="English">
             </div>
             <div class="form-file">
                 <div class="form-group">
                     <label>フロア</label>
+                </div>
                     <select id="offlce" class="form-control">
                         <option value="1">1F</option>
                         <option value="2">2F</option>
@@ -63,7 +62,7 @@
                         <option value="4">4F</option>
                         <option value="29">29F</option>
                     </select>
-                </div>
+
             </div>
             <div class="coordinate-box">
                 <div class="coordinate-title">
@@ -92,13 +91,19 @@
                 </div>
             </div>
         </form>
-        <button type="button" class="btn btn-primary mb-2" id="submit">Subimt</button>
+        <div class="note-box">
+            <div class="note-title">Note</div>
+            <textarea name="" id="note-text" cols="30" rows="10"></textarea>
+        </div>
+        <div class="footer-btn">
+            <button type="button" class="btn btn-primary" id="submit">Subimt</button>
+        </div>
     </div>
 </div>
 </body>
 <script>
 
-    mapconfig=new mapconfig();
+    mapconfig = new mapconfig();
 
     var positionInfo = [];
     let inputList = document.getElementById('input-list')
@@ -288,9 +293,12 @@
 
         var cookie_value = $.cookie("enabermap.uid");
         var companycode = cookie_value.substring(0, 5);
-        var countrycode = cookie_value.substring(5,8);
-        var buildingname = document.getElementById("bdname").value;
+        var countrycode = cookie_value.substring(5, 8);
+        var buildingname = document.getElementById("jp").value;
+        var buildingnameeng = document.getElementById("en").value;
         var floor = $("#offlce").find("option:selected").val();
+        var note = document.getElementById("note-text").value;
+        var alt = positionInfo[0].height;
 
         var formData = new FormData();
         formData.append('mapsvg', file);
@@ -300,6 +308,9 @@
         formData.append('countrycode', countrycode);
         formData.append('building', buildingname);
         formData.append('floor', floor);
+        formData.append('alt', alt);
+        formData.append('note', note);
+        formData.append('buildingeng', buildingnameeng);
         $.ajax({
             timeout: 8000,
             type: 'POST',
@@ -310,7 +321,7 @@
             dataType: "json",
             mimeType: "multipart/form-data",
             success: function (data) {
-                if(data.status == 'success'){
+                if (data.status == 'success') {
                     alert("insert success!Please add keypoints next!");
                     $.cookie('setkeyfilename', filename);
                     window.location.href = '/logic';
@@ -320,7 +331,6 @@
                 alert('Please check your network,if it is still not work.Please look admin for help!');
             }
         })
-
 
     })
 

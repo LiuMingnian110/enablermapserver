@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+    <script src="/javascripts/configsetting.js"></script>
+    <link rel="stylesheet" href="/stylesheets/updateindoormap.css">
+    <title>屋内地図設定</title>
+</head>
+
+<body>
+<div id="indoor-map-box">
+    <div id="indoor-map">
+        <div id="navigation-box">
+            <div id="userSettings-bnt">
+                <img src="/icon/Settings.png" alt="">
+                <h3>屋内地図設定</h3>
+            </div>
+            <div id="return-bnt">
+                <a href="../picturelist">
+                    <button type="button" class="btn btn-primary">
+                        <!-- ホームページ -->
+                        <img src="/icon/return.png" alt="">
+                    </button>
+                </a>
+            </div>
+        </div>
+        <form id="map-fom">
+            <div class="form-file">
+                <div class="form-group">
+                    <label>屋内地図　</label>
+                    <label style="position: absolute; right: 0px;">図面登録</label>
+                </div>
+                <div class="file-icon" id="file-icon">
+                    <img src="/icon/file.png" alt="">
+                </div>
+                <div class="file-up">
+                    <input class="form-control-file" type="file" name="company" id="company" accept="image/svg">
+                </div>
+            </div>
+            <div class="form-file">
+                <div class="form-group">
+                    <label>建物名称(日本語/英語)</label>
+                </div>
+                <input type="text" id="jp" class="form-control" value="" placeholder="日本語">
+                <input type="text" id="en" class="form-control" value="" placeholder="English">
+            </div>
+            <div class="form-file">
+                <div class="form-group">
+                    <label>地点登録　フロア</label>
+                </div>
+                <input type="text" id="floor" class="form-control" placeholder="Number(F)">
+            </div>
+            <div class="coordinate-box">
+                <div class="coordinate-title">
+                    <div class="location">地点登録　番号　座標</div>
+                    <div id="layer-preview">
+                        <img src="" alt="" id="preview">
+                    </div>
+                </div>
+                <div class="increase-box">
+                    <div class="point" id="point">
+                        <p id="point-p">地点番号</p>
+                        <p id="latitude">緯度/Lon</p>
+                        <p id="longitude">経度/Lat</p>
+                        <p id="altitude">高度/Ait</p>
+                    </div>
+                    <div class="input-list" id="input-list">
+                        <div id="create-btn">
+                            <button type="button" class="btn btn-primary">
+                                <svg t="1605764327048" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                     xmlns="http://www.w3.org/2000/svg" p-id="5641">
+                                    <path
+                                            d="M923.4 486H540V101.6c0-15.4-12.6-28-28-28s-28 12.6-28 28V486H100.6c-15.4 0-28 12.6-28 28s12.6 28 28 28H484v382.6c0 15.4 12.6 28 28 28s28-12.6 28-28V542h383.4c15.4 0 28-12.6 28-28s-12.6-28-28-28z"
+                                            fill="#ffffff" p-id="5642"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="note-box">
+            <div class="note-title">Note</div>
+            <textarea id="note-text" cols="30" rows="10"></textarea>
+        </div>
+        <div class="footer-btn">
+            <button type="button" class="btn btn-primary" id="submit-btn">Up Data</button>
+            <button type="button" class="btn btn-danger" id="danger-btn">Delete</button>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="/javascripts/updateindoormap.js"></script>
+</html>

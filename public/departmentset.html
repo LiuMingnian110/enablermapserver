@@ -4,19 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事業所・部門設定</title>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
             integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/stylesheets/farbtastic.css">
+    <script src="/javascripts/configsetting.js"></script>
     <link rel="stylesheet" href="/stylesheets/department-set.css">
-    <title>事業所・部門設定</title>
 </head>
 
 <body>
-<div class="department-box">
+<div class="office-box">
     <div>
         <div class="navigation-box">
             <div class="user-list-bnt">
@@ -24,125 +25,46 @@
                 <h3>事業所・部門設定</h3>
             </div>
             <div class="return-bnt">
-                <a href="../mainmap">
+                <a href="/mainmap">
                     <button type="button" class="btn btn-primary">
                         <img src="icon/return.png" alt="">
                     </button>
                 </a>
             </div>
         </div>
-        <div class="edit">
-            <div class="office">
-                <div class="title">事業所情報</div>
-                <ul>
-                    <li class="leftStyle">
-                        <p>事業所番号</p>
-                        <input class="form-control officeNo" type="text">
-                    </li>
-                    <li class="leftStyle">
-                        <p>事業所名称（日本語）</p>
-                        <input class="form-control jp" type="text">
-                    </li>
-                    <li>
-                        <p>officeName(english) </p>
-                        <input class="form-control en" type="text">
-                    </li>
-                </ul>
-            </div>
-            <div class="department">
-                <div class="title">部門情報</div>
-                <div class="list-box">
-                    <div class="title-list">
-                        <ul>
-                            <li class="departmentNo leftStyle">部門情報</li>
-                            <li class="jp leftStyle">事業所名称（日本語）</li>
-                            <li class="en leftStyle">officeName(english)</li>
-                            <li class="note">Note</li>
-                        </ul>
-                    </div>
-                    <div class="input-list">
-                        <ul>
-                            <li class="leftStyle">
-                                <input class="form-control departmentNo" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control jp" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control en" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control note" type="text" value="">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="input-list">
-                        <ul>
-                            <li class="leftStyle">
-                                <input class="form-control departmentNo" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control jp" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control en" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control note" type="text" value="">
-                            </li>
-                            <li>
-                                <button type="button" class="btn btn-danger">Delete</button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="input-list">
-                        <ul>
-                            <li class="leftStyle">
-                                <input class="form-control departmentNo" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control jp" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control en" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control note" type="text" value="">
-                            </li>
-                            <li>
-                                <button type="button" class="btn btn-danger">Delete</button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="input-list">
-                        <ul>
-                            <li class="leftStyle">
-                                <input class="form-control departmentNo" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control jp" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control en" type="text" value="">
-                            </li>
-                            <li class="leftStyle">
-                                <input class="form-control note" type="text" value="">
-                            </li>
-                            <li>
-                                <button type="button" class="btn btn-danger">Delete</button>
-                            </li>
-                        </ul>
-                    </div>
-                    <button type="button" class="btn btn-primary addition">部門追加</button>
-                </div>
-            </div>
+        <table id="target">
+            <tr>
+                <th rowspan='2' class="office-no">事業所番号<br>Office No.</th>
+                <th rowspan='2' class="edit">Edit</th>
+                <th colspan='2' class="office-name">Office Name</th>
+                <th rowspan='2' class="dep-no">部門番号<br>Dep No.</th>
+                <th colspan='2' class="dep-name">Dep. Name</th>
+                <th rowspan='2' class="note">Note</th>
+                <th rowspan='2' class="status">status</th>
+            </tr>
+            <tr class="language">
+                <td>Japanese</td>
+                <td>English</td>
+                <td>Japanese</td>
+                <td>English</td>
+            </tr>
+        </table>
+        <div class="append-btn">
+            <button type="button" class="btn btn-primary">
+                <a href="/addsetting">事業所追加</a>
+            </button>
         </div>
-        <div class="footer-btn">
-            <button type="button" class="btn btn-primary" id="submit-btn">Submit</button>
-            <button type="button" class="btn btn-danger" id="danger-btn">Delete</button>
+        <div class="display-quantity">
+            <div class="display-text">表示件数</div>
+            <select name="" id="">
+                <option value="">50</option>
+                <option value="">100</option>
+                <option value="">200</option>
+                <option value="">300</option>
+            </select>
         </div>
     </div>
 </div>
 </body>
-
+<script src="/javascripts/deparment-set.js"></script>
 </html>

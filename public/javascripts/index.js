@@ -1,4 +1,4 @@
-mapconfig= new mapconfig();
+mapconfig = new mapconfig();
 let map;
 let markerCluster = null;
 const companycode = $.cookie("enabermap.uid").substring(0, 5);
@@ -50,7 +50,7 @@ var getmapdetail = function (companycode) {
 var showindoormap = function (filename, keypoint) {
     $.cookie('filename', filename);
     $.cookie('keypoints', keypoint);
-    window.open(mapconfig.getbaseurl()+'indoorfloor');
+    window.open(mapconfig.getbaseurl() + 'indoorfloor');
 };
 
 var getpersondetail = function () {
@@ -97,7 +97,7 @@ var userlistmake = function () {
 
     $.ajax({
         type: 'GET',
-        url: mapconfig.getcompanyname()+companycode,
+        url: mapconfig.getcompanyname() + companycode,
         async: false,
         success: function (data) {
             companyNameEle.innerText = data[0].companyname;
@@ -399,7 +399,7 @@ panelChangePwdCloseBtn.onclick = function passChangeDemo() {
 let selector = document.querySelectorAll('.selector')
 let option = document.getElementById('option')
 let wrappers = document.querySelectorAll('.wrapper')
-var setVal  = document.querySelectorAll('.set-val')
+var setVal = document.querySelectorAll('.set-val')
 var activeSelectorIndex = 0
 for (let i = 0; i < selector.length; i++) {
     selector[i].index = i
@@ -411,15 +411,13 @@ for (let i = 0; i < selector.length; i++) {
     })
 }
 
-function realTime(){
+function realTime() {
     setVal[0].innerText = year
-    setVal[1].innerText = month+1
+    setVal[1].innerText = month + 1
     setVal[2].innerText = day
     setVal[3].innerText = hh
     setVal[4].innerText = mm
 }
-
-
 
 
 const date = new Date()
@@ -458,9 +456,10 @@ generatorOptions(wrappers[5], 5, 23, 1, true, '')
 // generatorOptions(wrappers[6], 6, 100, 1, true, '')
 
 //倍率スピード
-var speed = [ 1, 50, 100, 200, 500, 1000 ]
-function steSpeed(wrapper,groupIndex, sort = true, suffix = ''){
-    for(var i = 0; i < speed.length; i++){
+var speed = [1, 50, 100, 200, 500, 1000]
+
+function steSpeed(wrapper, groupIndex, sort = true, suffix = '') {
+    for (var i = 0; i < speed.length; i++) {
         var option = document.createElement('div')
         var text = document.createTextNode(speed[i])
         option.val = speed[i]
@@ -477,6 +476,7 @@ function steSpeed(wrapper,groupIndex, sort = true, suffix = ''){
         }
     }
 }
+
 steSpeed(wrappers[6], 6)
 
 
@@ -534,7 +534,8 @@ document.getElementById('ecording').addEventListener('click', function () {
 })
 
 
-function findKey (obj,value, compare = (a, b) => a === b) {  return Object.keys(obj).find(k => compare(obj[k], value))
+function findKey(obj, value, compare = (a, b) => a === b) {
+    return Object.keys(obj).find(k => compare(obj[k], value))
 }
 
 //履歴表示機能
@@ -567,9 +568,9 @@ document.getElementById('start-btn').addEventListener('click', function () {
         var checkbox = levelNo[i].querySelector('.checkbox-active')
         if (checkbox) {
             var companyName = checkbox.bindData.companyName
-            var country = findKey(countrydic,checkbox.bindData.country)
-            var office = findKey(officedic,checkbox.bindData.office)
-            var dep = findKey(depdic,checkbox.bindData.dep)
+            var country = findKey(countrydic, checkbox.bindData.country)
+            var office = findKey(officedic, checkbox.bindData.office)
+            var dep = findKey(depdic, checkbox.bindData.dep)
             var number = checkbox.bindData.number
             data.push(companyName + country + office + dep + number)
             flag = true
@@ -584,7 +585,7 @@ document.getElementById('start-btn').addEventListener('click', function () {
     $.cookie('speed', playspeed.toString());
 
 
-    window.open(mapconfig.getbaseurl()+'historyshow');
+    window.open(mapconfig.getbaseurl() + 'historyshow');
 
 })
 
@@ -595,13 +596,13 @@ document.getElementById("refresh-btn").addEventListener('click', function () {
 //HistoryDisplayTime buttonwをクリックして、
 
 
-document.getElementById('start-btn').addEventListener('click',function(){
+document.getElementById('start-btn').addEventListener('click', function () {
     var levelNo = document.querySelectorAll('.level-3')
     var data = []
     var flag = false
-    for(var i = 0; i < levelNo.length; i++){
+    for (var i = 0; i < levelNo.length; i++) {
         var checkbox = levelNo[i].querySelector('.checkbox-active')
-        if(checkbox) {
+        if (checkbox) {
             var companyName = checkbox.bindData.companyName
             var country = checkbox.bindData.country
             var office = checkbox.bindData.office
@@ -611,23 +612,23 @@ document.getElementById('start-btn').addEventListener('click',function(){
             flag = true
         }
     }
-    if(!flag) {
+    if (!flag) {
         alert('ユーザーを選択してください')
     }
 })
 
 //user rigth btn
-function menuBtn(){
+function menuBtn() {
     var levelNo = document.querySelectorAll('.level-3')
     var flag = false
-    for(var i = 0; i < levelNo.length; i++){
+    for (var i = 0; i < levelNo.length; i++) {
         var menuBtnBox = levelNo[i].querySelector('.menu-btn-box')
         menuBtnBox.index = i
 
-        menuBtnBox.addEventListener('click',function(){
+        menuBtnBox.addEventListener('click', function () {
             realTime()
             var currentBox = this.parentNode.querySelector('.checkbox')
-            if(!currentBox.classList.contains('checkbox-active')){
+            if (!currentBox.classList.contains('checkbox-active')) {
                 currentBox.classList.add('checkbox-active')
             }
             // this --> levelNo
@@ -638,7 +639,7 @@ function menuBtn(){
 
             currentNode.parentNode.querySelectorAll('.menu-options-btn')
                 .forEach((ele, index) => {
-                    if(this.index !== index) {
+                    if (this.index !== index) {
                         ele.style.display = 'none'
                     }
                 })
@@ -646,29 +647,29 @@ function menuBtn(){
             var menuOptionsBtn = this.querySelector('.menu-options-btn')
             menuOptionsBtn.style.display = menuOptionsBtn.style.display == 'block' ? 'none' : 'block'
 
-            if(currentNode.nextSibling !== null) {
+            if (currentNode.nextSibling !== null) {
                 var nextLevel = currentNode.nextSibling.classList[1].split('-')[1]
                 var nextEle = currentNode
-                while(nextLevel === level ) {
+                while (nextLevel === level) {
                     nextEle = nextEle.nextSibling
                     var checkbox = nextEle.querySelector('.checkbox')
-                    if(checkbox.classList.contains('checkbox-active')) {
+                    if (checkbox.classList.contains('checkbox-active')) {
                         checkbox.classList.remove('checkbox-active')
                     }
-                    if(nextEle.nextSibling === null) break
+                    if (nextEle.nextSibling === null) break
                     nextLevel = nextEle.nextSibling.classList[1].split('-')[1]
                 }
             }
-            if(currentNode.previousSibling !== null) {
+            if (currentNode.previousSibling !== null) {
                 var prevLevel = currentNode.previousSibling.classList[1].split('-')[1]
                 var prevEle = currentNode
-                while(prevLevel === level ) {
+                while (prevLevel === level) {
                     prevEle = prevEle.previousSibling
                     var checkbox = prevEle.querySelector('.checkbox')
-                    if(checkbox.classList.contains('checkbox-active')) {
+                    if (checkbox.classList.contains('checkbox-active')) {
                         checkbox.classList.remove('checkbox-active')
                     }
-                    if(prevEle.previousSibling === null) break
+                    if (prevEle.previousSibling === null) break
                     prevLevel = prevEle.previousSibling.classList[1].split('-')[1]
                 }
             }
@@ -676,9 +677,9 @@ function menuBtn(){
     }
     // resumeDisplayBtnをクリックして、HistoryDisplayTimeのdisplayを変わる
     var resumeDisplayBtn = document.querySelectorAll('.resume-display-btn')
-    for(var i = 0; i < resumeDisplayBtn.length; i++){
+    for (var i = 0; i < resumeDisplayBtn.length; i++) {
         resumeDisplayBtn[i].index = i
-        resumeDisplayBtn[i].addEventListener('click',function(){
+        resumeDisplayBtn[i].addEventListener('click', function () {
             mobileRecord.style.display = mobileRecord.style.display == 'none' ? 'block' : 'block'
         })
     }
@@ -686,10 +687,10 @@ function menuBtn(){
 
 //企業名、右側更新ボタン
 var refreshBtn = document.getElementById('refresh-btn')
-refreshBtn.addEventListener('click',function(){
+refreshBtn.addEventListener('click', function () {
     var userdetailshow = document.getElementById('userdetailshow')
-    for(var i = userdetailshow.childNodes.length - 1; i >= 0; i--){
-        if(userdetailshow.childNodes.length != 0){
+    for (var i = userdetailshow.childNodes.length - 1; i >= 0; i--) {
+        if (userdetailshow.childNodes.length != 0) {
             userdetailshow.removeChild(userdetailshow.childNodes[i])
         }
     }
@@ -697,45 +698,45 @@ refreshBtn.addEventListener('click',function(){
 })
 
 //userlist tree
-function treeDisplay(){
+function treeDisplay() {
     var treeitem = document.querySelector('.treeitem')
     var iconSvg = treeitem.querySelectorAll('.icon-svg')
 
-    for(var i = 0; i < iconSvg.length; i++){
-        iconSvg[i].addEventListener('click',function(){
+    for (var i = 0; i < iconSvg.length; i++) {
+        iconSvg[i].addEventListener('click', function () {
             var curNode = this.parentNode
             var curLevel = parseInt(curNode.classList[1].split('-')[1])
             var nextNode = curNode.nextSibling
             var nextLevel = parseInt(nextNode.classList[1].split('-')[1])
 
-            if(nextLevel === curLevel) return false
+            if (nextLevel === curLevel) return false
 
             // SVG Rotate
             var curSvg = this.querySelector('svg')
             curSvg.style.transform = curSvg.style.transform === 'rotate(0deg)' ? 'rotate(90deg)' : 'rotate(0deg)'
 
             // Tree expand
-            if(nextNode.style.display === 'none') {
+            if (nextNode.style.display === 'none') {
                 //開け
                 var openLevel = curLevel + 1
-                while(nextLevel >= openLevel) {
+                while (nextLevel >= openLevel) {
                     if (nextLevel === curLevel) break
-                    if(nextLevel === openLevel) {
+                    if (nextLevel === openLevel) {
                         nextNode.style.display = 'block'
                     }
-                    if(nextNode.nextSibling === null) break
+                    if (nextNode.nextSibling === null) break
                     nextNode = nextNode.nextSibling
                     nextLevel = parseInt(nextNode.classList[1].split('-')[1])
                 }
             } else {
                 // 閉め
                 var closeLevel = nextLevel
-                while(nextLevel >= closeLevel) {
+                while (nextLevel >= closeLevel) {
                     if (nextLevel === curLevel) break
                     nextNode.style.display = 'none'
                     var nextSvg = nextNode.querySelector('svg')
-                    if(nextSvg) nextSvg.style.transform = 'rotate(0deg)'
-                    if(nextNode.nextSibling === null) break
+                    if (nextSvg) nextSvg.style.transform = 'rotate(0deg)'
+                    if (nextNode.nextSibling === null) break
                     nextNode = nextNode.nextSibling
                     nextLevel = parseInt(nextNode.classList[1].split('-')[1])
                 }
@@ -744,3 +745,78 @@ function treeDisplay(){
         })
     }
 }
+
+//left menu icon color change
+function iconSwitch() {
+    let aClass = document.querySelectorAll('.nav-link')
+    for (let i = 0; i < aClass.length; i++) {
+        aClass[i].index = i
+        aClass[i].addEventListener('click', function () {
+            for (let n = 0; n < aClass.length; n++) {
+                const pathEle = aClass[n].getElementsByTagName('path')[0]
+                pathEle.setAttribute('fill', '#007bff')
+            }
+            const pathEle = aClass[this.index].getElementsByTagName('path')[0]
+            pathEle.setAttribute('fill', '#fff')
+        })
+    }
+}
+
+iconSwitch()
+
+//role conrole
+function dorole() {
+    var rolenumber=null;
+    $.ajax({
+        type: 'GET',
+        url: mapconfig.getpersondetail() + adminpnumber,
+        async: false,
+        success: function (data) {
+            rolenumber=data[0].prole;
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+
+    $.ajax({
+        type: 'GET',
+        url: mapconfig.getsysroledetail(),
+        async: false,
+        success: function (data) {
+            for(let i=0;i<data.length;i++){
+                if(rolenumber==data[i].roleid){
+                    console.log(data[i])
+                    if(data[i].adminsetting!=1){
+                        $("#adminsetting").remove();
+                    }
+                    if(data[i].changepwd!=1){
+                        $("#pwss").remove();
+                    }
+                    if(data[i].historyshow!=1){
+                        $("#ecording").remove();
+                    }
+                    if(data[i].indoormapsetting!=1){
+                        $("#picture-list").remove();
+                    }
+                    if(data[i].servicesetting!=1){
+                        $("#enterprise").remove();
+                    }
+                    if(data[i].usersetting!=1){
+                        $("#user-list").remove();
+                    }
+                    if(data[i].officesetting!=1){
+                        $("#department").remove();
+                    }
+                }
+
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+}
+dorole()
+
+

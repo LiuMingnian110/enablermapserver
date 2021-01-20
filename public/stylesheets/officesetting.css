@@ -1,0 +1,131 @@
+*{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+html,body{
+    width: 100%;
+    position: relative;
+}
+ul{
+    margin-bottom: 0px !important;
+}
+.department-box{
+    width: 95%;
+    box-shadow: 0.1px 0px 0px 2px rgba(134, 134, 134, 0.1);
+    position: relative;
+    margin: 20px auto;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    position: relative;
+}
+.navigation-box{
+    height: 38px;
+    position: relative;
+    background-color: #007bff;
+    padding: 0px 20px;
+    border-radius: 3px 3px 0 0;
+}
+.user-list-bnt{
+    height: 38px;
+    float: left;
+}
+.user-list-bnt img{
+    height: 24px;
+    float: left;
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+}
+.user-list-bnt h3{
+    line-height: 38px;
+    margin-left: 34px;
+    margin-bottom: 0px !important;
+    font-size: 18px;
+    color: #fff;
+}
+.return-bnt{
+    position: absolute;
+    right: 20px;
+}
+.return-bnt img{
+    height: 20px;
+}
+.edit{
+    position: relative;
+    padding: 20px 20px;
+}
+.office{
+    height: 78px;
+    margin-bottom: 20px;
+}
+.department{
+    display: flex;
+    display: -webkit-flex;
+    justify-content: flex-start;
+}
+.title{
+    width: 10%;
+    float: left;
+}
+.office ul{
+    width: 90%;
+}
+.list-box{
+    width: 90%;
+    position: relative;
+}
+.title-list{
+    margin-bottom: 20px;
+    position: relative;
+}
+.title ul, .input-list ul,.title-list ul{
+    position: relative;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: flex-start;
+}
+.input-list ul{
+    height: 38px;
+}
+ul li{
+    float: left;
+}
+.leftStyle{
+    margin-right: 20px;
+}
+.officeNo, .departmentNo{
+    width: 10%;
+}
+.officeNo input, .departmentNo input{
+    width: 100%;
+}
+.office .jp ,.office .en,.title-list .jp, .title-list .en,.input-list .jp, .input-list .en{
+    width: 20%;
+}
+.title-list .note ,.input-list .note{
+    width: 35%;
+}
+.department{
+    height: auto;
+}
+.note{
+    width: 400px;
+}
+.input-list{
+    margin-bottom: 20px;
+}
+#addition{
+    width: 100px;
+}
+.footer-btn{
+    margin-bottom: 20px;
+}
+#submit-btn,#danger-btn{
+    width: 10%;
+    margin-right: 16px;
+}
+
+.hide-btn{
+    display: none;
+}

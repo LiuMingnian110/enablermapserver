@@ -4,7 +4,7 @@ class mapconfig {
         this.baseurl = 'http://localhost:3000/'
     }
 
-    geturl(){
+    geturl() {
         return this.url
     }
 
@@ -37,86 +37,128 @@ class mapconfig {
     }
 
     //indoor-map html
-    svgupload(){
+    svgupload() {
         return this.baseurl + 'singleUpload'
     }
 
     //indoorfloor html
-    getfloordetail(){
+    getfloordetail() {
         return this.baseurl + 'getfloordetail/'
     }
 
     //logic html
-    updatakeypoint(){
+    updatakeypoint() {
         return this.baseurl + 'updatakeypoint'
     }
 
     //mapindoor html
-    getlocations(){
+    getlocations() {
         return this.baseurl + 'getlocations/'
     }
 
     //userSettings html
-    getcodnamelist(){
+    getcodnamelist() {
         return this.baseurl + 'getcodnamelist'
     }
 
-    getcompanydetail(){
+    getcompanydetail() {
         return this.baseurl + 'getcompanydetail/'
     }
 
-    newuser(){
+    newuser() {
         return this.baseurl + 'newuser'
     }
 
     //index html
-    user(){
+    user() {
         return this.baseurl + 'user/'
     }
 
-    getuserlist(){
+    getuserlist() {
         return this.baseurl + 'getuserlist/'
     }
 
-    changepw(){
+    changepw() {
         return this.baseurl + 'changepw'
     }
 
-    getallservicedetail(){
+    getallservicedetail() {
         return this.baseurl + 'getallservicedetail'
     }
 
-    insertservicesetting(){
+    insertservicesetting() {
         return this.baseurl + 'insertservicesetting'
     }
 
-    getservicesetting(){
+    getservicesetting() {
         return this.baseurl + 'getservicesetting/'
     }
 
-    updataservicesetting(){
+    updataservicesetting() {
         return this.baseurl + 'updataservicesetting'
     }
 
-    deleteservicesetting(){
+    deleteservicesetting() {
         return this.baseurl + 'deleteservicesetting'
     }
 
-    getsysroledetail(){
+    getsysroledetail() {
         return this.baseurl + 'getsysroledetail'
     }
 
-    deleteuser(){
+    deleteuser() {
         return this.baseurl + 'deleteuser'
     }
 
-    getpersoncompanydetail(){
+    getpersoncompanydetail() {
         return this.baseurl + 'getpersoncompanydetail/'
     }
 
-    updatapersontail(){
+    updatapersontail() {
         return this.baseurl + 'updatapersontail'
     }
 
+    insertofficeall() {
+        return this.baseurl + 'insertofficeall'
+    }
 
+    insertdepall() {
+        return this.baseurl + 'insertdepall'
+    }
+
+    insertcompanydetail() {
+        return this.baseurl + 'insertcompanydetail'
+    }
+
+    getcompandetailbyoffice() {
+        return this.baseurl + 'getcompandetailbyoffice/'
+    }
+
+    updateofficedetail() {
+        return this.baseurl + 'updateofficedetail'
+    }
+
+    updatedepdetail(){
+        return this.baseurl + 'updatedepdetail'
+    }
+
+    getdetailbyfilename(){
+        return this.baseurl + 'getdetailbyfilename/'
+    }
+
+    deleteindoormap(){
+        return this.baseurl + 'deleteindoormap'
+    }
+
+    updateindoordetail(){
+        return this.baseurl + 'updateindoordetail'
+    }
+
+    stopoffice(){
+        return this.baseurl + 'stopoffice'
+    }
+
+    getpersondetail(){
+        return this.baseurl + 'user/'
+    }
 }
