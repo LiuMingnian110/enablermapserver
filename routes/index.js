@@ -176,23 +176,19 @@ router.get('/user/:pnumber', async function (req, res, next) {
 
 //ユーザ登録
 router.post('/newuser', async function (req, res, next) {
-    if (req.body.data.companycode == "" || req.body.data.countrycode == "" || req.body.data.officecode == "" || req.body.data.depcode == "" || req.body.data.username == "" || req.body.data.mail == "" || req.body.data.password == "" || req.body.data.role == "" || req.body.data.icon == "" || req.body.data.color == "") {
-        res.json({"status": "failed"});
-        res.end();
-    } else {
-        await userpro.newpnumber(req.body.data.companycode, req.body.data.countrycode, req.body.data.officecode, req.body.data.depcode);
+    try {
+        await userpro.newpnumber(req.body.data.companycode, req.body.data.officecode, req.body.data.depcode);
         var result = await userpro.getlastpnumber();
         var dataString = JSON.stringify(result);
         var data = JSON.parse(dataString);
         var pnumber = data[0].maxpnumber;
-        const result1 = await userpro.insertUser(req.body.data.mail, req.body.data.password, req.body.data.role, req.body.data.icon, req.body.data.color, pnumber, req.body.data.username);
-        dataString = JSON.stringify(result1);
-        data = JSON.parse(dataString);
+        await userpro.insertUser(req.body.data.mail, req.body.data.password, req.body.data.role, req.body.data.icon, req.body.data.color, pnumber, req.body.data.username);
         res.json({"status": "success"});
-        res.end();
-
-
+    } catch (e) {
+        console.log(e);
+        res.json({"status": "failed"});
     }
+
 
 });
 
@@ -225,25 +221,27 @@ router.post('/changepw', async function (req, res, next) {
 
 //ユーザ登録パスワード認証
 router.post('/loginbypd', async function (req, res, next) {
-    const result = await userpro.checker(req.body.data.mail, req.body.data.pwd);
-    if (result.length == 0) {
-        res.json({"uid": "error"});
-        res.end();
-    } else {
-        var dataString = JSON.stringify(result);
-        var data = JSON.parse(dataString);
-        const result1 = await userpro.checkerpnumber(data[0].pnumber);
-        if (result1.length != 0) {
-            dataString = JSON.stringify(result1);
-            data = JSON.parse(dataString);
-            var str = data[0].pcompanycode + data[0].pcountry + data[0].poffice + data[0].pdep + data[0].pnumber;
-            req.session.isLogin = 1;
-            res.json({"uid": str});
-            res.end();
-        } else {
+    try {
+        const result = await userpro.checker(req.body.data.mail, req.body.data.pwd);
+        if (result.length == 0) {
             res.json({"uid": "error"});
-            res.end();
+        } else {
+            var dataString = JSON.stringify(result);
+            var data = JSON.parse(dataString);
+            const result1 = await userpro.checkerpnumber(data[0].pnumber);
+            if (result1.length != 0) {
+                dataString = JSON.stringify(result1);
+                data = JSON.parse(dataString);
+                var str = data[0].pcompanycode + data[0].poffice + data[0].pdep + data[0].pnumber;
+                req.session.isLogin = 1;
+                res.json({"uid": str});
+            } else {
+                res.json({"uid": "error"});
+            }
         }
+    } catch (e) {
+        console.log(e);
+        res.json({"uid": "error"});
     }
 
 });
@@ -258,9 +256,14 @@ router.post('/updateindoordetail', upload.single('mapsvg'), async function (req,
 
 //SVG File UpLoad
 router.post('/singleUpload', upload.single('mapsvg'), async function (req, res, next) {
-    const result = await userpro.insertIndoorMap(req.body.companycode, req.body.countrycode, req.body.svgfilename, req.body.building, req.body.floor, req.body.position, req.body.alt, req.body.note, req.body.buildingeng);
-    res.json({"status": "success"});
-    res.end();
+    try {
+        const result = await userpro.insertIndoorMap(req.body.companycode, req.body.svgfilename, req.body.building, req.body.floor, req.body.position, req.body.alt, req.body.note, req.body.buildingeng);
+        res.json({"status": "success"});
+    } catch (e) {
+        console.log(e);
+        res.json(null);
+    }
+
 });
 
 //GET SVG MAP 廃棄、使用しない
@@ -271,13 +274,18 @@ router.get('/getmap/:mapname.svg', function (req, res, next) {
 
 //GET USERLIST
 router.get('/getuserlist/:companyNo', async function (req, res, next) {
-    const result = await userpro.getuserlist(req.params.companyNo);
-    if (result.length == 0) {
-        res.status(400);
-    } else {
-        var dataString = JSON.stringify(result);
-        var data = JSON.parse(dataString);
-        res.send(data);
+    try {
+        const result = await userpro.getuserlist(req.params.companyNo);
+        if (result.length == 0) {
+            res.send(null);
+        } else {
+            var dataString = JSON.stringify(result);
+            var data = JSON.parse(dataString);
+            res.send(data);
+        }
+    } catch (e) {
+        console.log(e);
+        res.send(null);
     }
 });
 
@@ -291,18 +299,28 @@ router.get('/getcompanydetail/:companyNo', async function (req, res, next) {
 
 //企業名取得
 router.get('/getcompanyname/:companyNo', async function (req, res, next) {
-    const result = await userpro.getcompanyname(req.params.companyNo);
-    var dataString = JSON.stringify(result);
-    var data = JSON.parse(dataString);
-    res.send(data);
+    try {
+        const result = await userpro.getcompanyname(req.params.companyNo);
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        res.send(data);
+    } catch (e) {
+        console.log(e);
+        res.send(null);
+    }
 });
 
-//indoormap
+//indoormap 情報を取得する。
 router.get('/getindoordetail/:companyNo', async function (req, res, next) {
-    const result = await userpro.getindoordetail(req.params.companyNo);
-    var dataString = JSON.stringify(result);
-    var data = JSON.parse(dataString);
-    res.send(data);
+    try {
+        const result = await userpro.getindoordetail(req.params.companyNo);
+        var dataString = JSON.stringify(result);
+        var data = JSON.parse(dataString);
+        res.send(data);
+    } catch (e) {
+        console.log(e);
+        res.send(null);
+    }
 });
 
 //updata indoor map keypoint
@@ -341,11 +359,15 @@ router.get('/getuploadtime/:companycode', async function (req, res, next) {
 
 //
 router.get('/getcodnamelist', async function (req, res, next) {
-    const result = [];
-    result.push(JSON.parse(JSON.stringify(await userpro.getcountryname())));
-    result.push(JSON.parse(JSON.stringify(await userpro.getofficename())));
-    result.push(JSON.parse(JSON.stringify(await userpro.getdepname())));
-    res.send(result);
+    try {
+        const result = [];
+        result.push(JSON.parse(JSON.stringify(await userpro.getofficename())));
+        result.push(JSON.parse(JSON.stringify(await userpro.getdepname())));
+        res.send(result);
+    } catch (e) {
+        console.log(e);
+        res.send(null);
+    }
 })
 
 //get upload time
@@ -459,14 +481,24 @@ router.post('/insertofficeall', async function (req, res, next) {
 
 //insert depall
 router.post('/insertdepall', async function (req, res, next) {
-    const result = await userpro.insertdepall(req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng);
-    res.send(result);
+    try {
+        const result = await userpro.insertdepall(req.body.data.poffice,req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng);
+        res.send(result);
+    } catch (e) {
+        console.log(e);
+        res.send(null);
+    }
 });
 
 //insert companydetail
 router.post('/insertcompanydetail', async function (req, res, next) {
-    const result = await userpro.insertcompanydetail(req.body.data.pcompanycode, req.body.data.pcountry, req.body.data.poffice, req.body.data.pdep, req.body.data.note);
-    res.send(result);
+    try {
+        const result = await userpro.insertcompanydetail(req.body.data.pcompanycode,req.body.data.poffice, req.body.data.pdep, req.body.data.note);
+        res.send(result);
+    }catch (e) {
+        console.log(e);
+        res.send(null);
+    }
 });
 
 //update officedetail
@@ -477,8 +509,13 @@ router.post('/updateofficedetail', async function (req, res, next) {
 
 //update depdetail
 router.post('/updatedepdetail', async function (req, res, next) {
-    const result = await userpro.updatedepdetail(req.body.data.poffice, req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng, req.body.data.note, req.body.data.usestatus);
-    res.send(result);
+    try {
+        const result = await userpro.updatedepdetail(req.body.data.poffice, req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng, req.body.data.note, req.body.data.usestatus);
+        res.send(result);
+    }catch (e) {
+        console.log(e);
+        res.send(null);
+    }
 });
 
 //stopoffice

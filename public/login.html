@@ -83,7 +83,8 @@
     .btn {
         width: 100% !important;
     }
-    .submit{
+
+    .submit {
         width: 100%;
         margin: 0 auto;
         position: absolute;
@@ -103,7 +104,8 @@
             </div>
             <div class="form-group">
                 <label for="exampleFormControlInput1">メールアドレス/Mail address</label>
-                <input type="email" class="form-control" id="email" placeholder="例）enabler@gmail.co.jp" disabled="disabled">
+                <input type="email" class="form-control" id="email" placeholder="例）enabler@gmail.co.jp"
+                       disabled="disabled">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">パスワード/Password</label>
@@ -121,25 +123,25 @@
 </div>
 </body>
 <script>
-    mapconfig=new mapconfig();
+    mapconfig = new mapconfig();
 
     $("#company").blur(function () {
-        document.getElementById('email').disabled="disabled";
-        document.getElementById('password').disabled="disabled";
-        document.getElementById('email').value="";
-        document.getElementById('password').value="";
+        document.getElementById('email').disabled = "disabled";
+        document.getElementById('password').disabled = "disabled";
+        document.getElementById('email').value = "";
+        document.getElementById('password').value = "";
         $.ajax({
             type: 'GET',
             url: mapconfig.getcompanyname() + $("#company").val(),
             async: true,
             success: function (data) {
-                if (data.length == 0) {
+                if (data.length == 0 || data == null) {
                     alert("company is not exist!");
                     document.getElementById('company').value = "";
                 } else {
                     document.getElementById('company').value = $("#company").val() + "-" + data[0].companyname;
-                    document.getElementById('email').disabled=false;
-                    document.getElementById('password').disabled=false;
+                    document.getElementById('email').disabled = false;
+                    document.getElementById('password').disabled = false;
                 }
             },
             error: function (err) {
@@ -148,12 +150,20 @@
         })
     })
 
+    //SESSION　を書く時間
+    function wait(ms){
+        var start = new Date().getTime();
+        var end = start;
+        while(end < start + ms) {
+            end = new Date().getTime();
+        }
+    }
+
     function dataUp() {
         if ($("#company").val() == "" || $("#email").val() == "" || $("#password").val() == "") {
             alert("情報を全部入力してください。");
         } else {
             $.ajax({
-                timeout: 3000,
                 type: 'POST',
                 url: mapconfig.loginbypwd(),
                 contentType: "application/json",
@@ -173,6 +183,7 @@
                         window.location.href = '/login';
                     } else {
                         $.cookie('enabermap.uid', JSON.parse(data).uid);
+                        wait(3000);
                         window.location.href = '/mainmap';
                     }
                 },

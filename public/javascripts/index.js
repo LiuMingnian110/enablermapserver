@@ -2,7 +2,7 @@ mapconfig = new mapconfig();
 let map;
 let markerCluster = null;
 const companycode = $.cookie("enabermap.uid").substring(0, 5);
-const adminpnumber = $.cookie("enabermap.uid").substring(14);
+const adminpnumber = $.cookie("enabermap.uid").substring(15);
 let UserListData = null;
 let uidlist = [];
 let pnumberlist = [];
@@ -16,29 +16,31 @@ var getmapdetail = function (companycode) {
         type: 'GET',
         url: mapconfig.getindoordetail() + companycode,
         success: function (data) {
-            indoordetail = data;
-            for (let i = 0, len = indoordetail.length; i < len; i++) {
-                var templist = indoordetail[i].position.split("|");
-                var areaCoords = [];
-                for (let j = 0, len = templist.length; j < len; j++) {
-                    var tempstring = {
-                        lat: Number(templist[j].split(",")[0]),
-                        lng: Number(templist[j].split(",")[1])
+            if (data != null) {
+                indoordetail = data;
+                for (let i = 0, len = indoordetail.length; i < len; i++) {
+                    var templist = indoordetail[i].position.split("|");
+                    var areaCoords = [];
+                    for (let j = 0, len = templist.length; j < len; j++) {
+                        var tempstring = {
+                            lat: Number(templist[j].split(",")[0]),
+                            lng: Number(templist[j].split(",")[1])
+                        }
+                        areaCoords.push(tempstring);
                     }
-                    areaCoords.push(tempstring);
+                    var areaTriangle = new google.maps.Polygon({
+                        paths: areaCoords,
+                        strokeColor: "#FF0000",
+                        strokeOpacity: 0.8,
+                        strokeWeight: 3,
+                        fillColor: "#FF0000",
+                        fillOpacity: 0.35,
+                    });
+                    areaTriangle.setMap(map);
+                    areaTriangle.addListener("click", function () {
+                        showindoormap(indoordetail[i].svgfile, indoordetail[i].keypoint);
+                    });
                 }
-                var areaTriangle = new google.maps.Polygon({
-                    paths: areaCoords,
-                    strokeColor: "#FF0000",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 3,
-                    fillColor: "#FF0000",
-                    fillOpacity: 0.35,
-                });
-                areaTriangle.setMap(map);
-                areaTriangle.addListener("click", function () {
-                    showindoormap(indoordetail[i].svgfile, indoordetail[i].keypoint);
-                });
             }
         },
         error: function (err) {
@@ -72,7 +74,6 @@ var getpersondetail = function () {
 }
 
 var companyNameEle = document.querySelector('#user-title');
-var countrydic = {};
 const officedic = {};
 const depdic = {};
 var userlistmake = function () {
@@ -81,16 +82,14 @@ var userlistmake = function () {
         url: mapconfig.getcodnamelist(),
         async: false,
         success: function (data) {
-            for (let i = 0; i < data[0].length; i++) {
-                countrydic[data[0][i].countrycode] = data[0][i].countryname;
-            }
+            if (data != null) {
+                for (let i = 0; i < data[0].length; i++) {
+                    officedic[data[0][i].officecode] = data[0][i].officename;
+                }
 
-            for (let i = 0; i < data[1].length; i++) {
-                officedic[data[1][i].officecode] = data[1][i].officename;
-            }
-
-            for (let i = 0; i < data[2].length; i++) {
-                depdic[data[2][i].depcode] = data[2][i].depname;
+                for (let i = 0; i < data[1].length; i++) {
+                    depdic[""+data[1][i].officecode+data[1][i].depcode] = data[1][i].depname;
+                }
             }
         }
     })
@@ -109,9 +108,8 @@ var userlistmake = function () {
     for (let i = 0; i < UserListData.length; i++) {
         const user = UserListData[i];
         var companyCode = user.pcompanycode;
-        var country = countrydic[user.pcountry];
         var office = officedic[user.poffice];
-        var userDep = depdic[user.pdep];
+        var userDep = depdic[""+user.poffice+user.pdep];
         var userNumber = user.pnumber;
 
         if (!treeData.hasOwnProperty(office)) treeData[office] = {};
@@ -125,13 +123,11 @@ var userlistmake = function () {
             number: userNumber,
             office: office,
             dep: userDep,
-            country: country,
             companyName: companyCode,
             color: `#${userColor}`
         })
     }
     createCompanyTree(treeitem, treeData);
-    // treecontroller();
     menuBtn();
     treeDisplay();
 
@@ -200,7 +196,7 @@ var drawPosition = function () {
                 UserListData = data;
                 for (let i = 0; i < data.length; i++) {
                     pnumberlist.push(data[i].pnumber);
-                    var uid = data[i].pcompanycode + data[i].pcountry + data[i].poffice + data[i].pdep + data[i].pnumber;
+                    var uid = data[i].pcompanycode + data[i].poffice + data[i].pdep + data[i].pnumber;
                     uidlist.push(uid);
                 }
             }
@@ -228,7 +224,6 @@ var drawPosition = function () {
     $.cookie('uidlist', uidlist.toString());
     $.cookie('pnamelist', pnamelist.toString());
     timedraw(showallposition, 3000);
-
 
 }
 
@@ -503,8 +498,10 @@ document.getElementById('submit-btn').addEventListener('click', function () {
             success: function (data) {
                 if (JSON.parse(data).status == 'success') {
                     alert("updata password success!");
+                    document.getElementById("pw-chagen-btn").click();
                 } else {
                     alert("updata password failed!");
+                    document.getElementById("pw-chagen-btn").click();
                 }
             },
             error: function () {
@@ -764,48 +761,61 @@ function iconSwitch() {
 
 iconSwitch()
 
-//role conrole
+//role conrole marge必要未完成
 function dorole() {
-    var rolenumber=null;
+    var rolenumber = null;
+    var companyservice = null;
     $.ajax({
         type: 'GET',
         url: mapconfig.getpersondetail() + adminpnumber,
         async: false,
         success: function (data) {
-            rolenumber=data[0].prole;
+            rolenumber = data[0].prole;
         },
         error: function (err) {
             console.log(err);
         }
-    })
+    });
+
+    // $.ajax({
+    //     type: 'GET',
+    //     url: mapconfig.getpersondetail() + adminpnumber,
+    //     async: false,
+    //     success: function (data) {
+    //         rolenumber = data[0].prole;
+    //     },
+    //     error: function (err) {
+    //         console.log(err);
+    //     }
+    // });
 
     $.ajax({
         type: 'GET',
         url: mapconfig.getsysroledetail(),
         async: false,
         success: function (data) {
-            for(let i=0;i<data.length;i++){
-                if(rolenumber==data[i].roleid){
+            for (let i = 0; i < data.length; i++) {
+                if (rolenumber == data[i].roleid) {
                     console.log(data[i])
-                    if(data[i].adminsetting!=1){
+                    if (data[i].adminsetting != 1) {
                         $("#adminsetting").remove();
                     }
-                    if(data[i].changepwd!=1){
+                    if (data[i].changepwd != 1) {
                         $("#pwss").remove();
                     }
-                    if(data[i].historyshow!=1){
+                    if (data[i].historyshow != 1) {
                         $("#ecording").remove();
                     }
-                    if(data[i].indoormapsetting!=1){
+                    if (data[i].indoormapsetting != 1) {
                         $("#picture-list").remove();
                     }
-                    if(data[i].servicesetting!=1){
+                    if (data[i].servicesetting != 1) {
                         $("#enterprise").remove();
                     }
-                    if(data[i].usersetting!=1){
+                    if (data[i].usersetting != 1) {
                         $("#user-list").remove();
                     }
-                    if(data[i].officesetting!=1){
+                    if (data[i].officesetting != 1) {
                         $("#department").remove();
                     }
                 }
@@ -817,6 +827,7 @@ function dorole() {
         }
     })
 }
+
 dorole()
 
 

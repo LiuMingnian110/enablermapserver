@@ -118,7 +118,6 @@
 
     mapconfig = new mapconfig();
     var companycode = $.cookie('enabermap.uid').substring(0, 5);
-    var countrycode = $.cookie('enabermap.uid').substring(5, 8);
     var pnumber = document.URL.substring(document.URL.length - 5);
 
 
@@ -134,12 +133,11 @@
                     if (resultofficelist.indexOf(data[i].poffice) == -1) {
                         resultofficelist.push(data[i].poffice);
                         officedep.put(data[i].poffice, []);
-
                     }
 
                     if (officedep.get(data[i].poffice).indexOf(data[i].pdep) == -1) {
                         var temp = officedep.get(data[i].poffice);
-                        temp.push("" + data[i].pdep);
+                        temp.push("" + data[i].poffice + data[i].pdep);
                         officedep.put(data[i].poffice, temp);
                     }
 
@@ -158,14 +156,14 @@
         async: false,
         url: mapconfig.getcodnamelist(),
         success: function (data) {
-            for (let i = 0; i < data[1].length; i++) {
-                if (resultofficelist.indexOf(data[1][i].officecode) != -1) {
-                    $('#office').append('<option value=' + data[1][i].officecode + '>' + data[1][i].officename + '</option>');
+            for (let i = 0; i < data[0].length; i++) {
+                if (resultofficelist.indexOf(data[0][i].officecode) != -1) {
+                    $('#office').append('<option value=' + data[0][i].officecode + '>' + data[0][i].officename + '</option>');
                 }
             }
 
-            for (let i = 0; i < data[2].length; i++) {
-                depdic[data[2][i].depcode] = data[2][i].depname;
+            for (let i = 0; i < data[1].length; i++) {
+                depdic["" + data[1][i].officecode + data[1][i].depcode] = data[1][i].depname;
             }
         },
         error: function (err) {
@@ -173,15 +171,14 @@
         }
     })
 
-    function depselect(){
+    function depselect() {
         $("#dep").empty();
-        var resultdep=officedep.get(document.getElementById('office').value);
-        for(let i=0;i<resultdep.length;i++){
-            $('#dep').append('<option value=' + resultdep[i] + '>' + depdic[resultdep[i]] + '</option>');
+        var resultdep = officedep.get(document.getElementById('office').value);
+        for (let i = 0; i < resultdep.length; i++) {
+            $('#dep').append('<option value=' + resultdep[i].toString().substring(5) + '>' + depdic[resultdep[i]] + '</option>');
         }
     }
 
-    depselect();
 
     $.ajax({
         type: 'GET',
@@ -197,12 +194,21 @@
         }
     })
 
+    function isnodata(a) {
+        if (a == "" || a == null || a == undefined) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     $.ajax({
         type: 'GET',
         async: false,
         url: mapconfig.getpersoncompanydetail() + pnumber,
         success: function (data) {
             $('#office').find("option[value='" + data[0].poffice + "']").attr("selected", true);
+            depselect();
             $('#dep').find("option[value='" + data[0].pdep + "']").attr("selected", true);
         },
         error: function (err) {
@@ -247,38 +253,55 @@
 
 
     document.getElementById('submit-btn').addEventListener('click', function () {
-        $.ajax({
-            type: 'POST',
-            url: mapconfig.updatapersontail(),
-            contentType: "application/json",
-            dataType: "text",
-            data: JSON.stringify({
-                "data": {
-                    "pnumber": pnumber,
-                    "companycode": companycode,
-                    "countrycode": countrycode,
-                    "officecode": $('#office option:selected').val(),
-                    "depcode": $('#dep option:selected').val(),
-                    "username": $('#username').val(),
-                    "mail": $('#exampleFormControlInput1').val(),
-                    "password": $('#inputPassword').val(),
-                    "role": $('#role option:selected').val(),
-                    "icon": "1",
-                    "color": "FFFFFF"
+        if (isnodata(companycode) && isnodata($('#office option:selected').val()) && isnodata($('#dep option:selected').val()) && isnodata($('#username').val()) && isnodata($('#exampleFormControlInput1').val()) && isnodata($('#inputPassword').val()) && isnodata($('#role option:selected').val())) {
+            $.ajax({
+                type: 'POST',
+                url: mapconfig.updatapersontail(),
+                contentType: "application/json",
+                dataType: "text",
+                data: JSON.stringify({
+                    "data": {
+                        "pnumber": pnumber,
+                        "companycode": companycode,
+                        "officecode": $('#office option:selected').val(),
+                        "depcode": $('#dep option:selected').val(),
+                        "username": $('#username').val(),
+                        "mail": $('#exampleFormControlInput1').val(),
+                        "password": $('#inputPassword').val(),
+                        "role": $('#role option:selected').val(),
+                        "icon": "1",
+                        "color": "FFFFFF"
+                    }
+                }),
+                success: function (data) {
+                    if (JSON.parse(data).status == 'success') {
+                        alert("updata user success!");
+                        window.location.href = '/userlist';
+                    } else {
+                        alert("add user failed!");
+                    }
+                },
+                error: function () {
+                    alert('Please check your network,if it is still not work.Please look admin for help!');
                 }
-            }),
-            success: function (data) {
-                if (JSON.parse(data).status == 'success') {
-                    alert("updata user success!");
-                    window.location.href = '/userlist';
-                } else {
-                    alert("add user failed!");
-                }
-            },
-            error: function () {
-                alert('Please check your network,if it is still not work.Please look admin for help!');
-            }
-        })
+            })
+        } else {
+            alert("Please input all information!")
+        }
+    })
+
+    //pass Display
+    var displayIcon = document.querySelector('.display-icon')
+    var pass = document.querySelector('#inputPassword')
+    var iconColor = displayIcon.querySelector('path')
+    displayIcon.addEventListener('click', function () {//
+        if (pass.type === 'password') {
+            pass.type = 'text'
+            iconColor.setAttribute('fill', '#007BFF')
+        } else {
+            pass.type = 'password'
+            iconColor.setAttribute('fill', '#CCCCCC')
+        }
     })
 
 

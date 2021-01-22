@@ -2,10 +2,8 @@ const client = require('./MySQLUtil');
 
 //select user by pnumber
 const queryUserByUid = function (pnumber) {
-
     const sql = "select * from enablermap.user where pnumber = " + "'" + pnumber + "'" + ";";
     return pros(sql);
-
 }
 
 const insertUser = function (mail, pwd, prole, displayicon, displaycolor, pnumber, pname) {
@@ -23,11 +21,13 @@ const getNewPw = function (pnumber) {
     return pros(sql);
 }
 
+//パスワードとメールアドレスを使って、個人番号を取得する。
 const checker = function (mail, pwd) {
     const sql = "select pnumber from enablermap.user where mail =" + "'" + mail + "' and pwd = " + "'" + pwd + "';"
     return pros(sql);
 }
 
+//pnumberを使って、UID取得する。
 const checkerpnumber = function (pnumber) {
     const sql = "select * from enablermap.company where pnumber =" + "'" + pnumber + "';"
     return pros(sql);
@@ -64,8 +64,8 @@ const uploadtime = function (companycode, uploadtime) {
     return pros(sql);
 }
 
-const newpnumber = function (companycode, contrycode, officecode, pdep) {
-    const sql = "INSERT INTO enablermap.company (pcompanycode, pcountry, poffice, pdep) VALUES (" + "'" + companycode + "', '" + contrycode + "', '" + officecode + "', '" + pdep + "');"
+const newpnumber = function (companycode, officecode, pdep) {
+    const sql = "INSERT INTO enablermap.company (pcompanycode,poffice, pdep) VALUES (" + "'" + companycode + "', '" + officecode + "', '" + pdep + "');"
     return pros(sql);
 }
 
@@ -74,8 +74,8 @@ const getlastpnumber = function () {
     return pros(sql);
 }
 
-const insertIndoorMap = function (pcompanycode, pcountry, svgfile, building, floor, position, alt, note, buildingeng) {
-    const sql = "insert ignore into enablermap.indoormap values (" + "'" + pcompanycode + "','" + pcountry + "','" + svgfile + "','" + building + "','" + floor + "','" + position + "',null,'" + alt + "','" + note + "','" + buildingeng + "');"
+const insertIndoorMap = function (pcompanycode, svgfile, building, floor, position, alt, note, buildingeng) {
+    const sql = "insert ignore into enablermap.indoormap values (" + "'" + pcompanycode + "','" + svgfile + "','" + building + "','" + floor + "','" + position + "',null,'" + alt + "','" + note + "','" + buildingeng + "');"
     return pros(sql);
 }
 
@@ -171,13 +171,13 @@ const insertofficeall = function (officecode, officename, officenameeng) {
     return pros(sql);
 }
 
-const insertdepall = function (depcode, depname, odepnameeng) {
-    const sql = "insert into enablermap.depall values (" + "'" + depcode + "','" + depname + "','" + odepnameeng + "');"
+const insertdepall = function (officecode, depcode, depname, depnameeng) {
+    const sql = "insert into enablermap.depall values (" + "'" + depcode + "','" + depname + "','" + depnameeng + "','" + officecode + "');"
     return pros(sql);
 }
 
-const insertcompanydetail = function (pcompanycode, pcountry, poffice, pdep, note) {
-    const sql = "insert into enablermap.companydetail values (" + "'" + pcompanycode + "','" + pcountry + "','" + poffice + "','" + pdep + "','" + note + "',1);"
+const insertcompanydetail = function (pcompanycode, poffice, pdep, note) {
+    const sql = "insert into enablermap.companydetail values (" + "'" + pcompanycode + "','" + poffice + "','" + pdep + "','" + note + "',1);"
     return pros(sql);
 }
 
@@ -192,34 +192,24 @@ const deleteindoormap = function (filename) {
 }
 
 const updatapersontail = function (pnumber, officecode, depcode, username, mail, password, role, icon, color) {
-    try {
-        let sql = "UPDATE enablermap.user SET mail =" + "'" + mail + "',pwd =" + "'" + password + "',prole=" + "'" + role + "',displayicon=" + "'" + icon + "',displaycolor=" + "'" + color + "',pname=" + "'" + username + "'where pnumber =" + "'" + pnumber + "';"
-        pros(sql);
-        sql = "UPDATE  enablermap.company SET poffice = " + "'" + officecode + "',pdep =" + "'" + depcode + "'where pnumber = " + "'" + pnumber + "';"
-        return pros(sql);
-    } catch (e) {
-        console.log(e)
-    }
+    let sql = "UPDATE enablermap.user SET mail =" + "'" + mail + "',pwd =" + "'" + password + "',prole=" + "'" + role + "',displayicon=" + "'" + icon + "',displaycolor=" + "'" + color + "',pname=" + "'" + username + "'where pnumber =" + "'" + pnumber + "';"
+    pros(sql);
+    sql = "UPDATE  enablermap.company SET poffice = " + "'" + officecode + "',pdep =" + "'" + depcode + "'where pnumber = " + "'" + pnumber + "';"
+    return pros(sql);
 }
 
 const updatedepdetail = function (poffice, depcode, depname, depnameeng, note, usestatus) {
-    try {
-        let sql = "UPDATE enablermap.companydetail SET note =" + "'" + note + "',usestatus =" + "'" + usestatus + "'where poffice =" + "'" + poffice + "' and pdep=" + "'" + depcode + "';"
-        pros(sql);
-        sql = "UPDATE  enablermap.depall SET depname = " + "'" + depname + "',depnameeng =" + "'" + depnameeng + "'where depcode = " + "'" + depcode + "';"
-        return pros(sql);
-    } catch (e) {
-        console.log(e)
-    }
+    let sql = "UPDATE enablermap.companydetail SET note =" + "'" + note + "',usestatus =" + "'" + usestatus + "'where poffice =" + "'" + poffice + "' and pdep=" + "'" + depcode + "';"
+    pros(sql);
+    sql = "UPDATE  enablermap.depall SET depname = " + "'" + depname + "',depnameeng =" + "'" + depnameeng + "'where depcode = " + "'" + depcode + "' and officecode = " + "'" + poffice + "';"
+    return pros(sql);
+
 }
 
 const stopoffice = function (poffice) {
-    try {
-        let sql = "UPDATE enablermap.companydetail SET usestatus = 0 where poffice = " + "'" + poffice + "';"
-        return pros(sql);
-    } catch (e) {
-        console.log(e)
-    }
+    let sql = "UPDATE enablermap.companydetail SET usestatus = 0 where poffice = " + "'" + poffice + "';"
+    return pros(sql);
+
 }
 
 

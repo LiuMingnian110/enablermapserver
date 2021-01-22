@@ -78,47 +78,21 @@
     mapconfig = new mapconfig();
     var companycode = $.cookie("enabermap.uid").toString().substring(0, 5);
     var list = [];
-    var deplist = [];
     var alldepcode = [];
+
     $.ajax({
         type: 'GET',
         async: false,
         url: mapconfig.getcodnamelist(),
         success: function (data) {
-            for (let i = 0; i < data[1].length; i++) {
-                list.push(data[1][i].officecode)
-            }
-            for (let i = 0; i < data[2].length; i++) {
-                deplist.push(data[2][i])
-            }
-            for (let i = 0; i < deplist.length; i++) {
-                alldepcode.push(deplist[i].depcode);
+            for (let i = 0; i < data[0].length; i++) {
+                list.push(data[0][i].officecode)
             }
         },
         error: function (err) {
             console.log(err);
         }
     })
-
-    // function dozero(officecode) {
-    //     if (officecode < 10) {
-    //         return "00" + officecode;
-    //     } else if (officecode < 100) {
-    //         return "0" + officecode;
-    //     } else {
-    //         return officecode;
-    //     }
-    // }
-
-    // var tempmax = 0;
-    // for (let i = 0; i < list.length; i++) {
-    //     if (tempmax < Number(list[i])) {
-    //         tempmax = Number(list[i]);
-    //     }
-    // }
-    // var officecode = tempmax + 1;
-    // var prooffice = dozero(officecode);
-    // document.getElementById("officecode").value = prooffice;
 
     function checkofficecode() {
         var inputofficecode = document.getElementById('officecode').value;
@@ -157,45 +131,45 @@
         listnum = listnum + 1;
     })
 
-    document.getElementById("select-btn").addEventListener("click", function () {
-        var text = "既存の部門番号と名前:" + "\r\n ";
-        for (let i = 0; i < deplist.length; i++) {
-            text = text + "depcode:" + deplist[i].depcode + "  " + deplist[i].depname + "\r\n "
-        }
-        var selectdepcode = window.prompt(text, "input depcode");
-        var selectname = null;
-        var selectnameeng = null;
-        for (let i = 0; i < deplist.length; i++) {
-            if (deplist[i].depcode == selectdepcode) {
-                selectname = deplist[i].depname;
-                selectnameeng = deplist[i].depnameeng;
-                var id = listnum + 1;
-                var body = `<ul id="${id}">
-                            <li class="leftStyle departmentNo">
-                                <input id="${id}-depcode" class="form-control" type="text" value="${selectdepcode}" disabled="disabled">
-                            </li>
-                            <li class="leftStyle jp">
-                                <input id="${id}-depname" class="form-control " type="text" value="${selectname}" disabled="disabled">
-                            </li>
-                            <li class="leftStyle en">
-                                <input id="${id}-depnameeng" class="form-control " type="text" value="${selectnameeng}" disabled="disabled">
-                            </li>
-                            <li class="leftStyle note">
-                                <input id="${id}-note" class="form-control" type="text" value="">
-                            </li>
-                            <li>
-                                <button id="${id}-deletebutton" type="button" class="btn btn-danger" onclick="deleteul(${id})">Delete</button>
-                            </li>
-                        </ul>`
-                $("#target").append(body);
-                if (listnum != 0) {
-                    $("#" + listnum + "-deletebutton").attr('disabled', true);
-                }
-                listnum = listnum + 1;
-            }
-        }
-
-    })
+    // document.getElementById("select-btn").addEventListener("click", function () {
+    //     var text = "既存の部門番号と名前:" + "\r\n ";
+    //     for (let i = 0; i < deplist.length; i++) {
+    //         text = text + "depcode:" + deplist[i].depcode + "  " + deplist[i].depname + "\r\n "
+    //     }
+    //     var selectdepcode = window.prompt(text, "input depcode");
+    //     var selectname = null;
+    //     var selectnameeng = null;
+    //     for (let i = 0; i < deplist.length; i++) {
+    //         if (deplist[i].depcode == selectdepcode) {
+    //             selectname = deplist[i].depname;
+    //             selectnameeng = deplist[i].depnameeng;
+    //             var id = listnum + 1;
+    //             var body = `<ul id="${id}">
+    //                         <li class="leftStyle departmentNo">
+    //                             <input id="${id}-depcode" class="form-control" type="text" value="${selectdepcode}" disabled="disabled">
+    //                         </li>
+    //                         <li class="leftStyle jp">
+    //                             <input id="${id}-depname" class="form-control " type="text" value="${selectname}" disabled="disabled">
+    //                         </li>
+    //                         <li class="leftStyle en">
+    //                             <input id="${id}-depnameeng" class="form-control " type="text" value="${selectnameeng}" disabled="disabled">
+    //                         </li>
+    //                         <li class="leftStyle note">
+    //                             <input id="${id}-note" class="form-control" type="text" value="">
+    //                         </li>
+    //                         <li>
+    //                             <button id="${id}-deletebutton" type="button" class="btn btn-danger" onclick="deleteul(${id})">Delete</button>
+    //                         </li>
+    //                     </ul>`
+    //             $("#target").append(body);
+    //             if (listnum != 0) {
+    //                 $("#" + listnum + "-deletebutton").attr('disabled', true);
+    //             }
+    //             listnum = listnum + 1;
+    //         }
+    //     }
+    //
+    // })
 
     function arrdelete(i) {
         var index = alldepcode.indexOf(i);
@@ -215,12 +189,18 @@
     }
 
     function check(id) {
-        var temp = document.getElementById(id + "-newdepcode").value;
-        if (alldepcode.indexOf(temp) != -1) {
+        alldepcode = [];
+        for (let i = 0; i < listnum; i++) {
+            if (Number(i) != Number(id - 1)) {
+                var temp = document.getElementById(Number(i + 1) + "-newdepcode").value;
+                alldepcode.push(temp);
+            }
+        }
+
+        var tempdata = document.getElementById(id + "-newdepcode").value;
+        if (alldepcode.indexOf(tempdata) != -1) {
             alert("depcode is existed!Please rewrite depcode!");
             document.getElementById(id + "-newdepcode").focus();
-        } else {
-            alldepcode.push(temp);
         }
     }
 
@@ -256,6 +236,7 @@
                     dataType: "text",
                     data: JSON.stringify({
                         "data": {
+                            "poffice": $("#officecode").val(),
                             "depcode": $("#" + i + "-newdepcode").val(),
                             "depname": $("#" + i + "-newdepname").val(),
                             "depnameeng": $("#" + i + "-newdepnameeng").val()
@@ -278,7 +259,6 @@
                     data: JSON.stringify({
                         "data": {
                             "pcompanycode": companycode,
-                            "pcountry": '392',
                             "poffice": $("#officecode").val(),
                             "pdep": $("#" + i + "-newdepcode").val(),
                             "note": $("#" + i + "-note").val(),
@@ -301,7 +281,6 @@
                     data: JSON.stringify({
                         "data": {
                             "pcompanycode": companycode,
-                            "pcountry": '392',
                             "poffice": $("#officecode").val(),
                             "pdep": $("#" + i + "-depcode").val(),
                             "note": $("#" + i + "-note").val(),
@@ -319,7 +298,7 @@
         // if(i==listnum){
         //     alert("all success!")
         // }
-
+        window.location.href = "../departmentset"
     })
 
 

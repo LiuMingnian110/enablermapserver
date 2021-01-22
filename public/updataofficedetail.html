@@ -80,7 +80,7 @@
     mapconfig = new mapconfig();
     var companycode = $.cookie("enabermap.uid").toString().substring(0, 5);
 
-    var officecode = document.URL.substring(document.URL.length - 3);
+    var officecode = document.URL.substring(document.URL.length - 5);
     document.getElementById('officecode').value = officecode;
 
     var list = [];
@@ -88,18 +88,21 @@
     var depdic = {};
     var depdiceng = {};
     var alldepcode = [];
+
     $.ajax({
         type: 'GET',
         async: false,
         url: mapconfig.getcodnamelist(),
         success: function (data) {
-            for (let i = 0; i < data[1].length; i++) {
-                list.push(data[1][i])
+            for (let i = 0; i < data[0].length; i++) {
+                list.push(data[0][i])
             }
-            for (let i = 0; i < data[2].length; i++) {
-                deplist.push(data[2][i]);
-                depdic[data[2][i].depcode] = data[2][i].depname;
-                depdiceng[data[2][i].depcode] = data[2][i].depnameeng;
+            for (let i = 0; i < data[1].length; i++) {
+                if (data[1][i].officecode == officecode) {
+                    deplist.push(data[1][i]);
+                    depdic[data[1][i].depcode] = data[1][i].depname;
+                    depdiceng[data[1][i].depcode] = data[1][i].depnameeng;
+                }
             }
             for (let i = 0; i < deplist.length; i++) {
                 alldepcode.push(deplist[i].depcode);
@@ -123,12 +126,14 @@
 
     var listnum = 0;
     var orgindata = [];
+    var orginlength = 0;
 
     $.ajax({
         type: 'GET',
         async: false,
         url: mapconfig.getcompandetailbyoffice() + officecode,
         success: function (data) {
+            orginlength = data.length - 1;
             listnum = data.length - 1;
             for (let i = 0; i < data.length; i++) {
                 var temporgindata = depdic[data[i].pdep] + depdiceng[data[i].pdep] + data[i].note + data[i].usestatus;
@@ -205,12 +210,21 @@
     }
 
     function check(id) {
-        var temp = document.getElementById(id + "-newdepcode").value;
-        if (alldepcode.indexOf(temp) != -1) {
+        var templist=[];
+        var tempdata = document.getElementById(id + "-newdepcode").value;
+        if (alldepcode.indexOf(tempdata) != -1) {
             alert("depcode is existed!Please rewrite depcode!");
             document.getElementById(id + "-newdepcode").focus();
-        } else {
-            alldepcode.push(temp);
+        }
+        for (let i = listnum; i >= alldepcode.length; i--) {
+            if(Number(i) != Number(id)){
+                var temp = document.getElementById(Number(i) + "-newdepcode").value;
+                templist.push(temp);
+            }
+        }
+        if (templist.indexOf(tempdata) != -1) {
+            alert("depcode is existed!Please rewrite depcode!");
+            document.getElementById(id + "-newdepcode").focus();
         }
     }
 
@@ -249,7 +263,7 @@
                     dataType: "text",
                     data: JSON.stringify({
                         "data": {
-                            "poffice": officecode,
+                            "poffice": $("#officecode").val(),
                             "depcode": $("#" + i + "-depcode").val(),
                             "depname": $("#" + i + "-depname").val(),
                             "depnameeng": $("#" + i + "-depnameeng").val(),
@@ -278,6 +292,7 @@
                     dataType: "text",
                     data: JSON.stringify({
                         "data": {
+                            "poffice": $("#officecode").val(),
                             "depcode": $("#" + i + "-newdepcode").val(),
                             "depname": $("#" + i + "-newdepname").val(),
                             "depnameeng": $("#" + i + "-newdepnameeng").val()
@@ -300,7 +315,6 @@
                     data: JSON.stringify({
                         "data": {
                             "pcompanycode": companycode,
-                            "pcountry": '392',
                             "poffice": $("#officecode").val(),
                             "pdep": $("#" + i + "-newdepcode").val(),
                             "note": $("#" + i + "-note").val(),
@@ -319,7 +333,7 @@
         window.location.href = "../departmentset"
     })
 
-    document.getElementById('stopall-btn').addEventListener('click',function(){
+    document.getElementById('stopall-btn').addEventListener('click', function () {
         $.ajax({
             type: 'POST',
             url: mapconfig.stopoffice(),

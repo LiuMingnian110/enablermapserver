@@ -43,12 +43,12 @@ $.ajax({
     async: false,
     url: mapconfig.getcodnamelist(),
     success: function (data) {
-        for (let i = 0; i < data[1].length; i++) {
-            officedic[data[1][i].officecode] = data[1][i].officename;
+        for (let i = 0; i < data[0].length; i++) {
+            officedic[data[0][i].officecode] = data[0][i].officename;
         }
 
-        for (let i = 0; i < data[2].length; i++) {
-            depdic[data[2][i].depcode] = data[2][i].depname;
+        for (let i = 0; i < data[1].length; i++) {
+            depdic[""+data[1][i].officecode+data[1][i].depcode] = data[1][i].depname;
         }
     },
     error: function (err) {
@@ -74,7 +74,7 @@ $.ajax({
 for (let i = 0; i < userdetaillist.length; i++) {
     var temp = [];
     temp[0] = officedic[companydetail[i].poffice];
-    temp[1] = depdic[companydetail[i].pdep];
+    temp[1] = depdic[""+companydetail[i].poffice+companydetail[i].pdep];
     temp[3] = userdetaillist[i][0].pnumber;
     temp[4] = userdetaillist[i][0].pname;
     temp[5] = userdetaillist[i][0].mail;

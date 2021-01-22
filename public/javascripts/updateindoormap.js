@@ -193,7 +193,6 @@ submitBtn.addEventListener('click', function () {
 
     var cookie_value = $.cookie("enabermap.uid");
     var companycode = cookie_value.substring(0, 5);
-    var countrycode = cookie_value.substring(5, 8);
     var buildingname = document.getElementById("jp").value;
     var buildingnameeng = document.getElementById("en").value;
     var floor = document.getElementById("floor").value;

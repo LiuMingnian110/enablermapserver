@@ -10,14 +10,14 @@ $.ajax({
     async: false,
     url: mapconfig.getcodnamelist(),
     success: function (data) {
-        for (let i = 0; i < data[1].length; i++) {
-            officedic[data[1][i].officecode] = data[1][i].officename;
-            officediceng[data[1][i].officecode] = data[1][i].officenameeng;
+        for (let i = 0; i < data[0].length; i++) {
+            officedic[data[0][i].officecode] = data[0][i].officename;
+            officediceng[data[0][i].officecode] = data[0][i].officenameeng;
         }
 
-        for (let i = 0; i < data[2].length; i++) {
-            depdic[data[2][i].depcode] = data[2][i].depname;
-            depdiceng[data[2][i].depcode] = data[2][i].depnameeng;
+        for (let i = 0; i < data[1].length; i++) {
+            depdic[""+data[1][i].officecode+data[1][i].depcode] = data[1][i].depname;
+            depdiceng[""+data[1][i].officecode+data[1][i].depcode] = data[1][i].depnameeng;
         }
     },
     error: function (err) {
@@ -36,8 +36,8 @@ $.ajax({
             temp[1] = officedic[data[i].poffice];
             temp[2] = officediceng[data[i].poffice];
             temp[3] = data[i].pdep;
-            temp[4] = depdic[data[i].pdep];
-            temp[5] = depdiceng[data[i].pdep];
+            temp[4] = depdic[""+data[i].poffice+data[i].pdep];
+            temp[5] = depdiceng[""+data[i].poffice+data[i].pdep];
             temp[6] = data[i].note;
             if (data[i].usestatus == 1) {
                 temp[7] = "有効"
