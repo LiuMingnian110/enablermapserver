@@ -101,6 +101,12 @@ router.get('/logic', function (req, res, next) {
     res.render('logic');
 });
 
+
+//ロジック計算画面
+router.get('/updatebuilding/logic/logic', function (req, res, next) {
+    res.render('logic');
+});
+
 //屋内地図履歴表示画面
 router.get('/historyshowindoor', function (req, res, next) {
     res.render('historyshowindoor');
@@ -134,10 +140,15 @@ router.post('/location/:uid', function (req, res, next) {
     const uid = req.params.uid;
     if (req.body.data != null) {
         try {
-            logger.logger(uid, JSON.stringify(req.body.data));
-            var val = req.body.data.lat + ";" + req.body.data.lon + ";" + req.body.data.alt;
-            client.Post(uid, val);
-            res.json({"result": "success"});
+            if (req.body.data.tim != null) {
+                logger.logger(uid, req.body.data.tim.toString().substring(0,10), JSON.stringify(req.body.data));
+                var val = req.body.data.lat + ";" + req.body.data.lon + ";" + req.body.data.alt;
+                client.Post(uid, val);
+                res.json({"result": "success"});
+            } else {
+                res.json({"result": "failed"});
+            }
+
         } catch (e) {
             console.log(e);
             res.json({"result": "failed"});
@@ -146,12 +157,11 @@ router.post('/location/:uid', function (req, res, next) {
         res.json({"result": "failed"});
     }
     ;
-    res.end();
 });
 
 //人過去位置情報送信
-router.get('/historical/:uid', async function (req, res, next) {
-    const result = await filereader.getFileData(req.params.uid).catch((err) => {
+router.get('/historical/:date/:uid', async function (req, res, next) {
+    const result = await filereader.getFileData(req.params.date,req.params.uid).catch((err) => {
         return null;
     });
     if (result != null) {
@@ -482,7 +492,7 @@ router.post('/insertofficeall', async function (req, res, next) {
 //insert depall
 router.post('/insertdepall', async function (req, res, next) {
     try {
-        const result = await userpro.insertdepall(req.body.data.poffice,req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng);
+        const result = await userpro.insertdepall(req.body.data.poffice, req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng);
         res.send(result);
     } catch (e) {
         console.log(e);
@@ -493,9 +503,9 @@ router.post('/insertdepall', async function (req, res, next) {
 //insert companydetail
 router.post('/insertcompanydetail', async function (req, res, next) {
     try {
-        const result = await userpro.insertcompanydetail(req.body.data.pcompanycode,req.body.data.poffice, req.body.data.pdep, req.body.data.note);
+        const result = await userpro.insertcompanydetail(req.body.data.pcompanycode, req.body.data.poffice, req.body.data.pdep, req.body.data.note);
         res.send(result);
-    }catch (e) {
+    } catch (e) {
         console.log(e);
         res.send(null);
     }
@@ -512,7 +522,7 @@ router.post('/updatedepdetail', async function (req, res, next) {
     try {
         const result = await userpro.updatedepdetail(req.body.data.poffice, req.body.data.depcode, req.body.data.depname, req.body.data.depnameeng, req.body.data.note, req.body.data.usestatus);
         res.send(result);
-    }catch (e) {
+    } catch (e) {
         console.log(e);
         res.send(null);
     }

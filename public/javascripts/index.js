@@ -8,7 +8,32 @@ let uidlist = [];
 let pnumberlist = [];
 let userdetaillist = [];
 let pnamelist = [];
+let pnamedic = {};
 let uidlistforajax = null;
+
+
+function getuidlist() {
+    var data = [];
+    pnamelist = [];
+    var levelNo = document.querySelectorAll('.level-3');
+    for (var i = 0; i < levelNo.length; i++) {
+        var checkbox = levelNo[i].querySelector('.checkbox-active')
+        if (checkbox) {
+            var companyName = checkbox.bindData.companyName
+            var office = findKey(officedic, checkbox.bindData.office)
+            var dep = findKey(depdic, checkbox.bindData.dep)
+            var number = checkbox.bindData.number
+            data.push(companyName + office + dep.substring(dep.length - 5) + number)
+            pnamelist.push(pnamedic[number])
+        }
+    }
+
+    $.cookie('uidlist', data.toString());
+
+    $.cookie('pnamelist', pnamelist.toString());
+    return data;
+}
+
 
 //屋内地図Map上に書く
 var getmapdetail = function (companycode) {
@@ -63,7 +88,7 @@ var getpersondetail = function () {
             url: mapconfig.user() + pnumberlist[i],
             success: function (data) {
                 userdetaillist.push(data);
-                pnamelist.push(data[0].pname);
+                pnamedic[data[0].pnumber] = data[0].pname;
             },
             error: function (err) {
                 console.log(err);
@@ -88,7 +113,7 @@ var userlistmake = function () {
                 }
 
                 for (let i = 0; i < data[1].length; i++) {
-                    depdic[""+data[1][i].officecode+data[1][i].depcode] = data[1][i].depname;
+                    depdic["" + data[1][i].officecode + data[1][i].depcode] = data[1][i].depname;
                 }
             }
         }
@@ -109,7 +134,7 @@ var userlistmake = function () {
         const user = UserListData[i];
         var companyCode = user.pcompanycode;
         var office = officedic[user.poffice];
-        var userDep = depdic[""+user.poffice+user.pdep];
+        var userDep = depdic["" + user.poffice + user.pdep];
         var userNumber = user.pnumber;
 
         if (!treeData.hasOwnProperty(office)) treeData[office] = {};
@@ -130,7 +155,7 @@ var userlistmake = function () {
     createCompanyTree(treeitem, treeData);
     menuBtn();
     treeDisplay();
-
+    dorole();
 
 }
 
@@ -205,57 +230,60 @@ var drawPosition = function () {
             console.log(err);
         }
     })
-    for (let i = 0; i < uidlist.length; i++) {
-
-        if (i == uidlist.length - 1) {
-            uidlistforajax = uidlistforajax + uidlist[i]
-        } else if (i == 0) {
-            uidlistforajax = uidlist[i] + ";"
-        } else {
-            uidlistforajax = uidlistforajax + uidlist[i] + ";"
-        }
-    }
-
 
     getpersondetail();
 
     userlistmake();
-
-    $.cookie('uidlist', uidlist.toString());
-    $.cookie('pnamelist', pnamelist.toString());
+    makeurl();
     timedraw(showallposition, 3000);
 
 }
 
 var showallposition = function () {
     var tempnamelist = [];
-    var locations = [];
+    var locations = []
+
+    var uidlisttarget = getuidlist();
+    uidlistforajax = [];
+    for (let i = 0; i < uidlisttarget.length; i++) {
+
+        if (i == uidlisttarget.length - 1) {
+            uidlistforajax = uidlistforajax + uidlisttarget[i]
+        } else if (i == 0) {
+            uidlistforajax = uidlisttarget[i] + ";"
+        } else {
+            uidlistforajax = uidlistforajax + uidlisttarget[i] + ";"
+        }
+    }
+
+
     if (markerCluster != null) {
         markerCluster.clearMarkers();
     }
 
-    $.ajax({
-        type: 'GET',
-        async: false,
-        url: mapconfig.getlocations() + uidlistforajax,
-        success: function (data) {
-            if (data != null) {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i] != null) {
-                        var temp = data[i].split(";")
-                        tempnamelist.push(pnamelist[i]);
-                        var latlng = {lat: Number(temp[0]), lng: Number(temp[1])};
-                        locations.push(latlng);
+    if (uidlistforajax.length != 0) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            url: mapconfig.getlocations() + uidlistforajax,
+            success: function (data) {
+                if (data != null) {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i] != null) {
+                            var temp = data[i].split(";")
+                            tempnamelist.push(pnamelist[i]);
+                            var latlng = {lat: Number(temp[0]), lng: Number(temp[1])};
+                            locations.push(latlng);
+                        }
                     }
+
                 }
-
+            },
+            error: function (err) {
+                console.log(err);
             }
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    })
-
+        })
+    }
 
     var markers = locations.map((location, i) => {
         return new google.maps.Marker({
@@ -535,6 +563,7 @@ function findKey(obj, value, compare = (a, b) => a === b) {
     return Object.keys(obj).find(k => compare(obj[k], value))
 }
 
+
 //履歴表示機能
 document.getElementById('start-btn').addEventListener('click', function () {
     var year = document.getElementById('historyyear').innerText;
@@ -565,11 +594,10 @@ document.getElementById('start-btn').addEventListener('click', function () {
         var checkbox = levelNo[i].querySelector('.checkbox-active')
         if (checkbox) {
             var companyName = checkbox.bindData.companyName
-            var country = findKey(countrydic, checkbox.bindData.country)
             var office = findKey(officedic, checkbox.bindData.office)
             var dep = findKey(depdic, checkbox.bindData.dep)
             var number = checkbox.bindData.number
-            data.push(companyName + country + office + dep + number)
+            data.push(companyName + office + dep.substring(dep.length - 5) + number)
             flag = true
         }
     }
@@ -577,6 +605,8 @@ document.getElementById('start-btn').addEventListener('click', function () {
         alert('choose at lest one person');
     }
     $.cookie('userlist', data.toString());
+    $.cookie('target_time_date_min', target_time_min.toString().substring(0,10));
+    $.cookie('target_time_date_max', target_time_min.toString().substring(0,10));
     $.cookie('target_time_min', target_time_min);
     $.cookie('target_time_max', target_time_max);
     $.cookie('speed', playspeed.toString());
@@ -601,11 +631,10 @@ document.getElementById('start-btn').addEventListener('click', function () {
         var checkbox = levelNo[i].querySelector('.checkbox-active')
         if (checkbox) {
             var companyName = checkbox.bindData.companyName
-            var country = checkbox.bindData.country
             var office = checkbox.bindData.office
             var dep = checkbox.bindData.dep
             var number = checkbox.bindData.number
-            data.push(companyName + country + office + dep + number)
+            data.push(companyName + office + dep + number)
             flag = true
         }
     }
@@ -765,29 +794,51 @@ iconSwitch()
 function dorole() {
     var rolenumber = null;
     var companyservice = null;
+    var pname = null;
+    var pnumber = null;
+    var dep = null;
+    var office = null;
+
+
     $.ajax({
         type: 'GET',
         url: mapconfig.getpersondetail() + adminpnumber,
         async: false,
         success: function (data) {
+            pnumber = data[0].pnumber;
+            pname = data[0].pname;
             rolenumber = data[0].prole;
+            $.cookie("roleid", rolenumber);
         },
         error: function (err) {
             console.log(err);
         }
     });
 
-    // $.ajax({
-    //     type: 'GET',
-    //     url: mapconfig.getpersondetail() + adminpnumber,
-    //     async: false,
-    //     success: function (data) {
-    //         rolenumber = data[0].prole;
-    //     },
-    //     error: function (err) {
-    //         console.log(err);
-    //     }
-    // });
+    $.ajax({
+        type: 'GET',
+        url: mapconfig.getpersoncompanydetail() + pnumber,
+        async: false,
+        success: function (data) {
+            office = data[0].poffice;
+            dep = "" + office + data[0].pdep;
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+
+    $.ajax({
+        type: 'GET',
+        url: mapconfig.getservicesetting() + companycode,
+        async: false,
+        success: function (data) {
+            companyservice = data[0];
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
 
     $.ajax({
         type: 'GET',
@@ -796,7 +847,6 @@ function dorole() {
         success: function (data) {
             for (let i = 0; i < data.length; i++) {
                 if (rolenumber == data[i].roleid) {
-                    console.log(data[i])
                     if (data[i].adminsetting != 1) {
                         $("#adminsetting").remove();
                     }
@@ -806,7 +856,7 @@ function dorole() {
                     if (data[i].historyshow != 1) {
                         $("#ecording").remove();
                     }
-                    if (data[i].indoormapsetting != 1) {
+                    if (data[i].indoormapsetting != 1 || companyservice.indoormap != 1) {
                         $("#picture-list").remove();
                     }
                     if (data[i].servicesetting != 1) {
@@ -826,8 +876,98 @@ function dorole() {
             console.log(err);
         }
     })
+
+    //user-list role
+    //user
+    if (rolenumber == 5) {
+        document.querySelectorAll('.checkbox').forEach(function (item) {
+            item.style = "pointer-events: none"
+        });
+        document.querySelectorAll('.menu-btn-box').forEach(function (item) {
+            item.style = "pointer-events: none"
+        });
+        document.querySelectorAll('.node-text-name').forEach(function (item) {
+            if (item.innerText == pname) {
+                item.parentNode.previousSibling.style = "pointer-events: auto";
+                item.parentNode.nextSibling.nextSibling.style = "pointer-events: auto";
+
+            }
+        })
+    }
+
+    //dep user
+    if (rolenumber == 4) {
+        document.querySelectorAll('.checkbox').forEach(function (item) {
+            item.style = "pointer-events: none"
+        });
+        document.querySelectorAll('.menu-btn-box').forEach(function (item) {
+            item.style = "pointer-events: none"
+        });
+        document.querySelectorAll('.node-text-name').forEach(function (item) {
+            if (item.innerText == depdic[dep]) {
+                item.parentNode.previousSibling.style = "pointer-events: auto";
+                var tempdiv = item.parentNode.parentNode.nextSibling;
+                while (tempdiv.className.toString() == "peer-node level-3") {
+                    tempdiv.firstChild.nextSibling.nextSibling.nextSibling.style = "pointer-events: auto";
+                    tempdiv.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.style = "pointer-events: auto";
+                    tempdiv = tempdiv.nextSibling;
+                }
+
+            }
+        })
+    }
+
+    //office user
+    if (rolenumber == 3) {
+        document.querySelectorAll('.checkbox').forEach(function (item) {
+            item.style = "pointer-events: none"
+        });
+        document.querySelectorAll('.menu-btn-box').forEach(function (item) {
+            item.style = "pointer-events: none"
+        });
+        document.querySelectorAll('.node-text-name').forEach(function (item) {
+            if (item.innerText == officedic[office]) {
+                item.parentNode.previousSibling.style = "pointer-events: auto";
+                var tempdiv = item.parentNode.parentNode.nextSibling;
+                while (tempdiv.className.toString() != "peer-node level-1") {
+                    if (tempdiv.className.toString() == "peer-node level-2") {
+                        tempdiv.firstChild.nextSibling.nextSibling.style = "pointer-events: auto";
+                    }
+                    if (tempdiv.className.toString() == "peer-node level-3") {
+                        tempdiv.firstChild.nextSibling.nextSibling.nextSibling.style = "pointer-events: auto";
+                        tempdiv.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.style = "pointer-events: auto";
+                    }
+                    tempdiv = tempdiv.nextSibling;
+                }
+
+            }
+        })
+    }
+
 }
 
-dorole()
+function makeurl(){
+    document.querySelectorAll('.menu-btn-box').forEach(function (item) {
+        item.addEventListener('click',function () {
+            var levelNo = document.querySelectorAll('.level-3');
+            var data = []
+            for (var i = 0; i < levelNo.length; i++) {
+                var checkbox = levelNo[i].querySelector('.checkbox-active')
+                if (checkbox) {
+                    var number = checkbox.bindData.number
+                    data.push(number);
+                }
+            }
+            document.querySelectorAll('.urlset').forEach(function (item) {
+                item.href = "./updatauserset/"+data[0];
+            })
+
+
+        })
+    });
+
+}
+
+
 
 

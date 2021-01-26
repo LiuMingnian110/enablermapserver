@@ -222,7 +222,7 @@ submitBtn.addEventListener('click', function () {
             if (data.status == 'success') {
                 alert("update success!Please add keypoints next!");
                 $.cookie('setkeyfilename', targetfilename);
-                window.location.href = '/logic';
+                window.location.href = '/updatebuilding/logic/logic';
             }
         },
         error: function () {

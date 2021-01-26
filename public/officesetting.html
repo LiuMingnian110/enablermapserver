@@ -131,6 +131,28 @@
         listnum = listnum + 1;
     })
 
+    function doone() {
+        var id = listnum + 1;
+        var body = `<ul id="${id}">
+                            <li class="leftStyle departmentNo">
+                                <input id="${id}-newdepcode" class="form-control" type="text" value="00001" onchange="check(${id})">
+                            </li>
+                            <li class="leftStyle jp">
+                                <input id="${id}-newdepname" class="form-control " type="text" value="未設定">
+                            </li>
+                            <li class="leftStyle en">
+                                <input id="${id}-newdepnameeng" class="form-control " type="text" value="未設定">
+                            </li>
+                            <li class="leftStyle note">
+                                <input id="${id}-note" class="form-control" type="text" value="未設定">
+                            </li>
+                        </ul>`
+        $("#target").append(body);
+        listnum = listnum + 1;
+    }
+
+    doone();
+
     // document.getElementById("select-btn").addEventListener("click", function () {
     //     var text = "既存の部門番号と名前:" + "\r\n ";
     //     for (let i = 0; i < deplist.length; i++) {

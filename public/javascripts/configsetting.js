@@ -138,27 +138,27 @@ class mapconfig {
         return this.baseurl + 'updateofficedetail'
     }
 
-    updatedepdetail(){
+    updatedepdetail() {
         return this.baseurl + 'updatedepdetail'
     }
 
-    getdetailbyfilename(){
+    getdetailbyfilename() {
         return this.baseurl + 'getdetailbyfilename/'
     }
 
-    deleteindoormap(){
+    deleteindoormap() {
         return this.baseurl + 'deleteindoormap'
     }
 
-    updateindoordetail(){
+    updateindoordetail() {
         return this.baseurl + 'updateindoordetail'
     }
 
-    stopoffice(){
+    stopoffice() {
         return this.baseurl + 'stopoffice'
     }
 
-    getpersondetail(){
+    getpersondetail() {
         return this.baseurl + 'user/'
     }
 }

@@ -252,6 +252,19 @@
         }
     })
 
+    var roleid = $.cookie("roleid");
+    if (roleid == "3") {
+        $('#role').find('[value="1"]').remove();
+        $('#role').find('[value="2"]').remove();
+        $('#role').find('[value="3"]').remove();
+    }
+    if (roleid == "4" || roleid == "5") {
+        $('#role').find('[value="1"]').remove();
+        $('#role').find('[value="2"]').remove();
+        $('#role').find('[value="3"]').remove();
+        $('#role').find('[value="4"]').remove();
+    }
+
 </script>
 </body>
 </html>

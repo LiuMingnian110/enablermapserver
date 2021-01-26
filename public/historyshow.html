@@ -60,7 +60,9 @@
     </div>
     <script>
 
-        mapconfig=new mapconfig();
+
+        mapconfig = new mapconfig();
+
         //Java　Hashmap 自分を定義する
         function HashMap() {
             this.map = {};
@@ -170,7 +172,7 @@
 
         //google map and leaflet map 初期化
         var initMap = function () {
-            document.getElementById("replay").disabled=true;
+            document.getElementById("replay").disabled = true;
             const Tokyo = {lat: 35.68, lng: 139.75};
             map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
@@ -186,34 +188,91 @@
 
             document.getElementById("playspeed").value = time;
             userlist = targetlist.split(',');
-            for (let i = 0; i < userlist.length; i++) {
-                let uid = userlist[i];
-                resultArr = [];
-                $.ajax({
-                    type: 'GET',
-                    async: false,
-                    url: mapconfig.gethistorical() + uid,
-                    success: function (data) {
-                        if (data != null) {
-                            dataArr = data.split(/[(\r\n)\r\n]+/);
-                            dataArr.pop();
-                            for (let j = 0; j < dataArr.length; j++) {
-                                dataArr[j] = JSON.parse(dataArr[j]);
-                                if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
-                                    resultArr.push(dataArr[j]);
+            var target_time_date_min = $.cookie("target_time_date_min");
+            var target_time_date_max = $.cookie("target_time_date_max");
+            if (target_time_date_min == target_time_date_max) {
+                for (let i = 0; i < userlist.length; i++) {
+                    let uid = userlist[i];
+                    resultArr = [];
+                    $.ajax({
+                        type: 'GET',
+                        async: false,
+                        url: mapconfig.gethistorical() + target_time_date_min + "/" + uid,
+                        success: function (data) {
+                            if (data != null) {
+                                dataArr = data.split(/[(\r\n)\r\n]+/);
+                                dataArr.pop();
+                                for (let j = 0; j < dataArr.length; j++) {
+                                    dataArr[j] = JSON.parse(dataArr[j]);
+                                    if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
+                                        resultArr.push(dataArr[j]);
+                                    }
                                 }
+                                file_data.put(uid, resultArr);
+                                drawlocation.put(uid, 0);
                             }
-                            file_data.put(uid, resultArr);
-                            drawlocation.put(uid, 0);
+                        },
+                        error: function (err) {
+                            console.log(err);
                         }
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                })
-            }
-            alert("load log file success!")
+                    })
+                }
+                alert("load log file success!")
 
+            }else{
+                for (let i = 0; i < userlist.length; i++) {
+                    let uid = userlist[i];
+                    resultArr = [];
+                    $.ajax({
+                        type: 'GET',
+                        async: false,
+                        url: mapconfig.gethistorical() + target_time_date_min + "/" + uid,
+                        success: function (data) {
+                            if (data != null) {
+                                dataArr = data.split(/[(\r\n)\r\n]+/);
+                                dataArr.pop();
+                                for (let j = 0; j < dataArr.length; j++) {
+                                    dataArr[j] = JSON.parse(dataArr[j]);
+                                    if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
+                                        resultArr.push(dataArr[j]);
+                                    }
+                                }
+                                file_data.put(uid, resultArr);
+                                drawlocation.put(uid, 0);
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+                }
+
+                for (let i = 0; i < userlist.length; i++) {
+                    let uid = userlist[i];
+                    $.ajax({
+                        type: 'GET',
+                        async: false,
+                        url: mapconfig.gethistorical() + target_time_date_max + "/" + uid,
+                        success: function (data) {
+                            if (data != null) {
+                                dataArr = data.split(/[(\r\n)\r\n]+/);
+                                dataArr.pop();
+                                for (let j = 0; j < dataArr.length; j++) {
+                                    dataArr[j] = JSON.parse(dataArr[j]);
+                                    if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
+                                        resultArr.push(dataArr[j]);
+                                    }
+                                }
+                                file_data.put(uid, resultArr);
+                                drawlocation.put(uid, 0);
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+                }
+            }
             timelinebar(target_time_min, target_time_max, Number(time));
 
         };
@@ -222,7 +281,7 @@
         var showindoormap = function (filename, keypoint) {
             $.cookie('filename-history', filename);
             $.cookie('keypoints-history', keypoint);
-            window.open(mapconfig.getbaseurl()+"historyshowindoor");
+            window.open(mapconfig.getbaseurl() + "historyshowindoor");
         }
 
         var drawPoint = function (target, uid, temptime) {
@@ -251,7 +310,7 @@
                     });
                     layerlst.push(marker);
                     console.log("end");
-                    document.getElementById("replay").disabled=false;
+                    document.getElementById("replay").disabled = false;
                     k += 1;
                     drawlocation.put(uid, k);
                 }
@@ -278,15 +337,15 @@
         }
 
         document.getElementById("replay").addEventListener('click', function () {
-            document.getElementById("replay").disabled=true;
+            document.getElementById("replay").disabled = true;
             if (layerlst.length != 0) {
                 for (let i = 0; i < layerlst.length; i++) {
                     layerlst[i].setMap(null);
                 }
             }
             layerlst = [];
-            for(let i=0;i<userlist.length;i++){
-                drawlocation.put(userlist[i],0);
+            for (let i = 0; i < userlist.length; i++) {
+                drawlocation.put(userlist[i], 0);
             }
             var changetime = document.getElementById('playspeed').value;
             timelinebar(target_time_min, target_time_max, Number(changetime));

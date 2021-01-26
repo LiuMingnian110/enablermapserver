@@ -70,7 +70,7 @@ class GenDOM {
             ele_menuBtn[`on${menuOpts.handlerName}`] = menuOpts.event
             ele_menuBtn.bindData = menuOpts.bindData
             ele_menuBtn.innerHTML = `
-        <img src="/icon/muen-btn.png" alt="" class="menu-btn">
+        <img src="/icon/muen-btn.png" alt="" class="menu-btn" >
         <div class="menu-options-btn" style="display: none;">
             <ul>
                 <li>
@@ -79,7 +79,7 @@ class GenDOM {
                 </li>
                 <li>
                     <img src="/icon/user.png" alt="">
-                    <a href="/userSettings.html" id=""><span>用户情报变更</span></a>
+                    <a class="urlset"><span>用户情报变更</span></a>
                 </li>
             </ul>
         </div>

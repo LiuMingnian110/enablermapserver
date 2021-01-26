@@ -24,7 +24,7 @@
                 <h3>ユーザー設定</h3>
             </div>
             <div class="return-bnt">
-                <a href="/userlist">
+                <a href="/userlist" id="checkroleid">
                     <button type="button" class="btn btn-primary">
                         <img src="/icon/return.png" alt="">
                     </button>
@@ -82,6 +82,11 @@
     </div>
 </div>
 <script>
+    var roleid = $.cookie("roleid");
+    if (roleid == 5) {
+        document.getElementById("checkroleid").href = "/mainmap"
+    }
+
     function HashMap() {
         this.map = {};
     }
@@ -118,6 +123,7 @@
 
     mapconfig = new mapconfig();
     var companycode = $.cookie('enabermap.uid').substring(0, 5);
+    var userpnumber = $.cookie('enabermap.uid').substring(15, 20);
     var pnumber = document.URL.substring(document.URL.length - 5);
 
 
@@ -243,7 +249,11 @@
                 }
             }),
             success: function (data) {
-                window.location.href = '/userlist';
+                if (roleid != "5") {
+                    window.location.href = '/userlist';
+                } else {
+                    window.location.href = '/mainmap';
+                }
             },
             error: function () {
                 alert('Please check your network,if it is still not work.Please look admin for help!');
@@ -276,7 +286,11 @@
                 success: function (data) {
                     if (JSON.parse(data).status == 'success') {
                         alert("updata user success!");
-                        window.location.href = '/userlist';
+                        if (roleid != "5") {
+                            window.location.href = '/userlist';
+                        } else {
+                            window.location.href = '/mainmap';
+                        }
                     } else {
                         alert("add user failed!");
                     }
@@ -304,6 +318,22 @@
         }
     })
 
+    if (roleid == "3") {
+        $('#role').find('[value="1"]').remove();
+        $('#role').find('[value="2"]').remove();
+        if(userpnumber!=pnumber){
+            $('#role').find('[value="3"]').remove();
+        }
+
+    }
+    if (roleid == "4") {
+        $('#role').find('[value="1"]').remove();
+        $('#role').find('[value="2"]').remove();
+        $('#role').find('[value="3"]').remove();
+        if(userpnumber!=pnumber){
+            $('#role').find('[value="4"]').remove();
+        }
+    }
 
 </script>
 </body>
