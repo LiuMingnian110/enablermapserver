@@ -605,8 +605,8 @@ document.getElementById('start-btn').addEventListener('click', function () {
         alert('choose at lest one person');
     }
     $.cookie('userlist', data.toString());
-    $.cookie('target_time_date_min', target_time_min.toString().substring(0,10));
-    $.cookie('target_time_date_max', target_time_min.toString().substring(0,10));
+    $.cookie('target_time_date_min', target_time_min.toString().substring(0, 10));
+    $.cookie('target_time_date_max', target_time_min.toString().substring(0, 10));
     $.cookie('target_time_min', target_time_min);
     $.cookie('target_time_max', target_time_max);
     $.cookie('speed', playspeed.toString());
@@ -946,25 +946,31 @@ function dorole() {
 
 }
 
-function makeurl(){
-    document.querySelectorAll('.menu-btn-box').forEach(function (item) {
-        item.addEventListener('click',function () {
-            var levelNo = document.querySelectorAll('.level-3');
-            var data = []
-            for (var i = 0; i < levelNo.length; i++) {
-                var checkbox = levelNo[i].querySelector('.checkbox-active')
-                if (checkbox) {
-                    var number = checkbox.bindData.number
-                    data.push(number);
-                }
-            }
-            document.querySelectorAll('.urlset').forEach(function (item) {
-                item.href = "./updatauserset/"+data[0];
-            })
-
-
+function makeurl() {
+    if ($.cookie("roleid") == "5") {
+        document.querySelectorAll('.updateuserbtn').forEach(function (item) {
+            item.remove();
         })
-    });
+    } else {
+        document.querySelectorAll('.menu-btn-box').forEach(function (item) {
+            item.addEventListener('click', function () {
+                var levelNo = document.querySelectorAll('.level-3');
+                var data = []
+                for (var i = 0; i < levelNo.length; i++) {
+                    var checkbox = levelNo[i].querySelector('.checkbox-active')
+                    if (checkbox) {
+                        var number = checkbox.bindData.number
+                        data.push(number);
+                    }
+                }
+                document.querySelectorAll('.urlset').forEach(function (item) {
+                    item.href = "./updatauserset/" + data[0];
+                })
+
+
+            })
+        });
+    }
 
 }
 

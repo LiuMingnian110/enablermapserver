@@ -210,14 +210,14 @@
     }
 
     function check(id) {
-        var templist=[];
+        var templist = [];
         var tempdata = document.getElementById(id + "-newdepcode").value;
         if (alldepcode.indexOf(tempdata) != -1) {
             alert("depcode is existed!Please rewrite depcode!");
             document.getElementById(id + "-newdepcode").focus();
         }
         for (let i = listnum; i >= alldepcode.length; i--) {
-            if(Number(i) != Number(id)){
+            if (Number(i) != Number(id)) {
                 var temp = document.getElementById(Number(i) + "-newdepcode").value;
                 templist.push(temp);
             }
@@ -354,6 +354,10 @@
             }
         })
     })
+
+    // if (document.getElementById('0-depcode').value = "00000") {
+    //     document.getElementById('0-depcode').disabled = "";
+    // }
 
 
 </script>
