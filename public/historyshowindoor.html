@@ -102,6 +102,7 @@
     let file_data = new HashMap();
     let drawlocation = new HashMap();
     var layerlst = [];
+    var drawTarget = [];
 
     var sedistance;
     var perdistance;
@@ -128,8 +129,8 @@
             bar.style.width = i * perdistance + "%";
             var temptime = new Date(smallTime.getTime() + i * 1000);
             total.innerHTML = temptime.toString();
-            for (let j = 0; j < userlist.length; j++) {
-                drawPoint(file_data.get(userlist[j]), userlist[j], temptime);
+            for (let j = 0; j < drawTarget.length; j++) {
+                drawPoint(file_data.get(drawTarget[j]), drawTarget[j], temptime);
             }
             i += 1;
             delaydraw(i, Number(time));
@@ -177,26 +178,39 @@
         indoormap.fitBounds(imageBounds);
         indoormap.setZoom(22);
 
+        var target_time_date_min = $.cookie("target_time_date_min");
+
         for (let i = 0; i < userlist.length; i++) {
             let uid = userlist[i];
             resultArr = [];
             $.ajax({
                 type: 'GET',
                 async: false,
-                url: mapconfig.gethistorical() + uid,
+                url: mapconfig.gethistorical() + target_time_date_min + "/" + uid,
                 success: function (data) {
-                    if (data != null) {
+                    if (data != "null") {
                         console.log(uid);
                         dataArr = data.split(/[(\r\n)\r\n]+/);
                         dataArr.pop();
                         for (let j = 0; j < dataArr.length; j++) {
                             dataArr[j] = JSON.parse(dataArr[j]);
                             if (dataArr[j].tim >= target_time_min && dataArr[j].tim <= target_time_max) {
-                                resultArr.push(dataArr[j]);
+                                if (j != 0 || j != (dataArr.length - 1)) {
+                                    if (dataArr[j - 1].tim < dataArr[j].tim) {
+                                        resultArr.push(dataArr[j]);
+                                    }
+                                } else {
+                                    resultArr.push(dataArr[j]);
+                                }
                             }
                         }
                         file_data.put(uid, resultArr);
                         drawlocation.put(uid, 0);
+                        drawTarget.push(uid);
+                        alert("uid:" + uid + "load log file success!")
+                    } else {
+                        alert("uid:" + uid + " のログ記録は存在しない")
+
                     }
                 },
                 error: function (err) {
@@ -204,8 +218,6 @@
                 }
             })
         }
-        alert("load log file success!")
-
         timelinebar(target_time_min, target_time_max, Number(time));
 
     }
@@ -265,8 +277,8 @@
             }
         }
         layerlst = [];
-        for (let i = 0; i < userlist.length; i++) {
-            drawlocation.put(userlist[i], 0);
+        for (let i = 0; i < drawTarget.length; i++) {
+            drawlocation.put(drawTarget[i], 0);
         }
         var changetime = document.getElementById('playspeed').value;
         timelinebar(target_time_min, target_time_max, Number(changetime));

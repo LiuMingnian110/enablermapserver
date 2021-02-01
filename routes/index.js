@@ -81,6 +81,11 @@ router.get('/indoorfloor', function (req, res, next) {
     res.render('indoorfloor');
 });
 
+//屋内地図画面
+router.get('/historyshowfloor', function (req, res, next) {
+    res.render('historyshowfloor');
+});
+
 //ユーザ設定画面
 router.get('/userSettings', function (req, res, next) {
     res.render('userSettings');
@@ -141,7 +146,7 @@ router.post('/location/:uid', function (req, res, next) {
     if (req.body.data != null) {
         try {
             if (req.body.data.tim != null) {
-                logger.logger(uid, req.body.data.tim.toString().substring(0,10), JSON.stringify(req.body.data));
+                logger.logger(uid, req.body.data.tim.toString().substring(0, 10), JSON.stringify(req.body.data));
                 var val = req.body.data.lat + ";" + req.body.data.lon + ";" + req.body.data.alt;
                 client.Post(uid, val);
                 res.json({"result": "success"});
@@ -161,13 +166,13 @@ router.post('/location/:uid', function (req, res, next) {
 
 //人過去位置情報送信
 router.get('/historical/:date/:uid', async function (req, res, next) {
-    const result = await filereader.getFileData(req.params.date,req.params.uid).catch((err) => {
+    const result = await filereader.getFileData(req.params.date, req.params.uid).catch((err) => {
         return null;
     });
     if (result != null) {
         res.send(result.toString());
     } else {
-        res.send(null);
+        res.send("null");
     }
 });
 
@@ -382,13 +387,18 @@ router.get('/getcodnamelist', async function (req, res, next) {
 
 //get upload time
 router.get('/getfloordetail/:filename', async function (req, res, next) {
-        const result = await userpro.getbuildname(req.params.filename);
-        var dataString = JSON.stringify(result);
-        var data = JSON.parse(dataString);
-        const result1 = await userpro.getbuilddetail(data[0].building);
-        dataString = JSON.stringify(result1);
-        data = JSON.parse(dataString);
-        res.json(data);
+        try {
+            const result = await userpro.getbuildname(req.params.filename);
+            var dataString = JSON.stringify(result);
+            var data = JSON.parse(dataString);
+            const result1 = await userpro.getbuilddetail(data[0].building);
+            dataString = JSON.stringify(result1);
+            data = JSON.parse(dataString);
+            res.json(data);
+        } catch (e) {
+            console.log(e)
+        }
+
     }
 )
 

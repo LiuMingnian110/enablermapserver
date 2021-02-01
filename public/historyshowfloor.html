@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HistoryLoaction</title>
     <script src="/javascripts/configsetting.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAvtx-D_AVrB78-bTDzSaFuBLP5nRecsKM"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/maptalks/dist/maptalks.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
@@ -98,43 +98,25 @@
         var drawTarget = [];
         var target_time_min = $.cookie("target_time_min");
         var target_time_max = $.cookie("target_time_max");
+        var floorinfo;
+        var filename = $.cookie("filename-history");
 
-        //屋内地図Map上に書く
-        var getmapdetail = function (companycode) {
-            $.ajax({
-                type: 'GET',
-                url: mapconfig.getindoordetail() + companycode,
-                success: function (data) {
-                    indoordetail = data;
-                    for (let i = 0, len = indoordetail.length; i < len; i++) {
-                        var templist = indoordetail[i].position.split("|");
-                        var areaCoords = [];
-                        for (let j = 0, len = templist.length; j < len; j++) {
-                            var tempstring = {
-                                lat: Number(templist[j].split(",")[0]),
-                                lng: Number(templist[j].split(",")[1])
-                            }
-                            areaCoords.push(tempstring);
-                        }
-                        var areaTriangle = new google.maps.Polygon({
-                            paths: areaCoords,
-                            strokeColor: "#FF0000",
-                            strokeOpacity: 0.8,
-                            strokeWeight: 3,
-                            fillColor: "#FF0000",
-                            fillOpacity: 0.35,
-                        });
-                        areaTriangle.setMap(map);
-                        areaTriangle.addListener("click", function () {
-                            showindoormap(indoordetail[i].svgfile, indoordetail[i].keypoint);
-                        });
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        };
+
+        $.ajax({
+            type: 'GET',
+            url: mapconfig.getfloordetail() + filename,
+            async: false,
+            success: function (data) {
+                floorinfo = data;
+                console.log(data);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+
+        var center = floorinfo[0].position.split("|")[0].split(",");
+
 
         var sedistance;
         var perdistance;
@@ -174,15 +156,53 @@
         //google map and leaflet map 初期化
         var initMap = function () {
             document.getElementById("replay").disabled = true;
-            const Tokyo = {lat: 35.68, lng: 139.75};
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 10,
-                center: Tokyo,
+            map = new maptalks.Map('map', {
+                center: [Number(center[1]), Number(center[0])],
+                zoom: 14,
+                pitch: 56,
+                baseLayer: new maptalks.TileLayer('base', {
+                    urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+                    subdomains: ['a', 'b', 'c', 'd'],
+                    attribution: '&copy; <a href="http://osm.org">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/">CARTO</a>'
+                })
             });
 
-            var cookie_value = $.cookie("enabermap.uid");
-            var companycode = cookie_value.substring(0, 5);
-            getmapdetail(companycode);
+            var target = [];
+            for (let i = 0; i < floorinfo.length; i++) {
+                var position = [];
+                var point = floorinfo[0].position.split("|");
+                for (let j = 0; j < point.length; j++) {
+                    var temp = [Number(point[j].split(",")[1]), Number(point[j].split(",")[0])];
+                    position.push(temp);
+                }
+
+                var polygon = new maptalks.Polygon([
+                    position
+                ], {
+                    symbol: {
+                        lineColor: '#34495e',
+                        lineWidth: 1,
+                        polygonFill: '#34495e',
+                        polygonOpacity: 0.5
+                    },
+                    properties: {
+                        altitude: Number(floorinfo[i].alt),
+                    }
+                }).on('click', function () {
+                    $.cookie('filename-history', floorinfo[i].svgfile);
+                    $.cookie('keypoints-history', floorinfo[i].keypoint);
+                    if (i == floorinfo.length - 1) {
+                        $.cookie('flooralt', floorinfo[i].alt + ";" + '999999');
+                    } else {
+                        $.cookie('flooralt', floorinfo[i].alt + ";" + floorinfo[i + 1].alt);
+                    }
+
+                    window.open(mapconfig.getbaseurl() + 'historyshowindoor');
+                });
+                target.push(polygon);
+
+            }
+            var layer = new maptalks.VectorLayer('vector', target, {enableAltitude: true}).addTo(map);
 
             var time = $.cookie("speed");
             var targetlist = $.cookie("userlist");
@@ -218,9 +238,9 @@
                                 file_data.put(uid, resultArr);
                                 drawlocation.put(uid, 0);
                                 drawTarget.push(uid);
-                                alert("uid:"+uid+"load log file success!")
+                                alert("uid:" + uid + "load log file success!")
                             } else {
-                                alert("uid:"+uid+" のログ記録は存在しない")
+                                alert("uid:" + uid + " のログ記録は存在しない")
 
                             }
                         },
@@ -289,11 +309,6 @@
         };
         initMap();
 
-        var showindoormap = function (filename, keypoint) {
-            $.cookie('filename-history', filename);
-            window.open(mapconfig.getbaseurl() + "historyshowfloor");
-        }
-
         var drawPoint = function (target, uid, temptime) {
             var k = drawlocation.get(uid);
             if (k == 0) {
@@ -301,11 +316,21 @@
                 if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
                     var lat = Number(target[0].lat);
                     var lng = Number(target[0].lon);
-                    var marker = new google.maps.Marker({
-                        position: {lat: lat, lng: lng},
-                        map: map,
-                    });
-                    layerlst.push(marker);
+                    var alt = Number(target[0].alt);
+
+                    var point = new maptalks.Marker(
+                        [lng, lat],
+                        {
+                            properties: {
+                                altitude: alt
+                            }
+                        }
+                    )
+                    new maptalks.VectorLayer('startpoint', point, {
+                        enableAltitude: true,
+                        altitudeProperty: 'altitude'
+                    }).addTo(map);
+
                     k += 1;
                     drawlocation.put(uid, k);
                 }
@@ -314,11 +339,21 @@
                 if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
                     var lat = Number(target[k].lat);
                     var lng = Number(target[k].lon);
-                    var marker = new google.maps.Marker({
-                        position: {lat: lat, lng: lng},
-                        map: map,
-                    });
-                    layerlst.push(marker);
+                    var alt = Number(target[k].alt);
+
+                    var point = new maptalks.Marker(
+                        [lng, lat],
+                        {
+                            properties: {
+                                altitude: alt
+                            }
+                        }
+                    )
+                    new maptalks.VectorLayer('endpoint', point, {
+                        enableAltitude: true,
+                        altitudeProperty: 'altitude'
+                    }).addTo(map);
+
                     console.log("end");
                     document.getElementById("replay").disabled = false;
                     k += 1;
@@ -327,18 +362,20 @@
             } else if (k < target.length - 1) {
                 var targettime = new Date(target[k].tim);
                 if (temptime.getTime() <= targettime.getTime() && (temptime.getTime() + 1000) > targettime.getTime()) {
-                    var flightPath = new google.maps.Polyline({
-                        path: [{
-                            lat: Number(target[k - 1].lat),
-                            lng: Number(target[k - 1].lon)
-                        }, {lat: Number(target[k].lat), lng: Number(target[k].lon)}],
-                        geodesic: true,
-                        strokeColor: "#FF0000",
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2,
+                    var line = new maptalks.LineString([
+                        [Number(target[k - 1].lon), Number(target[k - 1].lat)],
+                        [Number(target[k].lon), Number(target[k].lat)]
+                    ], {
+                        properties: {
+                            'altitude': [Number(target[k - 1].alt), Number(target[k].alt)] //seperate altitude for each vertex
+                        },
+                        symbol: {
+                            'lineColor': 'rgb(135,196,240)',
+                            'lineWidth': 3
+                        }
                     });
-                    flightPath.setMap(map);
-                    layerlst.push(flightPath);
+                    var linename = uid + k + "-linelayer"
+                    new maptalks.VectorLayer(linename, line, {enableAltitude: true}).addTo(map);
                     k += 1;
                     drawlocation.put(uid, k);
                 }
@@ -347,13 +384,22 @@
         }
 
         document.getElementById("replay").addEventListener('click', function () {
+
             document.getElementById("replay").disabled = true;
-            if (layerlst.length != 0) {
-                for (let i = 0; i < layerlst.length; i++) {
-                    layerlst[i].setMap(null);
+
+            map.getLayer('startpoint').remove();
+
+            map.getLayer('endpoint').remove();
+
+            for (let j = 0; j < drawTarget.length; j++) {
+                for (let i = 0; i < file_data.get(drawTarget[j]).length; i++) {
+                    var tempname = drawTarget[j] + i + "-linelayer";
+                    if (map.getLayer(tempname) != null) {
+                        map.getLayer(tempname).remove();
+                    }
                 }
             }
-            layerlst = [];
+
             for (let i = 0; i < drawTarget.length; i++) {
                 drawlocation.put(drawTarget[i], 0);
             }
